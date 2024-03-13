@@ -3,7 +3,7 @@ import React from "react";
 import "../../styles/landing/home-style.scss";
 
 const Footer = () => {
-  const LinkGroup = ({ children, header }) => {
+  const LinkGroup: React.FC<any> = ({ children, header }) => {
     return (
       <>
         <div className="w-full px-4">
@@ -18,7 +18,7 @@ const Footer = () => {
     );
   };
 
-  const NavLink = ({ link, label }) => {
+  const NavLink: React.FC<any> = ({ link, label }) => {
     return (
       <li>
         <a
