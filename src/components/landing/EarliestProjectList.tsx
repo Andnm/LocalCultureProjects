@@ -10,33 +10,34 @@ import { Skeleton } from "@/components/ui/skeleton";
 const EarliestProjectList = () => {
   const [dataProjectList, setDataProjectList] = React.useState<any[]>([]);
   const dispatch = useAppDispatch();
-  const [isLoadingProjectList, setIsLoadingProjectList] = React.useState<boolean>(false);
+  const [isLoadingProjectList, setIsLoadingProjectList] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
-    setIsLoadingProjectList(true)
+    setIsLoadingProjectList(true);
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        socketInstance.on("getProjects", (data: any) => {
-          const newListProjects = data?.projects
-            ?.filter((project: any) => {
-              const expirationDate = new Date(
-                project.project_registration_expired_date
-              );
-              const currentDate = new Date();
-              return expirationDate > currentDate;
-            })
-            ?.sort((a: any, b: any) => {
-              const dateA = new Date(a.project_start_date);
-              const dateB = new Date(b.project_start_date);
-              return dateA.getTime() - dateB.getTime();
-            })
-            ?.slice(0, 4);
-          setDataProjectList(newListProjects);
-        });
+        console.log("res", result.payload)
+        const newListProjects = result.payload[1]
+          ?.filter((project: any) => {
+            const expirationDate = new Date(
+              project.project_registration_expired_date
+            );
+            const currentDate = new Date();
+            return expirationDate > currentDate;
+          })
+          ?.sort((a: any, b: any) => {
+            const dateA = new Date(a.project_registration_expired_date);
+            const dateB = new Date(b.project_registration_expired_date);
+            return dateA.getTime() - dateB.getTime();
+          });
+
+        console.log("newListProjects", newListProjects);
+        setDataProjectList(newListProjects);
       } else {
         toast.error("Có lỗi xảy ra khi tải danh sách dự án!");
       }
-      setIsLoadingProjectList(false)
+      setIsLoadingProjectList(false);
     });
   }, []);
 

@@ -20,8 +20,8 @@ const LandingPage = () => {
         <EarliestProjectList />
         <TopCompany />
         {/* <ContactUs /> */}
-        {/* <Footer /> */}
       </div>
+      <Footer />
     </>
   );
 };
