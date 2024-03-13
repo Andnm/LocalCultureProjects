@@ -1,0 +1,237 @@
+"use client";
+
+import React from "react";
+
+import "./style.scss";
+import { useAppDispatch, useAppSelector } from "@/src/redux/store";
+import { formatDate, generateFallbackAvatar } from "@/src/utils/handleFunction";
+import { Button } from "../ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  inviteMemberByLeader,
+} from "@/src/redux/features/groupSlice";
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import toast from "react-hot-toast";
+import { searchUserByEmail } from "@/src/redux/features/userSlice";
+import { Skeleton } from "../ui/skeleton";
+import { X } from "lucide-react";
+
+interface DialogViewProjectProps {
+  children: React.ReactNode;
+  groupId: number;
+  setDataGroup: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+export const AlertDialogOnlyInviteMember: React.FC<DialogViewProjectProps> = ({
+  children,
+  groupId,
+  setDataGroup,
+}) => {
+  const [open, setOpen] = React.useState(false);
+
+  const [newMember, setNewMember] = React.useState<string>("");
+  const [loadingSearchResult, setLoadingSearchResult] = React.useState(false);
+  const [memberResultSearch, setMemberResultSearch] = React.useState<any[]>([]);
+  const [memberList, setMemberList] = React.useState<any[]>([]);
+  const [loadingHandleInviteMember, setLoadingHandleInviteMember] =
+    React.useState(false);
+  const dispatch = useAppDispatch();
+  const { loadingListGroup, error }: any = useAppSelector((state) => state.group);
+
+  const handleNewMemberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLoadingSearchResult(true);
+    setNewMember(event.target.value);
+    dispatch(
+      searchUserByEmail({
+        roleName: "Student",
+        searchEmail: event.target.value,
+      })
+    ).then((result) => {
+      setMemberResultSearch(result.payload);
+      setLoadingSearchResult(false);
+    });
+  };
+
+  const handleClickSelectMember = (selectedMember: any) => {
+    setMemberList((prevMembers) => [...prevMembers, selectedMember]);
+    setNewMember("");
+    setMemberResultSearch([]);
+  };
+
+  const removeSelectedUserFromMemberList = (selectedMember: any) => {
+    setMemberList((prevMembers) =>
+      prevMembers.filter((member) => member !== selectedMember)
+    );
+  };
+
+  const handleInviteMember = () => {
+    setLoadingHandleInviteMember(true);
+    if (memberList.length !== 0) {
+      for (const user of memberList) {
+        const data = {
+          groupId: groupId,
+          userEmail: user.email,
+        };
+
+        dispatch(inviteMemberByLeader(data)).then((res) => {
+          if (inviteMemberByLeader.rejected.match(res)) {
+            toast.error(`${res.payload}`);
+          } else {
+            toast.success(`Mời ${user.email} thành công!`);
+            setDataGroup((preData) => [...preData, { user: user }]);
+          }
+        });
+      }
+      setOpen(false);
+    }
+    setNewMember("");
+    setMemberResultSearch([]);
+    setMemberList([]);
+    setLoadingHandleInviteMember(false);
+  };
+
+  const handleCancel = () => {
+    setNewMember("");
+    setMemberResultSearch([]);
+    setOpen(false);
+  };
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger>{children}</AlertDialogTrigger>
+      <AlertDialogContent className="opacity-100 max-w-lg bg-white">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Mời thành viên</AlertDialogTitle>
+        </AlertDialogHeader>
+
+        <div className="mb-4">
+          <div className="mt-4 relative">
+            <label
+              className="block text-gray-700 font-bold mb-2"
+              htmlFor="invited_member"
+            >
+              Thành viên
+            </label>
+
+            <input
+              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="invited_member"
+              type="text"
+              placeholder="Vui lòng nhập email để thêm thành viên"
+              value={newMember}
+              onChange={handleNewMemberChange}
+            />
+
+            {newMember && (
+              <div className="absolute z-50 w-full bg-white max-h-44 overflow-y-scroll shadow-lg border flex justify-start flex-col">
+                {loadingSearchResult ? (
+                  <div className="flex items-center gap-3 px-2 py-2 text-gray-500 text-sm">
+                    <Skeleton className="w-10 h-10 object-cover rounded-full" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="w-60 h-5" />
+                      <Skeleton className="w-60 h-5" />
+                    </div>
+                  </div>
+                ) : memberResultSearch &&
+                  Array.isArray(memberResultSearch) &&
+                  memberResultSearch.length > 0 ? (
+                  memberResultSearch?.map((result, index) => (
+                    <div
+                      key={index}
+                      className="flex cursor-pointer hover:bg-gray-200 px-2 py-2 items-center gap-3 transition-all duration-300 ease-in-out"
+                      onClick={() => handleClickSelectMember(result)}
+                    >
+                      <img
+                        src={
+                          result.avatar_url ||
+                          generateFallbackAvatar(result.email)
+                        }
+                        alt={result.fullname}
+                        className="w-10 h-10 object-cover rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <p className="font-normal text-sm">{result.fullname}</p>
+                        <p className="font-normal opacity-70 text-sm">
+                          {result.email}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-2 py-2 text-gray-500 text-sm">
+                    Không tìm thấy người phù hợp.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4">
+            {memberList.length !== 0 && (
+              <label className="block text-gray-700 font-bold mb-2">
+                Những người đã mời
+              </label>
+            )}
+
+            <div>
+              {memberList.map((member, index) => (
+                <div
+                  className="flex items-center justify-between gap-3 mt-4"
+                  key={index}
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={
+                        member.avatar_url ||
+                        generateFallbackAvatar(member.email)
+                      }
+                      alt={""}
+                      className="w-10 h-10 object-cover rounded-full"
+                    />
+                    <div className="flex flex-col">
+                      <p className={`font-normal text-sm`}>{member.fullname}</p>
+
+                      <p className={`font-normal opacity-70 text-sm`}>
+                        {member.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <X
+                    className="cursor-pointer w-5 h-5 text-gray-500"
+                    onClick={() => removeSelectedUserFromMemberList(member)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-4 justify-end mt-4">
+            <Button
+              className="rounded-sm bg-orange-200 border-orange-200 border-2"
+              onClick={handleCancel}
+            >
+              Hủy
+            </Button>
+            <Button
+              className="rounded-sm bg-blue-200 border-blue-200 border-2"
+              onClick={handleInviteMember}
+            >
+              Mời
+            </Button>
+          </div>
+        </div>
+      </AlertDialogContent>
+
+      {loadingListGroup && <SpinnerLoading />}
+    </AlertDialog>
+  );
+};

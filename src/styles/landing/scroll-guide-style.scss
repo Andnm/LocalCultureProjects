@@ -1,0 +1,101 @@
+.scroll-guide-container {
+  .arrow {
+    border: 1.5px solid var(--gray-color);
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--black-color);
+    border-radius: 20px;
+    transition: width 0.4s ease-out;
+
+    svg {
+      fill: var(--black-color);
+    }
+  }
+
+  .arrow:hover {
+    border-color: var(--orange-color);
+  }
+
+  .arrow-box {
+    width: 40px;
+  }
+
+  &:hover .hover-text {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .hover-text {
+    position: absolute;
+    top: -60px;
+    left: 180px;
+    transform: translate(-50%, -50%);
+    background-color: #d3d3d3;
+    color: var(--black-color);
+    padding: 20px 20px;
+    border-radius: 5px;
+    width: 350px;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0.5s;
+    font-size: 15px;
+    visibility: hidden;
+
+    svg {
+      width: 20px;
+      fill: var(--black-color);
+    }
+  }
+
+  .arrow-guide {
+    gap: 10px;
+    width: 100px;
+    transition: width 0.4s ease-out;
+  }
+
+  .rotate {
+    transform: rotate(-180deg);
+    transition: 0.7s;
+  }
+
+  .back-rotate {
+    transform: rotate(0deg);
+    transition: 0.7s;
+  }
+
+  .loading-bar {
+    position: relative;
+    height: 2px;
+    width: 230px;
+    background-color: var(--gray-color);
+
+    .progress-bar {
+      position: absolute;
+      height: 100%;
+      background-color: var(--orange-color);
+      transition: width 0.2s ease-out;
+    }
+  }
+
+  //shaking effect
+  @keyframes shaking {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(5px);
+    }
+    50% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
+
+  .effect-shaking {
+    animation: shaking 1.5s ease-in-out;
+  }
+}

@@ -1,0 +1,10 @@
+.BusinessGroupContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.BusinessGroupCard {
+    width: 48%;
+    height: fit-content;
+}

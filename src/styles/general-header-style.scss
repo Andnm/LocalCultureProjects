@@ -1,0 +1,187 @@
+.general-header-container {
+
+  .brand-name {
+    color: var(--orange-color);
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+  }
+
+  a {
+    color: var(--black-color);
+    font-size: 16px;
+  }
+
+  .search-container {
+    position: relative;
+    --size-button: 40px;
+    color: white;
+
+    .input {
+      padding-left: var(--size-button);
+      height: var(--size-button);
+      font-size: 13px;
+      border: none;
+      color: #fff;
+      outline: none;
+      width: var(--size-button);
+      -webkit-transition: all ease 0.3s;
+      transition: all ease 0.3s;
+      background-color: #191a1e;
+      border: 1.5px solid var(--gray-color);
+      border-radius: 50px;
+      cursor: pointer;
+    }
+
+    .input:hover {
+      border-color: var(--white-color);
+    }
+
+    .input:focus,
+    .input:not(:invalid) {
+      width: 200px;
+      cursor: text;
+    }
+
+    .input:focus + .icon,
+    .input:not(:invalid) + .icon {
+      pointer-events: all;
+      cursor: pointer;
+    }
+
+    .icon {
+      position: absolute;
+      width: var(--size-button);
+      height: var(--size-button);
+      top: 0;
+      left: 0;
+      padding: 8px;
+      pointer-events: none;
+    }
+
+    .icon svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .btn-signup,
+  .btn-login {
+    text-transform: none;
+    font-size: 16px;
+    font-weight: normal;
+    border-radius: 15px;
+  }
+
+  .btn-login {
+    background-color: var(--orange-color);
+    color: var(--black-color);
+    -webkit-transition: all ease 0.3s;
+    transition: all ease 0.3s;
+    padding: 7px 10px;
+    border: 2px solid var(--orange-color);
+  }
+
+  .btn-login:hover {
+    background-color: var(--white-color);
+  }
+
+  .btn-signup {
+    border: 2px solid var(--orange-color);
+    -webkit-transition: all ease 0.3s;
+    transition: all ease 0.3s;
+    padding: 7px 0px;
+    width: 101.73px;
+  }
+
+  .btn-signup:hover {
+    border: 2px solid var(--orange-color);
+    background-color: var(--orange-color);
+  }
+
+  .nav-items {
+    a {
+      -webkit-transition: all ease 0.3s;
+      transition: all ease 0.3s;
+    }
+
+    a:hover {
+      color: var(--orange-color);
+    }
+
+    .active {
+      color: var(--orange-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+.header-white {
+  background-color: var(--white-color) !important;
+
+  // .nav-items {
+  //   a {
+  //     color: black !important;
+  //   }
+  // }
+
+  .search-container {
+    .input {
+      background-color: var(--white-color);
+      color: var(--black-color);
+      border-color: var(--light-gray-color);
+    }
+
+    .input:hover {
+      border-color: var(--black-color);
+    }
+
+    .icon {
+      svg {
+        path {
+          stroke: var(--black-color);
+        }
+      }
+    }
+  }
+
+  .btn-dropdown {
+    width: 42px;
+    height: 42px;
+    border-width: 1.5px;
+    border-color: var(--light-gray-color);
+    -webkit-transition: all ease 0.3s;
+    transition: all ease 0.3s;
+
+    .avatar-user {
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  .btn-dropdown:hover {
+    border-color: var(--black-color);
+  }
+
+  .menu-item {
+    z-index: 999;
+    a {
+      color: black;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    a:hover {
+      color: var(--orange-color);
+    }
+
+    .logout-section {
+      color: black;
+      cursor: pointer;
+    }
+
+    .logout-section:hover div{
+      color: var(--orange-color)
+    }
+  }
+}

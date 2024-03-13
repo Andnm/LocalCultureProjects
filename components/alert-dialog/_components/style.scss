@@ -1,0 +1,70 @@
+.upload-image-box .img-upload {
+  width: 250px;
+  height: 150px;
+  position: relative;
+}
+
+.upload-image-box .img-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.upload-image-box .img-upload .remove-img {
+  right: 0;
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 1px dashed black;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.custom-file-upload {
+  height: 200px;
+  width: 300px;
+  border: 2px dashed #cacaca;
+  background-color: rgba(255, 255, 255, 1);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 48px 35px -48px rgba(0, 0, 0, 0.1);
+}
+
+.custom-file-upload label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-file-upload .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-file-upload .icon svg {
+  height: 80px;
+  fill: rgba(75, 85, 99, 1);
+}
+
+.custom-file-upload .text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-file-upload .text span {
+  font-weight: 400;
+  color: rgba(75, 85, 99, 1);
+}
+
+.custom-file-upload input {
+  display: none;
+}

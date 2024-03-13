@@ -1,0 +1,240 @@
+.banner-section {
+  background-image: url("https://ss-images.saostar.vn/2020/02/15/6994345/7campusdhfpttphcm.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 450px;
+  position: relative;
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .banner-content {
+    padding: 70px 20px;
+    position: relative;
+    z-index: 1;
+    color: white;
+
+    .nav__item {
+      cursor: pointer;
+      color: #cbcbcd;
+      padding: 8px 0px;
+    }
+
+    .nav__item.active {
+      color: white;
+      border-bottom: 2px solid white;
+    }
+
+    .form-search {
+      width: 70%;
+      background-color: white;
+      padding: 3px;
+      display: flex;
+      border-radius: 6px;
+
+      input {
+        width: 84%;
+        outline: none;
+      }
+
+      .btn {
+        background-color: var(--orange-color);
+      }
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .block {
+      display: block;
+    }
+
+    .text-gray-700 {
+      color: #4a5568;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .border {
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .rounded {
+      border-radius: 0.25rem;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .px-3 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .text-gray-700 {
+      color: #4a5568;
+    }
+
+    .leading-tight {
+      line-height: 1.25;
+    }
+
+    .focus\:outline-none:focus {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+
+    .focus\:shadow-outline:focus {
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .z-50 {
+      z-index: 50;
+    }
+
+    .bg-white {
+      background-color: #ffffff;
+    }
+
+    .max-h-44 {
+      max-height: 11rem;
+    }
+
+    .overflow-y-scroll {
+      overflow-y: scroll;
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .border {
+      border-width: 1px;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .justify-start {
+      justify-content: flex-start;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .hover\:bg-gray-200:hover {
+      background-color: #edf2f7;
+    }
+
+    .transition-all {
+      transition-property: all;
+      transition-duration: 0.3s;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0s;
+    }
+
+    .ease-in-out {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .duration-300 {
+      transition-duration: 0.3s;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .w-10 {
+      width: 2.5rem;
+    }
+
+    .h-10 {
+      height: 2.5rem;
+    }
+
+    .object-cover {
+      object-fit: cover;
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .font-normal {
+      font-weight: 400;
+    }
+
+    .opacity-70 {
+      opacity: 0.7;
+    }
+
+    .w-5 {
+      width: 1.25rem;
+    }
+
+    .h-5 {
+      height: 1.25rem;
+    }
+
+    .text-gray-500 {
+      color: #6b7280;
+    }
+
+    .text-gray-500:hover {
+      color: #4b5563;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .text-gray-500 {
+      color: #6b7280;
+    }
+
+    .text-gray-500:hover {
+      color: #4b5563;
+    }
+  }
+}

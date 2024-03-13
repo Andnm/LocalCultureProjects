@@ -1,0 +1,25 @@
+.pagination {
+  display: flex;
+  margin-bottom: 0px !important;
+  gap: 5px;
+
+  li {
+    &:not(:first-child):not(:last-child) {
+      width: 43px;
+      text-align: center;
+    }
+
+    cursor: pointer;
+  }
+
+  .page-item {
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: 1px solid #cccccc;
+  }
+
+  .active {
+    background-image: linear-gradient(to right, #349eff, #62b4ff);
+    color: #fff !important;
+  }
+}
