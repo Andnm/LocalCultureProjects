@@ -17,7 +17,6 @@ const EarliestProjectList = () => {
     setIsLoadingProjectList(true);
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        console.log("res", result.payload)
         const newListProjects = result.payload[1]
           ?.filter((project: any) => {
             const expirationDate = new Date(

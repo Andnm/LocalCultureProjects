@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { SetStateAction } from "react";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
@@ -20,6 +20,7 @@ import { socketInstance } from "@/src/utils/socket/socket-provider";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 
 interface UserProps {
+  setUserData: React.Dispatch<SetStateAction<UserType | null>>;
   userData: UserType;
 }
 
@@ -81,7 +82,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   </>
 );
 
-const DropDownUser: React.FC<UserProps> = ({ userData }) => {
+const DropDownUser: React.FC<UserProps> = ({ setUserData, userData }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [userLogin, setUserLogin] = useUserLogin();
@@ -97,6 +98,7 @@ const DropDownUser: React.FC<UserProps> = ({ userData }) => {
 
   const handleLogout = async () => {
     try {
+      setUserData(null);
       await dispatch(logout());
       router.push("/");
     } catch (error) {

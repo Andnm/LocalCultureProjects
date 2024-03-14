@@ -9,13 +9,25 @@ import Login from "../auth/Login";
 import Register from "../auth/Register";
 import { useUserData } from "@/src/hook/useUserData";
 import DropDownUser from "./DropDownUser";
+import { UserType } from "@/src/types/user.type";
+import { getUserFromSessionStorage } from "@/src/redux/utils/handleUser";
 
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
   const [isRegisterModalOpen, setRegisterModalOpen] = React.useState(false);
 
-  const userData = useUserData();
+  const [userData, setUserData] = React.useState<UserType | null>(null);
   const pathName = usePathname();
+
+  React.useEffect(() => {
+    const user = getUserFromSessionStorage();
+    setUserData(user);
+  }, []);
+
+  React.useEffect(() => {
+    const user = getUserFromSessionStorage();
+    setUserData(user);
+  }, [isLoginModalOpen, isRegisterModalOpen]);
 
   //show header
   const navItemsGeneral = [
@@ -115,45 +127,9 @@ const GeneralHeader = () => {
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
 
-          {/* TẠM THỜI ẨN SEARCH */}
-          {/* <div className="search-container">
-            <input
-              type="text"
-              name="text"
-              className="input"
-              required
-              placeholder="Gõ để tìm kiếm ..."
-            />
-
-            <div className="icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="ionicon"
-                viewBox="0 0 512 512"
-              >
-                <title>Search</title>
-                <path
-                  d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeMiterlimit="10"
-                  strokeWidth="32"
-                ></path>
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeMiterlimit="10"
-                  strokeWidth="32"
-                  d="M338.29 338.29L448 448"
-                ></path>
-              </svg>
-            </div>
-          </div> */}
-
           <div className="flex items-center justify-between gap-2">
             {userData ? (
-              <DropDownUser userData={userData} />
+              <DropDownUser setUserData={setUserData} userData={userData} />
             ) : (
               <>
                 <button

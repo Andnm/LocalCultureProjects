@@ -6,6 +6,7 @@ import { StoreProvider } from "@/src/redux/StoreProvider";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "@/src/utils/socket/socket-provider";
 import { AuthProvider } from "@/src/utils/context/auth-provider";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   // ]
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
