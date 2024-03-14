@@ -15,6 +15,7 @@ import { getUserFromSessionStorage } from "@/src/redux/utils/handleUser";
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
   const [isRegisterModalOpen, setRegisterModalOpen] = React.useState(false);
+  const [openRegisterMode, setOpenRegisterMode] = React.useState(false);
 
   const [userData, setUserData] = React.useState<UserType | null>(null);
   const pathName = usePathname();
@@ -28,6 +29,24 @@ const GeneralHeader = () => {
     const user = getUserFromSessionStorage();
     setUserData(user);
   }, [isLoginModalOpen, isRegisterModalOpen]);
+
+  const switchFromLoginToRegister = () => {
+    setLoginModalOpen(false);
+    setRegisterModalOpen(true);
+    setOpenRegisterMode(true);
+  };
+
+  const switchFromRegisterToLogin = () => {
+    setLoginModalOpen(true);
+    setRegisterModalOpen(false);
+    setOpenRegisterMode(false);
+  };
+
+  const handleCloseAction = () => {
+    setLoginModalOpen(false);
+    setRegisterModalOpen(false);
+    setOpenRegisterMode(false);
+  };
 
   //show header
   const navItemsGeneral = [
@@ -142,7 +161,10 @@ const GeneralHeader = () => {
                 </button>
 
                 {isLoginModalOpen && (
-                  <Login actionClose={() => setLoginModalOpen(false)} />
+                  <Login
+                    actionClose={handleCloseAction}
+                    switchFromLoginToRegister={switchFromLoginToRegister}
+                  />
                 )}
 
                 <button
@@ -155,7 +177,10 @@ const GeneralHeader = () => {
                 </button>
 
                 {isRegisterModalOpen && (
-                  <Register actionClose={() => setRegisterModalOpen(false)} />
+                  <Register
+                    switchFromRegisterToLogin={switchFromRegisterToLogin}
+                    actionClose={handleCloseAction}
+                  />
                 )}
               </>
             )}

@@ -22,10 +22,14 @@ import { signInWithPopup, signInWithRedirect } from "firebase/auth";
 import toast from "react-hot-toast";
 
 interface RegisterProps {
+  switchFromRegisterToLogin: () => void;
   actionClose: () => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ actionClose }) => {
+const Register: React.FC<RegisterProps> = ({
+  switchFromRegisterToLogin,
+  actionClose,
+}) => {
   const [formData, handleInputChange] = useInputChange({
     email: "",
     password: "",
@@ -121,10 +125,10 @@ const Register: React.FC<RegisterProps> = ({ actionClose }) => {
   };
 
   return (
-    <>
-      <div className="blur-bg-overlay"></div>
+    <div className="form-popup-container">
+      <div className="overlay"></div>
 
-      <div className="flex justify-center items-center h-5/6">
+      <div className="main-popup flex justify-center items-center h-5/6">
         <div className={`form-container register-container`}>
           <IoIosCloseCircleOutline
             className="close-btn"
@@ -193,7 +197,7 @@ const Register: React.FC<RegisterProps> = ({ actionClose }) => {
 
                   <div className="bottom-link">
                     <span> Đã có sẵn tài khoản? </span>
-                    <p>Đăng nhập</p>
+                    <p onClick={switchFromRegisterToLogin}>Đăng nhập</p>
                   </div>
                 </>
               ) : (
@@ -210,7 +214,7 @@ const Register: React.FC<RegisterProps> = ({ actionClose }) => {
       </div>
 
       {loading && <SpinnerLoading />}
-    </>
+    </div>
   );
 };
 

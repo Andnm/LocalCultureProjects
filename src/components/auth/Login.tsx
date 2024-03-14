@@ -21,9 +21,13 @@ import toast from "react-hot-toast";
 
 interface LoginProps {
   actionClose: () => void;
+  switchFromLoginToRegister: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ actionClose }) => {
+const Login: React.FC<LoginProps> = ({
+  switchFromLoginToRegister,
+  actionClose,
+}) => {
   const [formData, handleInputChange] = useInputChange({
     email: "",
     password: "",
@@ -98,10 +102,10 @@ const Login: React.FC<LoginProps> = ({ actionClose }) => {
   };
 
   return (
-    <>
-      <div className="blur-bg-overlay"></div>
+    <div className="form-popup-container">
+      <div className="overlay"></div>
 
-      <div className="flex justify-center items-center h-5/6">
+      <div className="main-popup flex justify-center items-center h-5/6">
         <div className={`form-container`}>
           <IoIosCloseCircleOutline
             className="close-btn"
@@ -168,7 +172,7 @@ const Login: React.FC<LoginProps> = ({ actionClose }) => {
 
               <div className="bottom-link">
                 <span> Bạn chưa có tài khoản? </span>
-                <p>Đăng kí</p>
+                <p onClick={switchFromLoginToRegister}>Đăng kí</p>
               </div>
             </form>
           </div>
@@ -176,7 +180,7 @@ const Login: React.FC<LoginProps> = ({ actionClose }) => {
       </div>
 
       {loading && <SpinnerLoading />}
-    </>
+    </div>
   );
 };
 
