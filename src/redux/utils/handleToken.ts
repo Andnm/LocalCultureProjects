@@ -16,6 +16,19 @@ export const getTokenFromSessionStorage = (): string | null => {
   return token;
 };
 
+export const getConfigHeader = () => {
+  const token = getTokenFromSessionStorage();
+  const configHeader = {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  return configHeader;
+};
+
 //decode token to user info
 export const decodeTokenToUser = (token: string): any | null => {
   const user: UserType = jwtDecode(token);

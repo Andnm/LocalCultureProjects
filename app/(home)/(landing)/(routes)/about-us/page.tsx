@@ -1,9 +1,36 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import "./style.scss";
 import { AiOutlineDownload } from "react-icons/ai";
 import { FaCheck } from "react-icons/fa6";
 
 const AboutUs = () => {
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const navLinks = [
     {
       display: "Cam kết phê duyệt",
@@ -149,6 +176,12 @@ const AboutUs = () => {
           </div>
         </div>
       </div>
+
+      {showScrollButton && (
+        <button onClick={scrollToTop} className="scroll-to-top-btn">
+          <span>↑</span>
+        </button>
+      )}
     </div>
   );
 };

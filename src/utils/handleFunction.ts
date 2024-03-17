@@ -61,10 +61,12 @@ export const getColorByProjectStatus = (status: string): string => {
     case "Processing":
       return "bg-yellow-200 text-yellow-900";
     case "Done":
+    case "Active":
       return "bg-green-200 text-green-900";
     case "Expired":
       return "bg-red-200 text-red-900";
     case "End":
+    case "Inactive":
       return "bg-gray-200 text-gray-900";
     case "Rejected":
       return "bg-red-200 text-red-900";
@@ -142,7 +144,7 @@ export const changeStatusPitchingFromEnToVn = (status: string): string => {
     default:
       return "Không xác định";
   }
-}
+};
 
 export const generateFileNameImage = () => {
   const currentDate = new Date();
@@ -156,7 +158,6 @@ export const generateFileNameImage = () => {
   const fileName = `image_${hours}${minutes}${seconds}_${day}${month}${year}`;
   return fileName;
 };
-
 
 export const truncateString = (input: string, maxLength: number): string => {
   if (input?.length > maxLength) {
@@ -228,4 +229,42 @@ export const extractLastName = (fullName: string): string => {
   const lastName: string = nameArray[0];
 
   return lastName;
+};
+
+export const sortData = (
+  column: string,
+  direction: "asc" | "desc",
+  dataTable: any[],
+  setDataTable: any
+) => {
+  const sortedData = [...dataTable];
+
+  sortedData.sort((a, b) => {
+    let valueA = a[column];
+
+    let valueB = b[column];
+
+    if (column === "role_name") {
+      valueA = a.role?.role_name || "";
+      valueB = b.role?.role_name || "";
+    } else {
+      const keys = column.split(".");
+      for (const key of keys) {
+        valueA = a[column];
+        valueB = b[column];
+      }
+    }
+
+    if (direction === "asc") {
+      if (valueA < valueB) return -1;
+      if (valueA > valueB) return 1;
+      return 0;
+    } else {
+      if (valueA > valueB) return -1;
+      if (valueA < valueB) return 1;
+      return 0;
+    }
+  });
+
+  setDataTable(sortedData);
 };

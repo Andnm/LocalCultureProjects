@@ -15,6 +15,7 @@ import { GoProjectRoadmap } from "react-icons/go";
 import { GoReport } from "react-icons/go";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { IoNotificationsOutline } from "react-icons/io5";
+import { GrConfigure } from "react-icons/gr";
 
 import { logout } from "@/src/redux/features/authSlice";
 
@@ -66,7 +67,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
           label: "Thông báo",
           suffix: (
             <Chip
-              value={newNotificationQuantity}
+              value={
+                newNotificationQuantity !== undefined
+                  ? newNotificationQuantity
+                  : 0
+              }
               size="sm"
               variant="ghost"
               color="indigo"
@@ -95,6 +100,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
           href: "/manage-report",
           icon: <GoReport className="w-4 h-4" />,
           label: "Hỗ trợ vấn đề",
+        },
+        {
+          href: "/configure",
+          icon: <GrConfigure className="w-4 h-4" />,
+          label: "Cấu hình",
         },
       ],
     },

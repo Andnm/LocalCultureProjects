@@ -11,7 +11,6 @@ interface NotificationItemsProps {
 }
 
 const NotificationItems: React.FC<NotificationItemsProps> = ({ data }) => {
-  console.log(data);
   const [navigateToLink, setNavigateToLink] = React.useState<string>("");
   const dispatch = useAppDispatch();
 

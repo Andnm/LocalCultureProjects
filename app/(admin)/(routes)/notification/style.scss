@@ -1,0 +1,20 @@
+.option-noti-btn {
+  .btn {
+    padding: 10px 16px;
+    border-radius: 25px;
+
+    &.active {
+      background-color: rgb(249 115 22);
+      color: white;
+    }
+
+    &:first-child {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      background-color: rgb(218, 164, 63);
+      border-radius: 25px;
+    }
+  }
+}

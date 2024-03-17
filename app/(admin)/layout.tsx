@@ -10,9 +10,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = (props) => {
   const dispatch = useAppDispatch();
 
   //handle notification
-  const [dataNotification, setDataNotification] = React.useState<
-    any | undefined
-  >();
 
   const [newNotificationQuantity, setNewNotificationQuantity] = React.useState<
     number | undefined
@@ -23,7 +20,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = (props) => {
       socketInstance.on("getNotifications-admin@gmail.com", (data: any) => {
         console.log("data", data);
         setNewNotificationQuantity(data.total_notifications);
-        setDataNotification(data.notifications);
       });
     });
   }, []);

@@ -96,10 +96,11 @@ const Dashboard = () => {
       >
         <main>
           <div className="pt-6 px-4">
-            <div className="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
-              <div className="shadow rounded-lg p-4 sm:p-6 xl:p-8 2xl:col-span-2">
+            <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
+              <div className="shadow rounded-lg p-4 sm:p-6 xl:p-8 xl:col-span-2">
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+
+                  <div className="bg-white shadow rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-center">
                       Tài khoản
                     </h2>
@@ -137,7 +138,7 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
+                  <div className="bg-white shadow rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-center">Dự án</h2>
 
                     <div className="flex justify-between items-center h-full">
@@ -206,7 +207,41 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mt-4">
+                  <div className="">
+                    <h2 className="text-xl leading-none font-bold mb-3 text-gray-900">
+                      Dự án theo trạng thái
+                    </h2>
+
+                    <div className="flex justify-center">
+                      {projectData.map((item: any, index) => (
+                        <div key={index} className="ml-3">
+                          <div className="flex items-center gap-2">
+                            <div className="text-base font-normal">
+                              <h3
+                                className={`py-1 px-2 font-bold ${getColorByProjectStatus(
+                                  item?.key
+                                )}`}
+                                style={{ borderRadius: "7px" }}
+                              >
+                                {item?.key}
+                              </h3>
+                            </div>
+
+                            <div className="flex items-center flex-row gap-2 ">
+                              <span className="text-xl leading-none font-bold text-gray-900">
+                                {item?.value}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
+
               <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
@@ -248,7 +283,7 @@ const Dashboard = () => {
                               </th>
                               <th
                                 scope="col"
-                                className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider "
                               >
                                 Số lượng
                               </th>
@@ -284,12 +319,13 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 2xl:grid-cols-2 xl:gap-4 my-4">
+            {/* <div className="grid grid-cols-1 2xl:grid-cols-2 xl:gap-4 my-4">
               <div className="bg-white shadow rounded-lg mb-4 p-4 sm:p-6 h-full">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold leading-none text-gray-900">
                     Nhóm chăm chỉ
                   </h3>
+
                   <a
                     href="#"
                     className="text-sm font-medium text-cyan-600 hover:bg-gray-100 rounded-lg inline-flex items-center p-2"
@@ -324,7 +360,6 @@ const Dashboard = () => {
                           </p>
                           <p className="text-sm text-gray-500 truncate">
                             <a
-                              href="/cdn-cgi/l/email-protection"
                               className="__cf_email__"
                               data-cfemail="17727a767e7b57607e7973646372653974787a"
                             >
@@ -333,10 +368,11 @@ const Dashboard = () => {
                           </p>
                         </div>
                         <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                          {/*  */}
+                 
                         </div>
                       </div>
                     </li>
+
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
@@ -352,7 +388,6 @@ const Dashboard = () => {
                           </p>
                           <p className="text-sm text-gray-500 truncate">
                             <a
-                              href="/cdn-cgi/l/email-protection"
                               className="__cf_email__"
                               data-cfemail="d4b1b9b5bdb894a3bdbab0a7a0b1a6fab7bbb9"
                             >
@@ -361,97 +396,14 @@ const Dashboard = () => {
                           </p>
                         </div>
                         <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                          {/*  */}
                         </div>
                       </div>
                     </li>
-                    <li className="py-3 sm:py-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src="https://demo.themesberg.com/windster/images/users/michael-gough.png"
-                            alt="Neil image"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            Michael Gough
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            <a
-                              href="/cdn-cgi/l/email-protection"
-                              className="__cf_email__"
-                              data-cfemail="57323a363e3b17203e3933242332257934383a"
-                            >
-                              [email&#160;protected]
-                            </a>
-                          </p>
-                        </div>
-                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                          {/*  */}
-                        </div>
-                      </div>
-                    </li>
-                    <li className="py-3 sm:py-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src="https://demo.themesberg.com/windster/images/users/thomas-lean.png"
-                            alt="Neil image"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            Thomes Lean
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            <a
-                              href="/cdn-cgi/l/email-protection"
-                              className="__cf_email__"
-                              data-cfemail="284d45494144685f41464c5b5c4d5a064b4745"
-                            >
-                              [email&#160;protected]
-                            </a>
-                          </p>
-                        </div>
-                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                          {/*  */}
-                        </div>
-                      </div>
-                    </li>
-                    <li className="pt-3 sm:pt-4 pb-0">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src="https://demo.themesberg.com/windster/images/users/lana-byrd.png"
-                            alt="Neil image"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            Lana Byrd
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            <a
-                              href="/cdn-cgi/l/email-protection"
-                              className="__cf_email__"
-                              data-cfemail="a2c7cfc3cbcee2d5cbccc6d1d6c7d08cc1cdcf"
-                            >
-                              [email&#160;protected]
-                            </a>
-                          </p>
-                        </div>
-                        <div className="inline-flex items-center text-base font-semibold text-gray-900">
-                          {/*  */}
-                        </div>
-                      </div>
-                    </li>
+
                   </ul>
                 </div>
               </div>
+              
               <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
                 <h3 className="text-xl leading-none font-bold text-gray-900 mb-10">
                   Dự án được đánh giá cao
@@ -608,7 +560,9 @@ const Dashboard = () => {
                   </table>
                 </div>
               </div>
-            </div>
+            </div> */}
+
+
           </div>
         </main>
       </div>

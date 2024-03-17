@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { UserType } from "@/src/types/user.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
 import { ErrorType } from "@/src/types/error.type";
 
 export interface UserState {
@@ -20,6 +20,25 @@ interface SearchUserByEmailParams {
   roleName: string;
   searchEmail: string;
 }
+
+export const getAllUser = createAsyncThunk(
+  "user/getAllUser",
+  async (page: number, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/users/?page=${page}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
 
 export const searchUserByEmail = createAsyncThunk(
   "user/searchUserByEmail",
@@ -80,6 +99,21 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    //get All User by admin
+    builder.addCase(getAllUser.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(getAllUser.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getAllUser.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
     //search User By Email
     builder.addCase(searchUserByEmail.pending, (state) => {
       state.loadingUser = true;
