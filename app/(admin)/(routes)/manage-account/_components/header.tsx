@@ -49,7 +49,11 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
 
         <div className="flex flex-col items-center  gap-4 md:flex-row">
           {/* tạm thời ẩn đi */}
-          <Button className="gap-2 border" onClick={openDrawerAction}>
+          <Button
+            className="gap-2 border"
+            onClick={openDrawerAction}
+            style={{ borderRadius: "7px" }}
+          >
             <MdFilterList className="w-5 h-5" />
             Bộ lọc
           </Button>
@@ -90,8 +94,9 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
             <Button
               variant={"default"}
               className={cn(
-                "font-normal justify-center items-center ph-10 text-orange-900 bg-orange-300 hover:bg-orange-400 gap-2 rounded"
+                "font-normal justify-center items-center ph-10 text-orange-900 bg-orange-300 hover:bg-orange-400 gap-2"
               )}
+              style={{ borderRadius: "7px"}}
               onClick={() =>
                 setFilterOption({
                   role_name: [],

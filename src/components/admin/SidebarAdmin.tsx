@@ -97,11 +97,6 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
           label: "Dự án",
         },
         {
-          href: "/manage-report",
-          icon: <GoReport className="w-4 h-4" />,
-          label: "Hỗ trợ vấn đề",
-        },
-        {
           href: "/configure",
           icon: <GrConfigure className="w-4 h-4" />,
           label: "Cấu hình",

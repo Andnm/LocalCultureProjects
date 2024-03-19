@@ -18,6 +18,7 @@ import {
 import {
   formatDate,
   getColorByProjectStatus,
+  sortData,
 } from "@/src/utils/handleFunction";
 import CustomModal from "@/src/components/shared/CustomModal";
 import InfoText from "./InfoText";
@@ -36,6 +37,7 @@ import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { Download } from "lucide-react";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import vn from "date-fns/locale/vi";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -49,12 +51,12 @@ interface ProjectTableProps {
 }
 
 const TABLE_HEAD = [
-  "Doanh nghiệp",
-  "Tên dự án",
-  "Người phụ trách",
-  "Trạng thái",
-  "Ngày tạo",
-  "",
+  { name: "Doanh nghiệp", key: "business.fullname" },
+  { name: "Tên dự án", key: "name_project" },
+  { name: "Người phụ trách", key: "responsible_person.fullname" },
+  { name: "Trạng thái", key: "project_status" },
+  { name: "Ngày tạo", key: "createdAt" },
+  { name: "", key: "" },
 ];
 
 const ProjectTable: React.FC<ProjectTableProps> = ({
@@ -458,7 +460,9 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                   ref={fileInputRef}
                   onChange={handleFileChange}
                 />
-                {selectedFile && <p className="mt-2">Tệp tin đã tải: {selectedFile.name}</p>}
+                {selectedFile && (
+                  <p className="mt-2">Tệp tin đã tải: {selectedFile.name}</p>
+                )}
               </div>
             </>
           ) : (
@@ -621,7 +625,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   if (dataTable?.length === 0) {
     return (
       <CardBody className="text-center">
-        <InfoText>Chưa có dự án nào được tạo.</InfoText>
+        <InfoText>Không có dự án nào phù hợp.</InfoText>
       </CardBody>
     );
   }
@@ -650,130 +654,149 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                   className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
                 >
                   <InfoText className="flex items-center gap-2 leading-none opacity-70">
-                    {head}
+                    {head.name}
                     {index !== TABLE_HEAD.length - 1 && (
-                      <RiExpandUpDownLine className="h-4 w-4" />
+                       <span
+                       className="flex flex-col"
+                       style={{ position: "relative", zIndex: "9999" }}
+                     >
+                       <IoIosArrowUp
+                         className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                         onClick={() =>
+                           sortData(head.key, "desc", dataTable, setDataTable)
+                         }
+                       />
+                       <IoIosArrowDown
+                         className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                         onClick={() =>
+                           sortData(head.key, "asc", dataTable, setDataTable)
+                         }
+                       />
+                     </span>
                     )}
                   </InfoText>
                 </th>
               ))}
             </tr>
           </thead>
-          {dataTable?.map((business: any, index) => {
-            const isLast = index === dataTable.length - 1;
+          {Array.isArray(dataTable) &&
+            dataTable?.map((business: any, index) => {
+              const isLast = index === dataTable.length - 1;
 
-            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+              const classes = isLast
+                ? "p-4"
+                : "p-4 border-b border-blue-gray-50";
 
-            const solutions = [
-              {
-                name: "Chi tiết",
-                icon: <BiDetail />,
-                onClick: () => handleOpenModalDetails(business),
-              },
+              const solutions = [
+                {
+                  name: "Chi tiết",
+                  icon: <BiDetail />,
+                  onClick: () => handleOpenModalDetails(business),
+                },
 
-              //Tạm thời ẩn đi
-              // {
-              //   name: "Sửa thông tin",
-              //   icon: <CiEdit />,
-              //   onClick: () => handleClickOpenInfo(business),
-              // },
-              {
-                name: "Xóa dự án",
-                icon: <MdOutlinePlaylistRemove />,
-                onClick: () => handleClickRemoveProject(business),
-              },
-            ];
+                //Tạm thời ẩn đi
+                // {
+                //   name: "Sửa thông tin",
+                //   icon: <CiEdit />,
+                //   onClick: () => handleClickOpenInfo(business),
+                // },
+                {
+                  name: "Xóa dự án",
+                  icon: <MdOutlinePlaylistRemove />,
+                  onClick: () => handleClickRemoveProject(business),
+                },
+              ];
 
-            return (
-              <tbody key={index}>
-                <tr>
-                  <td className={classes}>
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={business?.business?.avatar_url}
-                        alt={business?.business?.fullname}
-                        size="sm"
-                      />
+              return (
+                <tbody key={index}>
+                  <tr>
+                    <td className={classes}>
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          src={business?.business?.avatar_url}
+                          alt={business?.business?.fullname}
+                          size="sm"
+                        />
+                        <div className="flex flex-col">
+                          <InfoText>{business?.business?.fullname}</InfoText>
+
+                          <InfoText className="opacity-70">
+                            {business?.business?.email}
+                          </InfoText>
+                        </div>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <InfoText>{business?.name_project}</InfoText>
+                    </td>
+                    <td className={classes}>
                       <div className="flex flex-col">
-                        <InfoText>{business?.business?.fullname}</InfoText>
+                        <InfoText>
+                          {business?.responsible_person?.fullname}
+                        </InfoText>
 
                         <InfoText className="opacity-70">
-                          {business?.business?.email}
+                          {business?.responsible_person?.position}
                         </InfoText>
                       </div>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <InfoText>{business?.name_project}</InfoText>
-                  </td>
-                  <td className={classes}>
-                    <div className="flex flex-col">
-                      <InfoText>
-                        {business?.responsible_person?.fullname}
-                      </InfoText>
+                    </td>
 
-                      <InfoText className="opacity-70">
-                        {business?.responsible_person?.position}
-                      </InfoText>
-                    </div>
-                  </td>
+                    <StatusCell
+                      status={business.project_status}
+                      classes={classes}
+                    />
 
-                  <StatusCell
-                    status={business.project_status}
-                    classes={classes}
-                  />
+                    <td className={classes}>
+                      <InfoText>{formatDate(business?.createdAt)}</InfoText>
+                    </td>
 
-                  <td className={classes}>
-                    <InfoText>{formatDate(business?.createdAt)}</InfoText>
-                  </td>
-
-                  <td className={classes}>
-                    <Popover className="relative">
-                      {({ open }) => (
-                        <>
-                          <Popover.Button
-                            className={`
+                    <td className={classes}>
+                      <Popover className="relative">
+                        {({ open }) => (
+                          <>
+                            <Popover.Button
+                              className={`
                 ${open ? "text-red" : "text-black"}
                 group inline-flex items-cente
                 px-3 py-2 text-base font-medium hover:text-red focus:outline-none 
                 focus-visible:ring-2 focus-visible:ring-white/75`}
-                          >
-                            <BiDotsHorizontalRounded />
-                          </Popover.Button>
-                          <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="opacity-0 translate-y-1"
-                            enterTo="opacity-100 -translate-y-3"
-                            leave="transition ease-in duration-150"
-                            leaveFrom="opacity-100 translate-y-10"
-                            leaveTo="opacity-0 translate-y-1"
-                          >
-                            <Popover.Panel className="popover absolute left-1/2 z-10 mt-3 w-screen max-w-max -translate-x-full transform px-4 sm:px-0">
-                              <div className="rounded-lg shadow-lg ring-1 ring-black/5">
-                                <div className="relative grid bg-white">
-                                  {solutions.map((item, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex flex-row gap-2 items-center px-5 py-3 cursor-pointer hover:bg-gray-200"
-                                      onClick={() => item.onClick()}
-                                    >
-                                      {item.icon}
-                                      {item.name}
-                                    </div>
-                                  ))}
+                            >
+                              <BiDotsHorizontalRounded />
+                            </Popover.Button>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-200"
+                              enterFrom="opacity-0 translate-y-1"
+                              enterTo="opacity-100 -translate-y-3"
+                              leave="transition ease-in duration-150"
+                              leaveFrom="opacity-100 translate-y-10"
+                              leaveTo="opacity-0 translate-y-1"
+                            >
+                              <Popover.Panel className="popover absolute left-1/2 z-10 mt-3 w-screen max-w-max -translate-x-full transform px-4 sm:px-0">
+                                <div className="rounded-lg shadow-lg ring-1 ring-black/5">
+                                  <div className="relative grid bg-white">
+                                    {solutions.map((item, index) => (
+                                      <div
+                                        key={index}
+                                        className="flex flex-row gap-2 items-center px-5 py-3 cursor-pointer hover:bg-gray-200"
+                                        onClick={() => item.onClick()}
+                                      >
+                                        {item.icon}
+                                        {item.name}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
-                              </div>
-                            </Popover.Panel>
-                          </Transition>
-                        </>
-                      )}
-                    </Popover>
-                  </td>
-                </tr>
-              </tbody>
-            );
-          })}
+                              </Popover.Panel>
+                            </Transition>
+                          </>
+                        )}
+                      </Popover>
+                    </td>
+                  </tr>
+                </tbody>
+              );
+            })}
         </table>
 
         {isOpenModalDetail && selectedProject && (

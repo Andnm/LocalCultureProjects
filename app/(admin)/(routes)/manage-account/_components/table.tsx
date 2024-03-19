@@ -2,10 +2,8 @@
 
 import React, { Fragment } from "react";
 import "@/src/styles/admin/manage-project.scss";
-import { RiExpandUpDownLine } from "react-icons/ri";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
+import { MdOutlinePersonRemove } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
-import { CiEdit } from "react-icons/ci";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
 import { Popover, Transition } from "@headlessui/react";
 import {
@@ -71,8 +69,8 @@ const POPOVER_OPTION = [
   },
 
   {
-    name: "Xóa dự án",
-    icon: <MdOutlinePlaylistRemove />,
+    name: "Xóa tài khoản",
+    icon: <MdOutlinePersonRemove  />,
     onClick: () => {},
   },
 ];

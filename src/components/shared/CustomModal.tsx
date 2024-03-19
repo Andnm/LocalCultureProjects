@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-
-import { Fragment } from "react";
+import { X } from "lucide-react";
+import { CSSProperties, Fragment } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -29,6 +29,15 @@ export default function CustomModal({
     }
   };
 
+  const styleOverlay: CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  };
+
   return (
     <>
       <Transition appear show={open} as={Fragment}>
@@ -50,7 +59,7 @@ export default function CustomModal({
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="flex min-h-full items-center justify-center p-4 text-center relative z-50">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -60,13 +69,15 @@ export default function CustomModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
+                <Dialog.Panel className="relative z-40 w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
                   >
                     {title}
+                    <X className="cursor-pointer" onClick={actionClose} />
                   </Dialog.Title>
+
                   <div className="mt-2">{body}</div>
 
                   {status === "Pending" && (
@@ -90,6 +101,7 @@ export default function CustomModal({
                   )}
                 </Dialog.Panel>
               </Transition.Child>
+              <div className="overlay" style={styleOverlay}></div>
             </div>
           </div>
         </Dialog>

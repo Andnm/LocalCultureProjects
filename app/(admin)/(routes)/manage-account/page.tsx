@@ -96,7 +96,6 @@ const ManageAccount = () => {
         setTotalObject(result.payload[0]?.totalUsers);
         setDataTable(result.payload[1]);
         setOriginalDataTable(result.payload[1]);
-        console.log(result.payload);
       }
     });
   }, [currentPage]);
