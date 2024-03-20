@@ -172,7 +172,7 @@ const ProjectList = () => {
         ref={containerRef}
       >
         <div className="flex" style={{ height: "calc(100vh - 114px)" }}>
-          <div className="text-center max-w-xs flex items-center px-5">
+          <div className="text-center max-w-xs flex items-center px-5" style={{height: "80%"}}>
             <p className="text-2xl font-bold text-black-500">
               Tìm kiếm dự án phù hợp với bạn tại đây
             </p>
@@ -218,8 +218,7 @@ const ProjectList = () => {
                   <Skeleton className="h-full w-full absolute" />
                 </div>
               </>
-            ) : (
-              Array.isArray(dataProjectList) &&
+            ) : Array.isArray(dataProjectList) && dataProjectList.length > 0 ? (
               handleFilter(dataProjectList)?.map((project: any, index: any) => (
                 <Link
                   href={`/project-list/detail/${project.id}`}
@@ -227,9 +226,7 @@ const ProjectList = () => {
                   key={index}
                   style={{ borderRadius: "10px" }}
                 >
-                  <div
-                    className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200"
-                  >
+                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
                     <img
                       src={project?.business?.avatar_url}
                       alt={project?.business?.fullname}
@@ -258,6 +255,10 @@ const ProjectList = () => {
                   </div>
                 </Link>
               ))
+            ) : (
+              <div className="text-gray-500 flex justify-center items-center text-xl" style={{height: "80%"}}>
+                Hiện tại chưa có dự án nào được đăng!
+              </div>
             )}
           </div>
         </div>

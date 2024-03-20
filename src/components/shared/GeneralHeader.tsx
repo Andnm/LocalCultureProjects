@@ -11,6 +11,10 @@ import { useUserData } from "@/src/hook/useUserData";
 import DropDownUser from "./DropDownUser";
 import { UserType } from "@/src/types/user.type";
 import { getUserFromSessionStorage } from "@/src/redux/utils/handleUser";
+import { NAV_ITEMS_BUSINESS, NAV_ITEMS_GENERAL, NAV_ITEMS_LECTURER, NAV_ITEMS_STUDENT } from "@/src/constants/header_page";
+import Image from "next/image";
+import logo_remove_bg from "@/src/assets/logo-remove-bg.png"
+import logo from "@/src/assets/logo.jpg"
 
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
@@ -48,61 +52,20 @@ const GeneralHeader = () => {
     setOpenRegisterMode(false);
   };
 
-  //show header
-  const navItemsGeneral = [
-    {
-      nameItem: "Thông tin kho dự án",
-      path: "/about-us",
-    },
-    {
-      nameItem: "Danh sách dự án",
-      path: "/project-list",
-    },
-    {
-      nameItem: "Bạn cần hỗ trợ ?",
-      path: "/support",
-    },
-  ];
-
-  const navItemsStudent = [
-    {
-      nameItem: "Danh sách dự án",
-      path: "/project-list",
-    },
-    {
-      nameItem: "Bảng làm việc",
-      path: "/student-board",
-    },
-  ];
-
-  const navItemsBusiness = [
-    {
-      nameItem: "Bảng làm việc",
-      path: "/business-board",
-    },
-  ];
-
-  const navItemLecturer = [
-    {
-      nameItem: "Bảng làm việc",
-      path: "/lecturer-board",
-    },
-  ];
-
   const getNavItems = () => {
     if (userData && userData.role_name) {
       switch (userData.role_name) {
         case "Student":
-          return navItemsStudent;
+          return NAV_ITEMS_STUDENT;
         case "Business":
-          return navItemsBusiness;
+          return NAV_ITEMS_BUSINESS;
         case "Lecturer":
-          return navItemLecturer;
+          return NAV_ITEMS_LECTURER;
         default:
-          return navItemsGeneral;
+          return NAV_ITEMS_GENERAL;
       }
     } else {
-      return navItemsGeneral;
+      return NAV_ITEMS_GENERAL;
     }
   };
 
@@ -131,17 +94,18 @@ const GeneralHeader = () => {
 
   return (
     <div
-      className={`general-header-container border-b-2 ${
-        userData && "header-white border-b-2"
+      className={`general-header-container ${
+        userData && "header-white "
       }
       top-0 z-10 h-max max-w-full border-0 rounded-none px-4 py-2 lg:px-8 lg:py-3`}
     >
       <div className="container flex items-center justify-between text-white">
         <Link
           href="/"
-          className="mr-4 cursor-pointer py-1.5 font-medium brand-name"
+          className="mr-4 cursor-pointer py-1.5 font-medium brand-name flex items-center gap-2"
         >
-          Kho dự án
+          <Image src={logo_remove_bg} width={55} height={55} alt="logo"/>
+          Kho Dự án
         </Link>
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>

@@ -1,14 +1,15 @@
 .general-header-container {
+  background-color: #496179;
 
   .brand-name {
-    color: var(--orange-color);
+    color: #ffffff;
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 0.05rem;
   }
 
   a {
-    color: var(--black-color);
+    color: white;
     font-size: 16px;
   }
 
@@ -74,29 +75,45 @@
   }
 
   .btn-login {
-    background-color: var(--orange-color);
-    color: var(--black-color);
+    background-color: #009688;
     -webkit-transition: all ease 0.3s;
     transition: all ease 0.3s;
     padding: 7px 10px;
-    border: 2px solid var(--orange-color);
+    border: 2px solid #009688;
+
+    span {
+      color: white;
+    }
   }
 
   .btn-login:hover {
-    background-color: var(--white-color);
+    border-color: #dff5ff;
+    background-color: #dff5ff;
+
+    span {
+      color: black;
+    }
   }
 
   .btn-signup {
-    border: 2px solid var(--orange-color);
+    border: 2px solid #009688;
     -webkit-transition: all ease 0.3s;
     transition: all ease 0.3s;
     padding: 7px 0px;
     width: 101.73px;
+
+    span {
+      color: white;
+    }
   }
 
   .btn-signup:hover {
-    border: 2px solid var(--orange-color);
-    background-color: var(--orange-color);
+    border-color: #dff5ff;
+    background-color: #dff5ff;
+
+    span {
+      color: black;
+    }
   }
 
   .nav-items {
@@ -106,44 +123,19 @@
     }
 
     a:hover {
-      color: var(--orange-color);
+      color: orange;
     }
 
     .active {
-      color: var(--orange-color);
+      color: orange;
       text-decoration: underline;
+      text-underline-offset: 10px;
     }
   }
 }
 
 .header-white {
-  background-color: var(--white-color) !important;
-
-  // .nav-items {
-  //   a {
-  //     color: black !important;
-  //   }
-  // }
-
-  .search-container {
-    .input {
-      background-color: var(--white-color);
-      color: var(--black-color);
-      border-color: var(--light-gray-color);
-    }
-
-    .input:hover {
-      border-color: var(--black-color);
-    }
-
-    .icon {
-      svg {
-        path {
-          stroke: var(--black-color);
-        }
-      }
-    }
-  }
+  background-color: #496179 !important;
 
   .btn-dropdown {
     width: 42px;
@@ -160,7 +152,7 @@
   }
 
   .btn-dropdown:hover {
-    border-color: var(--black-color);
+    border-color: orange;
   }
 
   .menu-item {
@@ -172,7 +164,7 @@
     }
 
     a:hover {
-      color: var(--orange-color);
+      color: orange;
     }
 
     .logout-section {
@@ -180,8 +172,8 @@
       cursor: pointer;
     }
 
-    .logout-section:hover div{
-      color: var(--orange-color)
+    .logout-section:hover div {
+      color: orange;
     }
   }
 }

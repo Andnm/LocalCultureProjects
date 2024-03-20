@@ -31,7 +31,6 @@ const EarliestProjectList = () => {
             return dateA.getTime() - dateB.getTime();
           });
 
-        console.log("newListProjects", newListProjects);
         setDataProjectList(newListProjects);
       } else {
         toast.error("Có lỗi xảy ra khi tải danh sách dự án!");
@@ -101,15 +100,21 @@ const EarliestProjectList = () => {
         )}
       </div>
 
-      <div className="my-7 flex justify-center">
-        <Link
-          className="bg-blue-white border border-gray-500 hover:bg-gray-700 text-black hover:text-white 
+      {Array.isArray(dataProjectList) && dataProjectList.length !== 0 ? (
+        <div className="my-7 flex justify-center">
+          <Link
+            className="bg-blue-white border border-gray-500 hover:bg-gray-700 text-black hover:text-white 
         font-bold py-2 px-4 rounded cursor-pointer w-fit"
-          href="/project-list"
-        >
-          Hiển thị thêm
-        </Link>
-      </div>
+            href="/project-list"
+          >
+            Hiển thị thêm
+          </Link>
+        </div>
+      ) : (
+        <div className="my-7 flex justify-center">
+          <p className="italic">Hiện tại chưa có dự án nào được đăng!</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -38,22 +38,18 @@ const roleSpecificMenuItems: Record<string, { path: string; name: string }[]> =
     Student: [
       { path: "/student-profile", name: "Trang cá nhân" },
       { path: "/student-board", name: "Bảng làm việc" },
-      { path: "/#", name: "Lịch sử hoạt động" },
-      { path: "/group", name: "Quản lý group" },
-      { path: "/support", name: "Trợ giúp" },
+      { path: "/group", name: "Quản lý nhóm" },
+      { path: "/contact", name: "Liên hệ" },
     ],
     Business: [
       { path: "/business-profile", name: "Trang cá nhân" },
       { path: "/business-board", name: "Quản lý dự án" },
-      { path: "/#", name: "Hoạt động gần đây" },
-      { path: "/support", name: "Trợ giúp" },
+      { path: "/contact", name: "Liên hệ" },
     ],
     Lecturer: [
       { path: "/lecturer-profile", name: "Trang cá nhân" },
-      { path: "/#", name: "Quản lý dự án" },
       { path: "/lecturer-board", name: "Quản lý nhóm" },
-      { path: "/#", name: "Hoạt động gần đây" },
-      { path: "/support", name: "Trợ giúp" },
+      { path: "/contact", name: "Liên hệ" },
     ],
   };
 
@@ -131,7 +127,7 @@ const DropDownUser: React.FC<UserProps> = ({ setUserData, userData }) => {
       {/* Notifications Dropdown */}
       <Menu as="div" className="relative inline-block text-left">
         <DropdownButton>
-          <IoIosNotificationsOutline className="w-7 h-7 object-cover rounded-3xl text-black" />
+          <IoIosNotificationsOutline className="w-7 h-7 object-cover rounded-3xl text-white" />
         </DropdownButton>
         {newNotificationQuantity !== 0 && (
           <span className="absolute -top-2 -right-1">

@@ -115,7 +115,7 @@ const DrawerFilter = ({ openDrawer, closeDrawerAction, filterOption, setFilterOp
       placement="right"
       open={openDrawer}
       onClose={closeDrawerAction}
-      className="p-4 shadow-md w-[500px]"
+      className="p-4 shadow-md w-[500px] z-50"
       size={700}
     >
       <div className="mb-6 flex items-center justify-between ">

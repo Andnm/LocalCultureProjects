@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import "./style.scss";
-import { AiOutlineDownload } from "react-icons/ai";
 import { FaCheck } from "react-icons/fa6";
 
 const AboutUs = () => {
@@ -57,35 +56,20 @@ const AboutUs = () => {
 
         <div className="banner-content flex flex-col">
           <h1 className="font-bold mb-5" style={{ fontSize: "30px" }}>
-            Thông tin về kho dự án
+            Kho Dự án Truyền thông - Quảng bá sản phẩm văn hóa bản địa Việt Nam
           </h1>
-          <p style={{ maxWidth: "50%" }} className="text-center">
-            Kho dự án là nơi sinh viên đại học FPT có thể dễ dàng kết nối với
-            doanh nghiệp để cùng nhau thực hiện các dự án mà doanh nghiệp đề ra.
-            Kho dự án đặt ra sứ mệnh thực thi những tiêu chuẩn cao nhất nhằm
-            cung cấp những lợi ích, trải nghiệm tốt nhất cho sinh viên dựa trên
-            nền tảng công nghệ.
+          <p style={{ maxWidth: "50%" }} className="text-center text-lg">
+            Là dự án kết nối các doanh nghiệp nhỏ và hộ kinh doanh với sinh viên
+            trường Đại học FPT nhằm lên ý tưởng và triển khai các chiến dịch
+            marketing - truyền thông thực tế cho sản phẩm văn hóa bản địa của
+            các doanh nghiệp này, dựa trên một mô hình truyền thông đặc thù được
+            nghiên cứu và thiết kế riêng cho các loại hình sản phẩm văn hóa bản
+            địa Việt Nam
           </p>
-
-          <div
-            className="mt-5 bg-blue-white border border-white hover:bg-orange-600 text-white hover:text-white hover:border-orange-600
-        flex gap-2 items-center py-2 px-4 rounded cursor-pointer w-fit"
-          >
-            <AiOutlineDownload />
-            Chi tiết tại đây
-          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 background-gray py-12">
-        {navLinks.map((item, index) => (
-          <div className="flex flex-col items-center" key={index}>
-            <img src={item.src} alt="img" />
-            <p className="text-center font-semibold mt-3">{item.display}</p>
-          </div>
-        ))}
-      </div>
-
+      {/* sứ mệnh */}
       <div className="py-12 container">
         <div className="grid grid-cols-2 gap-20">
           <div>
@@ -133,6 +117,7 @@ const AboutUs = () => {
         </div>
       </div>
 
+      {/* Đối tượng dự án */}
       <div className="background-gray second-section py-12">
         <div className="container">
           <div className="grid grid-cols-2 gap-20">
@@ -156,6 +141,7 @@ const AboutUs = () => {
         </div>
       </div>
 
+      {/* Tính khả thi dự án */}
       <div className="py-12 container">
         <div className="grid grid-cols-2 gap-20">
           <div className="flex flex-col justify-center h-full">

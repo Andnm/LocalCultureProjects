@@ -1,25 +1,60 @@
 .banner-section {
-  background-image: url("https://ss-images.saostar.vn/2020/02/15/6994345/7campusdhfpttphcm.jpg");
+  // background-image: url("https://ss-images.saostar.vn/2020/02/15/6994345/7campusdhfpttphcm.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 450px;
+  height: calc(100vh - 91px);
   position: relative;
+  background-color: #496179;
+  overflow-x: hidden;
 
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .img-banner {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    height: calc(100vh - 91px);
+    clip-path: ellipse(50% 100% at 50% 100%);
+    object-fit: contain;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .banner-content {
-    padding: 70px 20px;
-    position: relative;
+    width: 60%;
     z-index: 1;
     color: white;
+
+    .btn-more {
+      width: 200px;
+      padding: 15px 0;
+      text-align: center;
+      margin: 20px 10px;
+      border-radius: 25px;
+      font-weight: bold;
+      border: 2px solid #009688;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+
+      & > span {
+        background: #009688;
+        height: 100%;
+        width: 0;
+        border-radius: 25px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 2;
+        transition: width 0.5s;
+      }
+
+      &:hover > span {
+        width: 100%;
+      }
+    }
 
     .nav__item {
       cursor: pointer;
