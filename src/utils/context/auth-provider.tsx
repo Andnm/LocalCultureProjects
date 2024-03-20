@@ -6,6 +6,8 @@ type AuthContextType = {
   //   auth: any | null;
   selectedUserChat: any | null;
   setSelectedUserChat: React.Dispatch<React.SetStateAction<any[]>>;
+  selectedProjectContext: any | null;
+  setSelectedProjectContext: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,9 +18,17 @@ export const useAuthContext = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedUserChat, setSelectedUserChat] = useState<any | null>([]);
+  const [selectedProjectContext, setSelectedProjectContext] = useState<any | null>([]);
 
   return (
-    <AuthContext.Provider value={{ selectedUserChat, setSelectedUserChat }}>
+    <AuthContext.Provider
+      value={{
+        selectedUserChat,
+        setSelectedUserChat,
+        selectedProjectContext,
+        setSelectedProjectContext,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

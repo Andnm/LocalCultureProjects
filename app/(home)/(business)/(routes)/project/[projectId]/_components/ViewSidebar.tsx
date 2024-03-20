@@ -33,6 +33,7 @@ const ViewSidebar = ({ dataProject }: BoardTitleFormProps) => {
       : pathName;
 
   const isStudent = userLogin?.role_name === "Student";
+  const isLecturer = userLogin?.role_name === "Lecturer";
 
   const initialRoutesInProject = [
     {
@@ -57,9 +58,10 @@ const ViewSidebar = ({ dataProject }: BoardTitleFormProps) => {
     },
   ];
 
-  const routesInProject = isStudent
-    ? initialRoutesInProject.filter((route) => route.label !== "Nhóm")
-    : initialRoutesInProject;
+  const routesInProject =
+    isStudent || isLecturer
+      ? initialRoutesInProject.filter((route) => route.label !== "Nhóm đăng kí Pitching")
+      : initialRoutesInProject;
 
   const handleNavigate = (href: string) => {
     router.push(href);

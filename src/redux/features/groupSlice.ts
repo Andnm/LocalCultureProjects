@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import {
+  getConfigHeader,
+  getTokenFromSessionStorage,
+} from "../utils/handleToken";
 import { GroupType } from "@/src/types/group.type";
 import { UserGroupType } from "@/src/types/user-group.type";
 
@@ -174,6 +177,21 @@ export const getAllMemberByGroupId = createAsyncThunk<any, number>(
   }
 );
 
+export const getAllGroupByAdmin = createAsyncThunk(
+  "group/getAllGroupByAdmin",
+  async (_, thunkAPI) => {
+    try {
+      const response = await http.get<any>(`/groups`, getConfigHeader());
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const groupSlice = createSlice({
   name: "group",
   initialState,
@@ -247,6 +265,20 @@ export const groupSlice = createSlice({
       state.error = "";
     });
     builder.addCase(replyInviteToJoinGroup.rejected, (state, action) => {
+      state.loadingGroup = false;
+      state.error = action.payload as string;
+    });
+
+    //getAllGroupByAdmin
+    builder.addCase(getAllGroupByAdmin.pending, (state) => {
+      state.loadingGroup = true;
+      state.error = "";
+    });
+    builder.addCase(getAllGroupByAdmin.fulfilled, (state, action) => {
+      state.loadingGroup = false;
+      state.error = "";
+    });
+    builder.addCase(getAllGroupByAdmin.rejected, (state, action) => {
       state.loadingGroup = false;
       state.error = action.payload as string;
     });

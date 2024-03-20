@@ -2,92 +2,125 @@ import React from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { IoIosSearch } from "react-icons/io";
 import { MdPlaylistAdd } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { MdFilterList } from "react-icons/md";
+import { MdOutlineClear } from "react-icons/md";
+import { GrPowerReset } from "react-icons/gr";
+import DrawerFilterAdmin from "@/components/drawer/DrawerFilterAdmin";
+import { FILTER_ACCOUNT_BY_ADMIN } from "@/src/constants/filter";
+import { CardHeader, Typography } from "@material-tailwind/react";
+import { cn } from "@/lib/utils";
 
-import {
-  CardHeader,
-  Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
-} from "@material-tailwind/react";
+interface ManageGroupHeaderProps {
+  onSearchChange: any;
+  filterOption: any;
+  setFilterOption: any;
+}
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Pending",
-    value: "pending",
-  },
-  {
-    label: "Public",
-    value: "Public",
-  },
-  {
-    label: "Processing",
-    value: "processing",
-  },
-  {
-    label: "Done",
-    value: "done",
-  },
-  {
-    label: "Expired",
-    value: "expired",
-  },
-];
+const ManageGroupHeader: React.FC<ManageGroupHeaderProps> = ({
+  onSearchChange,
+  filterOption,
+  setFilterOption,
+}) => {
+  const [openDrawer, setOpenDrawer] = React.useState(false);
+  const openDrawerAction = () => setOpenDrawer(true);
+  const closeDrawerAction = () => setOpenDrawer(false);
 
-const ManageAccountHeader: React.FC = () => {
   return (
-    <CardHeader floated={false} shadow={false} className="rounded-none">
-      <div className="mb-8 flex items-center justify-between gap-8">
-        <div>
-          <Typography variant="h5" color="blue-gray">
-            Quản lý tài khoản
-          </Typography>
+    <>
+      <CardHeader floated={false} shadow={false} className="rounded-none">
+        <div className="mb-8 flex items-center justify-between gap-8">
+          <div>
+            <Typography variant="h5" color="blue-gray">
+              Quản lý tài khoản
+            </Typography>
+          </div>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <div
+              className="flex items-center justify-center gap-2 cursor-pointer px-4 py-2"
+              style={{ borderRadius: "7px", borderWidth: "1px" }}
+            >
+              <MdPlaylistAdd />
+              <p className="text-sm">Tạo tài khoản</p>
+            </div>
+          </div>
         </div>
-        <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-          <div
-            className="flex items-center justify-center gap-2 cursor-pointer px-4 py-2"
-            style={{ borderRadius: "7px", borderWidth: "1px" }}
+
+        <div className="flex flex-col items-center gap-4 md:flex-row">
+          <Button
+            className="gap-2 border"
+            onClick={openDrawerAction}
+            style={{ borderRadius: "7px" }}
           >
-            <MdPlaylistAdd />
-            <p className="text-sm">Tạo tài khoản</p>
+            <MdFilterList className="w-5 h-5" />
+            Bộ lọc
+          </Button>
+
+          <div
+            style={{ borderRadius: "7px" }}
+            className="relative border flex items-center w-5/12 h-10 rounded-lg focus-within:shadow-lg bg-white overflow-hidden"
+          >
+            <div className="grid place-items-center h-full w-12 text-gray-300">
+              <IoIosSearch />
+            </div>
+
+            <input
+              className="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
+              type="text"
+              id="search"
+              placeholder="Gõ tên group muốn tìm kiếm"
+              value={filterOption?.searchValue}
+              onChange={onSearchChange}
+            />
+
+            {filterOption?.searchValue && (
+              <MdOutlineClear
+                className="cursor-pointer mr-3"
+                onClick={() => {
+                  setFilterOption((prevFilterOption: any) => ({
+                    ...prevFilterOption,
+                    searchValue: "",
+                  }));
+                }}
+              />
+            )}
           </div>
+
+          {(filterOption.role_name !== "" ||
+            filterOption.status !== "" ||
+            filterOption.searchValue !== "") && (
+            <Button
+              variant={"default"}
+              className={cn(
+                "font-normal justify-center items-center ph-10 text-orange-900 bg-orange-300 hover:bg-orange-400 gap-2"
+              )}
+              style={{ borderRadius: "7px" }}
+              onClick={() =>
+                setFilterOption({
+                  role_name: [],
+                  status: [],
+                  searchValue: filterOption?.searchValue,
+                })
+              }
+            >
+              <GrPowerReset />
+              <p>Reset</p>
+            </Button>
+          )}
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        {/* tạm thời ẩn đi */}
-        <Tabs value="all" className="filter w-full md:w-max">
-          <TabsHeader>
-            {TABS.map(({ label, value }) => (
-              <Tab key={value} value={value}>
-                &nbsp;&nbsp;{label}&nbsp;&nbsp;
-              </Tab>
-            ))}
-          </TabsHeader>
-        </Tabs>
-
-        <div
-          style={{ borderRadius: "7px" }}
-          className="relative border flex items-center w-5/12 h-10 rounded-lg focus-within:shadow-lg bg-white overflow-hidden"
-        >
-          <div className="grid place-items-center h-full w-12 text-gray-300">
-            <IoIosSearch />
-          </div>
-
-          <input
-            className="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
-            type="text"
-            id="search"
-            placeholder="Gõ thứ gì đó ..."
-          />
-        </div>
-      </div>
-    </CardHeader>
+      {openDrawer && (
+        <DrawerFilterAdmin
+          listFilter={FILTER_ACCOUNT_BY_ADMIN}
+          openDrawer={openDrawer}
+          closeDrawerAction={closeDrawerAction}
+          filterOption={filterOption}
+          setFilterOption={setFilterOption}
+        />
+      )}
+    </>
   );
 };
 
-export default ManageAccountHeader;
+export default ManageGroupHeader;

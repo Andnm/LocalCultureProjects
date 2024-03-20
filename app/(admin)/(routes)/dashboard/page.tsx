@@ -60,7 +60,7 @@ const Dashboard = () => {
         );
 
         dispatch(statisticsBusinessFollowProvince()).then((result) => {
-          setBusinessFollowProvinceData(result.payload.slice(0, 7));
+          setBusinessFollowProvinceData(result.payload.slice(0, 6));
         });
 
         dispatch(statisticsAccount()).then((result) =>
@@ -97,7 +97,7 @@ const Dashboard = () => {
         <main>
           <div className="pt-6 px-4">
             <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
-              <div className="shadow rounded-lg p-4 sm:p-6 xl:p-8 xl:col-span-2">
+              <div className=" rounded-lg xl:col-span-2">
                 <div className="grid grid-cols-2 gap-4 mb-4">
 
                   <div className="bg-white shadow rounded-lg p-6">

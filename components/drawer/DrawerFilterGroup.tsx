@@ -10,17 +10,16 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import "./style.scss";
+import { FILTER_GROUP_BY_LECTURER } from "@/src/constants/filter";
 
 interface DrawerFilterProps {
-  listFilter: any;
   openDrawer: any;
   closeDrawerAction: any;
   filterOption: any;
   setFilterOption: any;
 }
 
-const DrawerFilterAdmin = ({
-  listFilter,
+const DrawerFilterGroup = ({
   openDrawer,
   closeDrawerAction,
   filterOption,
@@ -28,8 +27,8 @@ const DrawerFilterAdmin = ({
 }: DrawerFilterProps) => {
   return (
     <Drawer
-      overlay={true}
-      placement="left"
+      overlay={false}
+      placement="right"
       open={openDrawer}
       onClose={closeDrawerAction}
       className="p-4 drawer-filter-account"
@@ -56,7 +55,7 @@ const DrawerFilterAdmin = ({
       </div>
 
       <div>
-        {listFilter.map((filterItem: any, index: any) => (
+        {FILTER_GROUP_BY_LECTURER.map((filterItem, index) => (
           <Accordion key={index} type="multiple">
             <AccordionItem value={`item-${index}`} className="border-none">
               <AccordionTrigger
@@ -70,7 +69,7 @@ const DrawerFilterAdmin = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-1 text-neutral-700">
-                {filterItem.options.map((option: any, optionIndex: any) => (
+                {filterItem.options.map((option, optionIndex) => (
                   <label
                     key={optionIndex}
                     className="flex items-center mb-1 cursor-pointer"
@@ -124,4 +123,4 @@ const DrawerFilterAdmin = ({
   );
 };
 
-export default DrawerFilterAdmin;
+export default DrawerFilterGroup;

@@ -58,6 +58,7 @@ export const getColorByProjectStatus = (status: string): string => {
       return "bg-blue-200 text-blue-900";
     case "Public":
       return "bg-violet-200 text-violet-900";
+    case "Active":
     case "Processing":
       return "bg-yellow-200 text-yellow-900";
     case "Done":

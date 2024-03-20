@@ -1,5 +1,8 @@
+"use client"
+
 import { getAllMemberByGroupId } from "@/src/redux/features/groupSlice";
 import { useAppDispatch } from "@/src/redux/store";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
 import {
   changeStatusFromEnToVn,
   changeStatusPitchingFromEnToVn,
@@ -15,24 +18,18 @@ import toast from "react-hot-toast";
 
 interface CardGroupProps {
   group: any;
-  lectureData: any;
 }
 
-const CardGroup = ({ group, lectureData }: CardGroupProps) => {
+const CardGroup = ({ group }: CardGroupProps) => {
   const [memberInGroup, setMemberInGroup] = React.useState([]);
+  const { selectedProjectContext, setSelectedProjectContext }: any = useAuthContext();
+
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const getRelationshipStatus = () => {
-    const lectureInGroup = lectureData.find(
-      (lecture: any) => lecture.group.id === group.group.id
-    );
-
-    return lectureInGroup ? lectureInGroup.relationship_status : "N/A";
-  };
-
-  const handleNavigateIntoGroupDetail = (groupId: number) => {
-    router.push(`/group/${groupId}/member`);
+  const handleNavigateIntoGroupDetail = (groupId: number, group: any) => {
+    setSelectedProjectContext(group)
+    router.push(`/group/${groupId}/info`);
   };
 
   React.useEffect(() => {
@@ -46,11 +43,11 @@ const CardGroup = ({ group, lectureData }: CardGroupProps) => {
   }, []);
 
   // console.log(group)
-  
+
   return (
     <div
       className="cursor-pointer hover:scale-102 transition-transform duration-300 transform h-full border-2 border-gray-200 border-opacity-60 rounded-2xl overflow-hidden"
-      onClick={() => handleNavigateIntoGroupDetail(group?.group?.id)}
+      onClick={() => handleNavigateIntoGroupDetail(group?.group?.id, group)}
     >
       <div className="h-32 w-full bg-[#1a679e] relative">
         <div className="flex flex-col pt-5 pl-5">
@@ -62,7 +59,7 @@ const CardGroup = ({ group, lectureData }: CardGroupProps) => {
             className={`${getColorByProjectStatus(
               group?.register_pitching_status
             )} px-3 py-1 rounded-xl text-sm text-center`}
-            style={{width: '100px'}}
+            style={{ width: "100px" }}
           >
             {changeStatusPitchingFromEnToVn(group?.register_pitching_status)}
           </div>
@@ -99,16 +96,18 @@ const CardGroup = ({ group, lectureData }: CardGroupProps) => {
         </h1>
         <div className="leading-relaxed mb-3 flex gap-3">
           <div className="flex gap-1 items-center">
-            <GraduationCap className="w-4 h-4" />{group?.group?.group_quantity}
+            <GraduationCap className="w-4 h-4" />
+            {group?.group?.group_quantity}
           </div>
           <div
             style={{
-              color: getRelationshipStatusInfo(getRelationshipStatus()).color,
+              color: getRelationshipStatusInfo(group?.relationship_status)
+                .color,
             }}
             className={`flex gap-1 items-center font-bold`}
           >
             <Loader className="w-4 h-4" />
-            {getRelationshipStatusInfo(getRelationshipStatus()).text}
+            {getRelationshipStatusInfo(group?.relationship_status).text}
           </div>
         </div>
         <div className="flex items-center text-sm justify-end text-gray-400 border-t pt-4">

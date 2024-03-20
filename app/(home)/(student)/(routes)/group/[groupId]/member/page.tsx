@@ -51,14 +51,18 @@ const MemberGroup = ({ params }: { params: { groupId: number } }) => {
 
           const dataBodyNoti = {
             notification_type: NOTIFICATION_TYPE.REPLY_INVITE_MEMBER,
-            information: `${userLogin?.fullname} đã ${relationshipStatus === "Joined" ? "chấp thuận" : "từ chối"} lời mời tham gia group ${dataGroup[0]?.group?.group_name} của bạn`,
+            information: `${userLogin?.fullname} đã ${
+              relationshipStatus === "Joined" ? "chấp thuận" : "từ chối"
+            } lời mời tham gia group ${
+              dataGroup[0]?.group?.group_name
+            } của bạn`,
             sender_email: `${userLogin?.email}`,
             receiver_email: `${leaderEmail}`,
           };
 
           dispatch(createNewNotification(dataBodyNoti)).then((result) => {
-            console.log(result)
-          })
+            console.log(result);
+          });
 
           const updatedIndex = dataGroup.findIndex(
             (item) => item.id === result.payload.id

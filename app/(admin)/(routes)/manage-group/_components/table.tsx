@@ -18,6 +18,7 @@ import {
 import {
   formatDate,
   getColorByProjectStatus,
+  sortData,
 } from "@/src/utils/handleFunction";
 import CustomModal from "@/src/components/shared/CustomModal";
 import InfoText from "../../manage-project/_components/InfoText";
@@ -36,6 +37,11 @@ import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { Download } from "lucide-react";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import vn from "date-fns/locale/vi";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { GiCaptainHatProfile } from "react-icons/gi";
+import PopoverOption from "@/src/components/shared/PopoverOption";
+import CardInfo from "./CardInfo";
+import { CardAccountInfo } from "@/components/CardAccountInfo";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -49,15 +55,23 @@ interface ProjectTableProps {
 }
 
 const TABLE_HEAD = [
-  "Doanh nghiệp",
-  "Tên dự án",
-  "Người phụ trách",
-  "Trạng thái",
-  "Ngày tạo",
-  "",
+  { name: "Tên nhóm", key: "group_name" },
+  { name: "Thành viên", key: "members" },
+  { name: "Giảng viên", key: "members" },
+  { name: "Trạng thái nhóm", key: "status" },
+  { name: "Ngày tạo", key: "createdAt" },
+  { name: "", key: "" },
 ];
 
-const AccountTable: React.FC<ProjectTableProps> = ({
+const POPOVER_OPTION = [
+  {
+    name: "Chi tiết",
+    icon: <BiDetail />,
+    onClick: () => {},
+  },
+];
+
+const GroupTable: React.FC<ProjectTableProps> = ({
   totalObject,
   dataTable,
   setDataTable,
@@ -92,125 +106,119 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                   className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
                 >
                   <InfoText className="flex items-center gap-2 leading-none opacity-70">
-                    {head}
+                    {head.name}
                     {index !== TABLE_HEAD.length - 1 && (
-                      <RiExpandUpDownLine className="h-4 w-4" />
+                      <span
+                        className="flex flex-col"
+                        style={{ position: "relative", zIndex: "9999" }}
+                      >
+                        <IoIosArrowUp
+                          className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                          onClick={() =>
+                            sortData(head.key, "desc", dataTable, setDataTable)
+                          }
+                        />
+                        <IoIosArrowDown
+                          className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                          onClick={() =>
+                            sortData(head.key, "asc", dataTable, setDataTable)
+                          }
+                        />
+                      </span>
                     )}
                   </InfoText>
                 </th>
               ))}
             </tr>
           </thead>
-          {dataTable?.map((business: any, index) => {
+          {dataTable?.map((group: any, index) => {
             const isLast = index === dataTable.length - 1;
 
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
-
-            const solutions = [
-              {
-                name: "Chi tiết",
-                icon: <BiDetail />,
-                onClick: () => {},
-              },
-
-              //Tạm thời ẩn đi
-              // {
-              //   name: "Sửa thông tin",
-              //   icon: <CiEdit />,
-              //   onClick: () => handleClickOpenInfo(business),
-              // },
-              {
-                name: "Xóa dự án",
-                icon: <MdOutlinePlaylistRemove />,
-                onClick: () => {},
-              },
-            ];
 
             return (
               <tbody key={index}>
                 <tr>
                   <td className={classes}>
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={business?.business?.avatar_url}
-                        alt={business?.business?.fullname}
-                        size="sm"
-                      />
-                      <div className="flex flex-col">
-                        <InfoText>{business?.business?.fullname}</InfoText>
-
-                        <InfoText className="opacity-70">
-                          {business?.business?.email}
-                        </InfoText>
-                      </div>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <InfoText>{business?.name_project}</InfoText>
-                  </td>
-                  <td className={classes}>
-                    <div className="flex flex-col">
-                      <InfoText>
-                        {business?.responsible_person?.fullname}
-                      </InfoText>
-
-                      <InfoText className="opacity-70">
-                        {business?.responsible_person?.position}
-                      </InfoText>
-                    </div>
+                    <InfoText>{group?.group_name}</InfoText>
                   </td>
 
-                  <StatusCell
-                    status={business.project_status}
-                    classes={classes}
-                  />
-
+                  {/* student */}
                   <td className={classes}>
-                    <InfoText>{formatDate(business?.createdAt)}</InfoText>
-                  </td>
-
-                  <td className={classes}>
-                    <Popover className="relative">
-                      {({ open }) => (
+                    <div className="flex flex-row gap-3">
+                      {group?.members?.map((member: any, index: any) => (
                         <>
-                          <Popover.Button
-                            className={`
-                ${open ? "text-red" : "text-black"}
-                group inline-flex items-cente
-                px-3 py-2 text-base font-medium hover:text-red focus:outline-none 
-                focus-visible:ring-2 focus-visible:ring-white/75`}
-                          >
-                            <BiDotsHorizontalRounded />
-                          </Popover.Button>
-                          <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="opacity-0 translate-y-1"
-                            enterTo="opacity-100 -translate-y-3"
-                            leave="transition ease-in duration-150"
-                            leaveFrom="opacity-100 translate-y-10"
-                            leaveTo="opacity-0 translate-y-1"
-                          >
-                            <Popover.Panel className="popover absolute left-1/2 z-10 mt-3 w-screen max-w-max -translate-x-full transform px-4 sm:px-0">
-                              <div className="rounded-lg shadow-lg ring-1 ring-black/5">
-                                <div className="relative grid bg-white">
-                                  {solutions.map((item, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex flex-row gap-2 items-center px-5 py-3 cursor-pointer hover:bg-gray-200"
-                                      onClick={() => item.onClick()}
-                                    >
-                                      {item.icon}
-                                      {item.name}
-                                    </div>
-                                  ))}
+                          {member.role_in_group !== "Lecturer" && (
+                            <div className="flex items-center gap-3 relative">
+                              <CardAccountInfo
+                                sideOffset={10}
+                                side={"top"}
+                                dataStudent={member}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Avatar
+                                    src={member?.user?.avatar_url}
+                                    alt={member?.user?.fullname}
+                                    size="sm"
+                                    className="w-10 h-10 object-cover rounded-full"
+                                  />                               
                                 </div>
-                              </div>
-                            </Popover.Panel>
-                          </Transition>
+                              </CardAccountInfo>
+                              {member.role_in_group === "Leader" && (
+                                <GiCaptainHatProfile className="text-xl text-red-950 absolute -bottom-2 -right-1" />
+                              )}
+                            </div>
+                          )}
                         </>
-                      )}
-                    </Popover>
+                      ))}
+                    </div>
+                  </td>
+
+                  {/* lecturer */}
+                  <td className={classes}>
+                    <div className="flex flex-col gap-3">
+                      {group?.members?.map((member: any, index: any) => (
+                        <>
+                          {member.role_in_group === "Lecturer" && (
+                            <div className="flex items-center gap-3">
+                              <CardAccountInfo
+                                sideOffset={10}
+                                side={"top"}
+                                dataStudent={member}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Avatar
+                                    src={member?.user?.avatar_url}
+                                    alt={member?.user?.fullname}
+                                    size="sm"
+                                    className="w-10 h-10 object-cover rounded-full"
+                                  />
+                                  <div className="flex flex-col">
+                                    <InfoText className="text-start">
+                                      {member?.user?.fullname}
+                                    </InfoText>
+
+                                    <InfoText className="opacity-70">
+                                      {member?.user?.email}
+                                    </InfoText>
+                                  </div>
+                                </div>
+                              </CardAccountInfo>
+                            </div>
+                          )}
+                        </>
+                      ))}
+                    </div>
+                  </td>
+
+                  <StatusCell status={group.group_status} classes={classes} />
+
+                  <td className={classes}>
+                    <InfoText>{formatDate(group?.createdAt)}</InfoText>
+                  </td>
+
+                  <td className={classes}>
+                    <PopoverOption solutions={POPOVER_OPTION} />
                   </td>
                 </tr>
               </tbody>
@@ -230,4 +238,4 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   );
 };
 
-export default AccountTable;
+export default GroupTable;

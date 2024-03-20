@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -26,7 +26,8 @@ const LecturerLayout = (props: { children: React.ReactNode }) => {
                 Nhóm
               </Link>
 
-              <Link
+              {/* tạm thời ẩn đi */}
+              {/* <Link
                 href="/lecturer-board/project"
                 className={`cursor-pointer block py-2 px-7 ${
                   pathName === "/lecturer-board/project"
@@ -35,7 +36,7 @@ const LecturerLayout = (props: { children: React.ReactNode }) => {
                 }`}
               >
                 Dự án
-              </Link>
+              </Link> */}
             </ul>
           </div>
         </div>

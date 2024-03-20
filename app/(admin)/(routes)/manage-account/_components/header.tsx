@@ -11,6 +11,7 @@ import DrawerFilterAdmin from "@/components/drawer/DrawerFilterAdmin";
 
 import { CardHeader, Typography } from "@material-tailwind/react";
 import { cn } from "@/lib/utils";
+import { FILTER_GROUP_BY_ADMIN } from "@/src/constants/filter";
 
 interface ManageAccountHeaderProps {
   onSearchChange: any;
@@ -48,7 +49,6 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
         </div>
 
         <div className="flex flex-col items-center  gap-4 md:flex-row">
-          {/* tạm thời ẩn đi */}
           <Button
             className="gap-2 border"
             onClick={openDrawerAction}
@@ -96,7 +96,7 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
               className={cn(
                 "font-normal justify-center items-center ph-10 text-orange-900 bg-orange-300 hover:bg-orange-400 gap-2"
               )}
-              style={{ borderRadius: "7px"}}
+              style={{ borderRadius: "7px" }}
               onClick={() =>
                 setFilterOption({
                   role_name: [],
@@ -114,6 +114,7 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
 
       {openDrawer && (
         <DrawerFilterAdmin
+          listFilter={FILTER_GROUP_BY_ADMIN}
           openDrawer={openDrawer}
           closeDrawerAction={closeDrawerAction}
           filterOption={filterOption}
