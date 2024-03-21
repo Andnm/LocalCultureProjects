@@ -5,6 +5,9 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
+  images: {
+    domains: ["live.staticflickr.com"],
+  },
 };
 
 module.exports = nextConfig;

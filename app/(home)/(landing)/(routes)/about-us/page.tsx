@@ -15,6 +15,9 @@ import {
 } from "@/src/constants/about_us_page";
 import Image from "next/image";
 import { TeamMemberInfo } from "@/components/TeamMemberInfo";
+import Aos from "aos";
+import "aos/dist/aos.css";
+import { Hint } from "@/components/hint";
 
 const MAX_IMG_THS = 200;
 const MAX_IMG_STUDENT = 120;
@@ -22,6 +25,10 @@ const MAX_WIDTH_IMG = 300;
 const MAX_HEIGH_IMG = 200;
 
 const AboutUs = () => {
+  useEffect(() => {
+    Aos.init({ duration: 2000 });
+  }, []);
+
   const [showTopMenu, setShowTopMenu] = useState(false);
   const [activeSection, setActiveSection] = useState(ABOUT_US_HEADER[0].id);
 
@@ -64,7 +71,7 @@ const AboutUs = () => {
       ABOUT_US_HEADER.forEach((item) => {
         const sectionRef = getRefById(item.id);
         if (sectionRef) {
-          const offset = 30;
+          const offset = 35;
           const topPos = sectionRef.offsetTop - offset;
           const bottomPos = topPos + sectionRef.offsetHeight;
 
@@ -78,6 +85,8 @@ const AboutUs = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // xử lý liên quan đến scroll
 
   const getRefById = (id: number) => {
     switch (id) {
@@ -212,25 +221,31 @@ const AboutUs = () => {
 
       {/* sứ mệnh */}
       <div ref={missionRef} className="py-12 container">
-        <h2 className="font-semibold title-section mb-4">Sứ mệnh</h2>
+        <h2 data-aos="fade-in" className="font-semibold title-section mb-4">
+          Sứ mệnh
+        </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6">
+        <div
+          data-aos="fade-up"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6"
+        >
           {MISSION.map((item, index) => (
             <div
               key={index}
-              className="border-2 border-gray-300 cursor-pointer p-4 rounded-lg h-full flex flex-col items-center transition-transform transform-gpu hover:scale-102"
+              className="border-2 border-gray-300 cursor-pointer p-4 rounded-lg h-full flex flex-col items-center transition-transform transform-gpu hover:scale-105"
               style={{
                 borderRadius: "25px",
               }}
             >
-              <Image
-                src={item.image}
-                width={150}
-                height={200}
-                alt={item.content}
-                loading="lazy"
-                className="mx-auto"
-              />
+              <div style={{ width: "150px", height: "200px" }}>
+                <img
+                  src={item.image}
+                  alt={item.content}
+                  loading="lazy"
+                  className="mx-auto w-full h-full"
+                />
+              </div>
+
               <h4 className="text-2xl font-semibold mt-4">{item.title}</h4>
               <p className="mt-2 text-justify">{item.content}</p>
             </div>
@@ -241,8 +256,10 @@ const AboutUs = () => {
       {/* Đối tượng dự án */}
       <div ref={objectProjectRef} className="background-gray">
         <div className="py-12 container flex items-center flex-col">
-          <h2 className="font-semibold title-section">Đối tượng dự án</h2>
-          <h4 className="font-normal subtitle-section">
+          <h2 data-aos="fade-down" className="font-semibold title-section">
+            Đối tượng dự án
+          </h2>
+          <h4 data-aos="fade-down" className="font-normal subtitle-section">
             Sản phẩm văn hóa bản địa sở hữu ít nhất một trong các đặc điểm dưới
             đây:
           </h4>
@@ -250,18 +267,21 @@ const AboutUs = () => {
           <div className="flex flex-col items-center gap-10 mt-12 mb-20">
             {OBJECT_PROJECT.map((item, index) => (
               <div
+                data-aos={`${index % 2 === 0 ? "fade-right" : "fade-left"}`}
                 key={index}
                 className={`flex flex-row w-8/12 gap-16 items-center ${
                   index % 2 === 0 ? "flex-row-reverse" : ""
                 }`}
               >
-                <Image
+                <img
                   src={item.image}
-                  width={MAX_WIDTH_IMG}
-                  height={MAX_HEIGH_IMG}
                   alt={item.content}
                   loading="lazy"
-                  className="mx-auto"
+                  className="mx-auto w-full h-full"
+                  style={{
+                    width: `${MAX_WIDTH_IMG}px`,
+                    height: `${MAX_HEIGH_IMG}px`,
+                  }}
                 />
                 <p className="mt-2 flex-grow text-lg text-center">
                   {item.content}
@@ -270,7 +290,11 @@ const AboutUs = () => {
             ))}
           </div>
 
-          <h4 className="font-normal subtitle-section" style={{ width: "60%" }}>
+          <h4
+            data-aos="fade-down"
+            className="font-normal subtitle-section"
+            style={{ width: "60%" }}
+          >
             Dự án hướng tới các doanh nghiệp nhỏ, hộ kinh doanh đang sản xuất -
             kinh doanh các sản phẩm văn hóa bản địa Việt Nam:
           </h4>
@@ -278,18 +302,24 @@ const AboutUs = () => {
           <div className="py-6 flex flex-wrap gap-10 justify-center items-center mt-6">
             {ANOTHER_OBJECT.map((item, index) => (
               <div
+                data-aos="flip-up"
                 key={index}
                 className={`flex flex-col gap-2 items-center`}
                 style={{ width: "33%" }}
               >
-                <Image
-                  src={item.image}
-                  width={300}
-                  height={200}
-                  alt={item.content}
-                  loading="lazy"
-                  className="mx-auto"
-                />
+                <div
+                  style={{
+                    width: `300px`,
+                    height: `200px`,
+                  }}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.content}
+                    loading="lazy"
+                    className="mx-auto w-full h-full object-cover"
+                  />
+                </div>
                 <p className="mt-2 text-lg text-center w-9/12">
                   {item.content}
                 </p>
@@ -304,12 +334,20 @@ const AboutUs = () => {
         ref={feasibilityRef}
         className="py-12 container flex flex-col justify-center items-center"
       >
-        <h2 className="font-semibold title-section mb-4">Tính khả thi dự án</h2>
-        <h4 className="font-normal subtitle-section">Đội ngũ</h4>
+        <h2 data-aos="fade-down" className="font-semibold title-section mb-4">
+          Tính khả thi dự án
+        </h2>
+        <h4 data-aos="fade-down" className="font-normal subtitle-section">
+          Đội ngũ
+        </h4>
 
-        <div className="grid grid-cols-1 gap-10 my-10" style={{ width: "70%" }}>
+        <div
+          data-aos="zoom-in"
+          className="grid grid-cols-1 gap-10 my-10"
+          style={{ width: "70%" }}
+        >
           {/* Ths */}
-          <div className="grid grid-cols-2 ">
+          <div className="grid grid-cols-2">
             {TEAM_MEMBER.filter((member) => member.role === "Ths").map(
               (item, index) => (
                 <div key={index} className="flex flex-col items-center">
@@ -325,10 +363,8 @@ const AboutUs = () => {
                       side={"right"}
                       dataMember={item}
                     >
-                      <Image
+                      <img
                         src={item.image}
-                        width={MAX_IMG_THS}
-                        height={MAX_IMG_THS}
                         alt={item.name}
                         loading="lazy"
                         className="mx-auto"
@@ -368,10 +404,8 @@ const AboutUs = () => {
                       side={"top"}
                       dataMember={item}
                     >
-                      <Image
+                      <img
                         src={item.image}
-                        width={MAX_IMG_STUDENT}
-                        height={MAX_IMG_STUDENT}
                         alt={item.name}
                         loading="lazy"
                         className="mx-auto"
@@ -395,8 +429,13 @@ const AboutUs = () => {
           </div>
         </div>
 
-        <h4 className="font-normal subtitle-section">Dự án từng thực hiện</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6">
+        <h4 data-aos="fade-down" className="font-normal subtitle-section">
+          Dự án từng thực hiện
+        </h4>
+        <div
+          data-aos="zoom-in-down"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6"
+        >
           {EXAMPLE_PROJECT.map((item, index) => (
             <div
               key={index}
@@ -409,20 +448,36 @@ const AboutUs = () => {
                 style={{
                   width: `${MAX_WIDTH_IMG}px`,
                   height: `${MAX_HEIGH_IMG}px`,
-                  position: "relative",
                 }}
               >
-                <Image
+                <img
                   src={item.image}
                   alt={item.name}
-                  fill={true}
                   loading="lazy"
-                  sizes="(min-width: 808px) 50vw, 100vw"
-                  className="mx-auto"
+                  className="mx-auto w-full h-full"
                   style={{ objectFit: "cover", objectPosition: "top" }}
                 />
               </div>
-              <p className="mt-2 text-center text-blue-700">{item.name}</p>
+
+              <div className="h-2"> </div>
+
+              {item?.link ? (
+                <Hint
+                  sideOffset={1}
+                  description={`Bấm vào đây để coi chi tiết`}
+                  side={"top"}
+                >
+                  <a
+                    className="text-center text-blue-700"
+                    href={item?.link}
+                    target="_blank"
+                  >
+                    {item.name}
+                  </a>
+                </Hint>
+              ) : (
+                <p className="text-center text-blue-700">{item.name}</p>
+              )}
             </div>
           ))}
         </div>
