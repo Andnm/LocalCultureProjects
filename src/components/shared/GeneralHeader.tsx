@@ -14,7 +14,7 @@ import { getUserFromSessionStorage } from "@/src/redux/utils/handleUser";
 import { NAV_ITEMS_BUSINESS, NAV_ITEMS_GENERAL, NAV_ITEMS_LECTURER, NAV_ITEMS_STUDENT } from "@/src/constants/header_page";
 import Image from "next/image";
 import logo_remove_bg from "@/src/assets/logo-remove-bg.png"
-import logo from "@/src/assets/logo.jpg"
+import logo from "@/src/assets/logo.png"
 
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
