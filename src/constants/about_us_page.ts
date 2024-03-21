@@ -95,6 +95,8 @@ export const TEAM_MEMBER = [
     detail:
       "Giảng viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
     role: "Ths",
+    link_email: "anhhvq@fe.edu.vn",
+    phone: "0367082493",
   },
   {
     id: 2,
@@ -103,6 +105,8 @@ export const TEAM_MEMBER = [
     detail:
       "Thạc sĩ chuyên ngành Nghiên cứu Truyền thông tại Đại học Monash, Australia (niên khóa 2018). Với gần 10 năm kinh nghiệm làm việc trong lĩnh vực Truyền thông, Hương Thảo đã và đang giữ vị trí Quản lý phòng Truyền thông của các Doanh nghiệp, cũng như các công ty tư vấn giải pháp, chiến lược truyền thông và quan hệ báo chí cho các thương hiệu trong ngành công nghiệp, tiêu dùng nhanh (FMCG), công nghệ, sức khỏe và gần đây là mảng văn hóa – giáo dục. Bên cạnh công việc chuyên môn, Hương Thảo cũng đang giữ vai trò Giảng viên ngành Quản trị Truyền thông Đa phương tiện tại Trường Đại học FPT TP. Hồ Chí Minh.",
     role: "Ths",
+    link_email: "",
+    phone: "",
   },
   {
     id: 3,
@@ -111,6 +115,8 @@ export const TEAM_MEMBER = [
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
     role: "Student",
+    link_email: "",
+    phone: "",
   },
   {
     id: 4,
@@ -119,6 +125,8 @@ export const TEAM_MEMBER = [
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
     role: "Student",
+    link_email: "",
+    phone: "",
   },
   {
     id: 5,
@@ -127,6 +135,8 @@ export const TEAM_MEMBER = [
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
     role: "Student",
+    link_email: "",
+    phone: "",
   },
   {
     id: 6,
@@ -134,6 +144,8 @@ export const TEAM_MEMBER = [
     name: "Trần Đặng Minh Đắc",
     detail: "Sinh viên ngành Digital Marketing, Đại học FPT TP.HCM",
     role: "Student",
+    link_email: "",
+    phone: "",
   },
   {
     id: 7,
@@ -142,6 +154,8 @@ export const TEAM_MEMBER = [
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
     role: "Student",
+    link_email: "",
+    phone: "",
   },
 ];
 

@@ -14,6 +14,7 @@ import {
   TEAM_MEMBER,
 } from "@/src/constants/about_us_page";
 import Image from "next/image";
+import { TeamMemberInfo } from "@/components/TeamMemberInfo";
 
 const MAX_IMG_THS = 200;
 const MAX_IMG_STUDENT = 120;
@@ -319,15 +320,21 @@ const AboutUs = () => {
                       height: `${MAX_IMG_THS}px`,
                     }}
                   >
-                    <Image
-                      src={item.image}
-                      width={MAX_IMG_THS}
-                      height={MAX_IMG_THS}
-                      alt={item.name}
-                      loading="lazy"
-                      className="mx-auto"
-                      style={{ objectFit: "cover", objectPosition: "top" }}
-                    />
+                    <TeamMemberInfo
+                      sideOffset={10}
+                      side={"right"}
+                      dataMember={item}
+                    >
+                      <Image
+                        src={item.image}
+                        width={MAX_IMG_THS}
+                        height={MAX_IMG_THS}
+                        alt={item.name}
+                        loading="lazy"
+                        className="mx-auto"
+                        style={{ objectFit: "cover", objectPosition: "top" }}
+                      />
+                    </TeamMemberInfo>
                   </div>
                   <h4
                     className="mt-2 font-bold text-lg"
@@ -356,15 +363,21 @@ const AboutUs = () => {
                       height: `${MAX_IMG_STUDENT}px`,
                     }}
                   >
-                    <Image
-                      src={item.image}
-                      width={MAX_IMG_STUDENT}
-                      height={MAX_IMG_STUDENT}
-                      alt={item.name}
-                      loading="lazy"
-                      className="mx-auto"
-                      style={{ objectFit: "cover", objectPosition: "top" }}
-                    />
+                    <TeamMemberInfo
+                      sideOffset={10}
+                      side={"top"}
+                      dataMember={item}
+                    >
+                      <Image
+                        src={item.image}
+                        width={MAX_IMG_STUDENT}
+                        height={MAX_IMG_STUDENT}
+                        alt={item.name}
+                        loading="lazy"
+                        className="mx-auto"
+                        style={{ objectFit: "cover", objectPosition: "top" }}
+                      />
+                    </TeamMemberInfo>
                   </div>
                   <h4
                     className="mt-2 font-bold"
