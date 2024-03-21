@@ -1,14 +1,36 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./style.scss";
 import { FaCheck } from "react-icons/fa6";
 import { MdOutlineArrowRightAlt } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import {
+  ABOUT_US_HEADER,
+  ANOTHER_OBJECT,
+  EXAMPLE_PROJECT,
+  MISSION,
+  OBJECT_PROJECT,
+  TEAM_MEMBER,
+} from "@/src/constants/about_us_page";
+import Image from "next/image";
+
+const MAX_IMG_THS = 200;
+const MAX_IMG_STUDENT = 120;
+const MAX_WIDTH_IMG = 300;
+const MAX_HEIGH_IMG = 200;
 
 const AboutUs = () => {
+  const [showTopMenu, setShowTopMenu] = useState(false);
+  const [activeSection, setActiveSection] = useState(ABOUT_US_HEADER[0].id);
+
   const [showScrollButton, setShowScrollButton] = useState(false);
   const router = useRouter();
+
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const missionRef = useRef(null);
+  const objectProjectRef = useRef(null);
+  const feasibilityRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +38,14 @@ const AboutUs = () => {
         setShowScrollButton(true);
       } else {
         setShowScrollButton(false);
+      }
+
+      if (aboutRef.current) {
+        if (window.scrollY > (aboutRef.current?.offsetTop || 0)) {
+          setShowTopMenu(true);
+        } else {
+          setShowTopMenu(false);
+        }
       }
     };
 
@@ -26,21 +56,111 @@ const AboutUs = () => {
     };
   }, []);
 
-  const scrollToTop = () => {
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY;
+
+      ABOUT_US_HEADER.forEach((item) => {
+        const sectionRef = getRefById(item.id);
+        if (sectionRef) {
+          const offset = 30;
+          const topPos = sectionRef.offsetTop - offset;
+          const bottomPos = topPos + sectionRef.offsetHeight;
+
+          if (scrollPos >= topPos && scrollPos < bottomPos) {
+            setActiveSection(item.id);
+          }
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const getRefById = (id: number) => {
+    switch (id) {
+      case 1:
+        return aboutRef.current;
+      case 2:
+        return missionRef.current;
+      case 3:
+        return objectProjectRef.current;
+      case 4:
+        return feasibilityRef.current;
+      default:
+        return null;
+    }
+  };
+
+  const scrollToTop: any = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
 
+  const scrollToSection = (ref: any) => {
+    const offset = 30;
+    const topPos = ref.current.offsetTop - offset;
+    window.scrollTo({ top: topPos, behavior: "smooth" });
+  };
+
+  const handleClickItemHeader = (item: any) => {
+    switch (item.id) {
+      case 1:
+        if (aboutRef.current) scrollToTop();
+        break;
+      case 2:
+        if (missionRef.current) {
+          scrollToSection(missionRef);
+        }
+        break;
+      case 3:
+        if (objectProjectRef.current) {
+          scrollToSection(objectProjectRef);
+        }
+        break;
+      case 4:
+        if (feasibilityRef.current) {
+          scrollToSection(feasibilityRef);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="about-us-container">
-      <div className="py-10" style={{ backgroundColor: "#f4f5f9" }}>
+      {showTopMenu && (
+        <div className="general-management__menu">
+          <ul>
+            {ABOUT_US_HEADER.map((item, index) => (
+              <li key={index}>
+                <a
+                  className={activeSection === item.id ? "active" : ""}
+                  onClick={() => handleClickItemHeader(item)}
+                >
+                  {item.nameItem}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Giới thiệu */}
+      <div
+        ref={aboutRef}
+        className="py-10"
+        style={{ backgroundColor: "#f4f5f9" }}
+      >
         <div className="relative">
           <div className="container banner-about-us"></div>
 
           <div
-            className="absolute z-10 p-6 -bottom-10"
+            className="absolute z-1 p-6 -bottom-10"
             style={{
               backgroundColor: "#EEEEEE",
               left: "40%",
@@ -61,7 +181,10 @@ const AboutUs = () => {
             </h1>
 
             <div>
-              <button className="btn-contact" onClick={() => router.push('/contact')}>
+              <button
+                className="btn-contact"
+                onClick={() => router.push("/contact")}
+              >
                 <span></span>
                 <p className="flex items-center text-center justify-center gap-3">
                   Liên hệ{" "}
@@ -87,96 +210,208 @@ const AboutUs = () => {
       </div>
 
       {/* sứ mệnh */}
-      <div className="py-12 container">
-        <div className="grid grid-cols-2 gap-20">
-          <div>
-            <h2>100% dự án đã được phê duyệt</h2>
-            <p>
-              Thấu hiểu nhu cầu sinh viên về thông tin của một dự án, nền tảng
-              Kho dự án sẽ cung cấp dự án với 4 giá trị:
-            </p>
+      <div ref={missionRef} className="py-12 container">
+        <h2 className="font-semibold title-section mb-4">Sứ mệnh</h2>
 
-            <ul className="mx-2 my-3">
-              <li className="flex items-center gap-2">
-                <FaCheck className="text-emerald-600" />
-                <p>Phù hợp sinh viên</p>
-              </li>
-
-              <li className="flex items-center gap-2">
-                <FaCheck className="text-emerald-600" />
-                <p>Không quá khó khăn</p>
-              </li>
-
-              <li className="flex items-center gap-2">
-                <FaCheck className="text-emerald-600" />
-                <p>Trải nghiệm thực tế</p>
-              </li>
-
-              <li className="flex items-center gap-2">
-                <FaCheck className="text-emerald-600" />
-                <p>Sẵn sàng tiến hành</p>
-              </li>
-            </ul>
-
-            <p>
-              Từ đây, bạn đã có thể đặt trọn niềm tin. Việc của bạn là tìm kiếm
-              dự án theo nhu cầu. Thời gian tìm kiếm dự án ưng ý của bạn hoàn
-              toàn được rút ngắn.
-            </p>
-          </div>
-
-          <div>
-            <img
-              src="https://upload.tanca.io/api/upload/news/62deb4415d40ee43ee00f325?name=62deb441a99faOmGq2886793-du-an-la-gi-3.jpg"
-              alt="img"
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6">
+          {MISSION.map((item, index) => (
+            <div
+              key={index}
+              className="border-2 border-gray-300 cursor-pointer p-4 rounded-lg h-full flex flex-col items-center transition-transform transform-gpu hover:scale-102"
+              style={{
+                borderRadius: "25px",
+              }}
+            >
+              <Image
+                src={item.image}
+                width={150}
+                height={200}
+                alt={item.content}
+                loading="lazy"
+                className="mx-auto"
+              />
+              <h4 className="text-2xl font-semibold mt-4">{item.title}</h4>
+              <p className="mt-2 text-justify">{item.content}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Đối tượng dự án */}
-      <div className="background-gray second-section py-12">
-        <div className="container">
-          <div className="grid grid-cols-2 gap-20">
-            <div>
-              <img
-                src="https://img.pikbest.com/ai/illus_our/20230413/07839fdef7fbcd893a0dfe920ad240ff.jpg!w700wp"
-                alt="img"
-              />
-            </div>
+      <div ref={objectProjectRef} className="background-gray">
+        <div className="py-12 container flex items-center flex-col">
+          <h2 className="font-semibold title-section">Đối tượng dự án</h2>
+          <h4 className="font-normal subtitle-section">
+            Sản phẩm văn hóa bản địa sở hữu ít nhất một trong các đặc điểm dưới
+            đây:
+          </h4>
 
-            <div className="flex flex-col justify-center h-full">
-              <h2>Dẫn đầu về số lượng</h2>
-              <p>
-                Với đội ngũ luôn thức trực để sàng lọc, nền tảng Kho dự án có
-                những người chuyên môn tại Đại học FPT. Các dự án hay và hấp dẫn
-                sẽ được cập nhật liên tục với thông tin đến từ các doanh nghiệp
-                xịn xò. Bạn an tâm với nhiều lựa chọn đa dạng và phù hợp nhất.
-              </p>
-            </div>
+          <div className="flex flex-col items-center gap-10 mt-12 mb-20">
+            {OBJECT_PROJECT.map((item, index) => (
+              <div
+                key={index}
+                className={`flex flex-row w-8/12 gap-16 items-center ${
+                  index % 2 === 0 ? "flex-row-reverse" : ""
+                }`}
+              >
+                <Image
+                  src={item.image}
+                  width={MAX_WIDTH_IMG}
+                  height={MAX_HEIGH_IMG}
+                  alt={item.content}
+                  loading="lazy"
+                  className="mx-auto"
+                />
+                <p className="mt-2 flex-grow text-lg text-center">
+                  {item.content}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <h4 className="font-normal subtitle-section" style={{ width: "60%" }}>
+            Dự án hướng tới các doanh nghiệp nhỏ, hộ kinh doanh đang sản xuất -
+            kinh doanh các sản phẩm văn hóa bản địa Việt Nam:
+          </h4>
+
+          <div className="py-6 flex flex-wrap gap-10 justify-center items-center mt-6">
+            {ANOTHER_OBJECT.map((item, index) => (
+              <div
+                key={index}
+                className={`flex flex-col gap-2 items-center`}
+                style={{ width: "33%" }}
+              >
+                <Image
+                  src={item.image}
+                  width={300}
+                  height={200}
+                  alt={item.content}
+                  loading="lazy"
+                  className="mx-auto"
+                />
+                <p className="mt-2 text-lg text-center w-9/12">
+                  {item.content}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Tính khả thi dự án */}
-      <div className="py-12 container">
-        <div className="grid grid-cols-2 gap-20">
-          <div className="flex flex-col justify-center h-full">
-            <h2>Hỗ trợ nhiệt tình</h2>
-            <p>
-              Là Kho dự án luôn đồng hành cùng bạn, đội ngũ admin được đào tạo
-              bài bản & am hiểu nghiệp vụ, luôn hỗ trợ bạn trong suốt quá trình
-              tham gia nếu có vấn đề gì phát sinh, giúp bạn tiết kiệm đáng kể
-              công sức và thời gian.
-            </p>
+      <div
+        ref={feasibilityRef}
+        className="py-12 container flex flex-col justify-center items-center"
+      >
+        <h2 className="font-semibold title-section mb-4">Tính khả thi dự án</h2>
+        <h4 className="font-normal subtitle-section">Đội ngũ</h4>
+
+        <div className="grid grid-cols-1 gap-10 my-10" style={{ width: "70%" }}>
+          {/* Ths */}
+          <div className="grid grid-cols-2 ">
+            {TEAM_MEMBER.filter((member) => member.role === "Ths").map(
+              (item, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div
+                    className="rounded-full overflow-hidden border-2 border-gray-200"
+                    style={{
+                      width: `${MAX_IMG_THS}px`,
+                      height: `${MAX_IMG_THS}px`,
+                    }}
+                  >
+                    <Image
+                      src={item.image}
+                      width={MAX_IMG_THS}
+                      height={MAX_IMG_THS}
+                      alt={item.name}
+                      loading="lazy"
+                      className="mx-auto"
+                      style={{ objectFit: "cover", objectPosition: "top" }}
+                    />
+                  </div>
+                  <h4
+                    className="mt-2 font-bold text-lg"
+                    style={{
+                      color: "rgb(88, 126, 211)",
+                      width: `${MAX_IMG_THS}px`,
+                      textAlign: "center",
+                    }}
+                  >
+                    {item.name}
+                  </h4>
+                </div>
+              )
+            )}
           </div>
 
-          <div>
-            <img
-              src="https://vieclamkinhdoanh.vn/blog/wp-content/uploads/2022/05/ho-tro-kinh-doanh-la-gi.png"
-              alt="img"
-            />
+          {/* student */}
+          <div className="grid grid-cols-5 ">
+            {TEAM_MEMBER.filter((member) => member.role === "Student").map(
+              (item, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div
+                    className="rounded-full overflow-hidden border-2 border-gray-200"
+                    style={{
+                      width: `${MAX_IMG_STUDENT}px`,
+                      height: `${MAX_IMG_STUDENT}px`,
+                    }}
+                  >
+                    <Image
+                      src={item.image}
+                      width={MAX_IMG_STUDENT}
+                      height={MAX_IMG_STUDENT}
+                      alt={item.name}
+                      loading="lazy"
+                      className="mx-auto"
+                      style={{ objectFit: "cover", objectPosition: "top" }}
+                    />
+                  </div>
+                  <h4
+                    className="mt-2 font-bold"
+                    style={{
+                      color: "rgb(88, 126, 211)",
+                      width: `${MAX_IMG_STUDENT}px`,
+                      textAlign: "center",
+                    }}
+                  >
+                    {item.name}
+                  </h4>
+                </div>
+              )
+            )}
           </div>
+        </div>
+
+        <h4 className="font-normal subtitle-section">Dự án từng thực hiện</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 py-6">
+          {EXAMPLE_PROJECT.map((item, index) => (
+            <div
+              key={index}
+              className=""
+              style={{
+                width: `${MAX_WIDTH_IMG}px`,
+              }}
+            >
+              <div
+                style={{
+                  width: `${MAX_WIDTH_IMG}px`,
+                  height: `${MAX_HEIGH_IMG}px`,
+                  position: "relative",
+                }}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill={true}
+                  loading="lazy"
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  className="mx-auto"
+                  style={{ objectFit: "cover", objectPosition: "top" }}
+                />
+              </div>
+              <p className="mt-2 text-center text-blue-700">{item.name}</p>
+            </div>
+          ))}
         </div>
       </div>
 

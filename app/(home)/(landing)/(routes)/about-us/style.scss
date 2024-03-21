@@ -1,4 +1,17 @@
 .about-us-container {
+  .title-section {
+    color: #f9a826;
+    text-align: center;
+    font-size: 1.7rem;
+  }
+
+  .subtitle-section {
+    color: #000d6b;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
   span {
     background: linear-gradient(to right, #5eaae3, #2a6496);
     -webkit-background-clip: text;
@@ -46,7 +59,7 @@
       }
 
       &:hover {
-        background-color: #EEEEEE;
+        background-color: #eeeeee;
       }
     }
   }
@@ -54,13 +67,6 @@
   .background-gray {
     background: #f4f5f9;
     width: 100%;
-  }
-
-  h2 {
-    font-size: 33px;
-    font-weight: 500;
-    line-height: 1.4;
-    margin-bottom: 20px;
   }
 
   .scroll-to-top-btn {
@@ -79,5 +85,78 @@
     justify-content: center;
     align-items: center;
     z-index: 999;
+  }
+
+  // header
+  .general-management__menu {
+    padding: 0 30px;
+    position: relative;
+    background: #fff;
+    border-bottom: 2px solid rgba(48, 51, 58, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    transition: all 0.3s ease-in-out;
+    width: 100vw;
+
+    ul {
+      display: flex;
+      margin-bottom: 0px;
+
+      li {
+        padding: 10px 5px;
+        position: relative;
+        display: block;
+        margin-right: 16px;
+        transition: all 0.3s ease;
+        border-radius: 10px;
+
+        a {
+          cursor: pointer;
+          display: block;
+          padding: 12px 8px 8px;
+          font-size: 17px;
+          line-height: 20px;
+          font-weight: bold;
+          color: rgba(48, 51, 58, 0.86);
+          text-decoration: none;
+
+          &.active {
+            font-weight: bold;
+          }
+
+          &.active::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+            background-color: #f9a826;
+            transition: all 0.3s ease;
+          }
+        }
+
+        &:hover {
+          a {
+            &::after {
+              content: "";
+              display: block;
+              position: absolute;
+              bottom: -1px;
+              left: 0;
+              width: 100%;
+              height: 3px;
+              border-radius: 8px 8px 0 0;
+              background-color: #f9a826;
+              transition: all 0.3s ease;
+            }
+          }
+        }
+      }
+    }
   }
 }
