@@ -3,9 +3,12 @@
 import React, { useEffect, useState } from "react";
 import "./style.scss";
 import { FaCheck } from "react-icons/fa6";
+import { MdOutlineArrowRightAlt } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 const AboutUs = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,35 +33,49 @@ const AboutUs = () => {
     });
   };
 
-  const navLinks = [
-    {
-      display: "Cam kết phê duyệt",
-      src: "https://s3-cdn.rever.vn/p/v2.48.39/images/icon-verify-listing-blue.svg",
-    },
-    {
-      display: "Dẫn đầu số lượng",
-      src: "https://s3-cdn.rever.vn/p/v2.48.39/images/icon-many-listing-blue.svg",
-    },
-    {
-      display: "Hỗ trợ nhiệt tình",
-      src: "https://s3-cdn.rever.vn/p/v2.48.39/images/icon-save-money-blue.svg",
-    },
-    {
-      display: "Nhiều điều bất ngờ",
-      src: "https://s3-cdn.rever.vn/p/v2.48.39/images/icon-save-gift-blue.svg",
-    },
-  ];
-
   return (
     <div className="about-us-container">
-      <div className="banner-about-us">
-        <div className="overlay"></div>
+      <div className="py-10" style={{ backgroundColor: "#f4f5f9" }}>
+        <div className="relative">
+          <div className="container banner-about-us"></div>
 
-        <div className="banner-content flex flex-col">
-          <h1 className="font-bold mb-5" style={{ fontSize: "30px" }}>
-            Kho Dự án Truyền thông - Quảng bá sản phẩm văn hóa bản địa Việt Nam
-          </h1>
-          <p style={{ maxWidth: "50%" }} className="text-center text-lg">
+          <div
+            className="absolute z-10 p-6 -bottom-10"
+            style={{
+              backgroundColor: "#EEEEEE",
+              left: "40%",
+              borderRadius: "25px",
+            }}
+          >
+            <h1 className="text-2xl">
+              Thông tin về <span>Chúng tôi</span>
+            </h1>
+          </div>
+        </div>
+
+        <div className="container banner-content flex flex-row justify-between mt-20 gap-2">
+          <div style={{ width: "45%" }}>
+            <h1 className="font-normal mb-5" style={{ fontSize: "30px" }}>
+              Kho Dự án Truyền thông - <br />
+              <span> Quảng bá sản phẩm văn hóa bản địa Việt Nam</span>
+            </h1>
+
+            <div>
+              <button className="btn-contact" onClick={() => router.push('/contact')}>
+                <span></span>
+                <p className="flex items-center text-center justify-center gap-3">
+                  Liên hệ{" "}
+                  <MdOutlineArrowRightAlt
+                    style={{
+                      fill: "#5eaae3",
+                    }}
+                  />
+                </p>
+              </button>
+            </div>
+          </div>
+
+          <p style={{ width: "50%" }} className="text-justify text-lg">
             Là dự án kết nối các doanh nghiệp nhỏ và hộ kinh doanh với sinh viên
             trường Đại học FPT nhằm lên ý tưởng và triển khai các chiến dịch
             marketing - truyền thông thực tế cho sản phẩm văn hóa bản địa của

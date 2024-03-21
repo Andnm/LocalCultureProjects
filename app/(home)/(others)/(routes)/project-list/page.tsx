@@ -172,7 +172,10 @@ const ProjectList = () => {
         ref={containerRef}
       >
         <div className="flex" style={{ height: "calc(100vh - 114px)" }}>
-          <div className="text-center max-w-xs flex items-center px-5" style={{height: "80%"}}>
+          <div
+            className="text-center max-w-xs flex items-center px-5"
+            style={{ height: "80%" }}
+          >
             <p className="text-2xl font-bold text-black-500">
               Tìm kiếm dự án phù hợp với bạn tại đây
             </p>
@@ -256,7 +259,10 @@ const ProjectList = () => {
                 </Link>
               ))
             ) : (
-              <div className="text-gray-500 flex justify-center items-center text-xl" style={{height: "80%"}}>
+              <div
+                className="text-gray-500 flex justify-center items-center text-xl"
+                style={{ height: "80%" }}
+              >
                 Hiện tại chưa có dự án nào được đăng!
               </div>
             )}
