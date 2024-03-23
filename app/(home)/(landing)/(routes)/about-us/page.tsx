@@ -442,15 +442,21 @@ const AboutUs = () => {
                     height: `${MAX_IMG_SUB_STUDENT}px`,
                   }}
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    loading="lazy"
-                    className={`mx-auto absolute ${
-                      item.id === 3 && "-bottom-9"
-                    } ${item.id === 1 && "bottom-0"}`}
-                    style={{ objectFit: "cover" }}
-                  />
+                  <TeamMemberInfo
+                    sideOffset={10}
+                    side={"left"}
+                    dataMember={item}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      className={`mx-auto absolute ${
+                        item.id === 3 && "-bottom-9"
+                      } ${item.id === 1 && "bottom-0"}`}
+                      style={{ objectFit: "cover" }}
+                    />
+                  </TeamMemberInfo>
                 </div>
                 <h4
                   className="mt-2 font-bold"
