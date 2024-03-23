@@ -9,18 +9,22 @@ import {
   ABOUT_US_HEADER,
   ANOTHER_OBJECT,
   EXAMPLE_PROJECT,
+  MAIN_STUDENT_TEAM,
   MISSION,
   OBJECT_PROJECT,
-  TEAM_MEMBER,
+  SUB_STUDENT_TEAM,
+  THS_TEAM,
 } from "@/src/constants/about_us_page";
 import Image from "next/image";
 import { TeamMemberInfo } from "@/components/TeamMemberInfo";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { Hint } from "@/components/hint";
+import logo from "@/src/assets/logo.png";
 
-const MAX_IMG_THS = 200;
-const MAX_IMG_STUDENT = 120;
+const MAX_IMG_THS = 220;
+const MAX_IMG_MAIN_STUDENT = 170;
+const MAX_IMG_SUB_STUDENT = 120;
 const MAX_WIDTH_IMG = 300;
 const MAX_HEIGH_IMG = 200;
 
@@ -71,7 +75,7 @@ const AboutUs = () => {
       ABOUT_US_HEADER.forEach((item) => {
         const sectionRef = getRefById(item.id);
         if (sectionRef) {
-          const offset = 35;
+          const offset = 100;
           const topPos = sectionRef.offsetTop - offset;
           const bottomPos = topPos + sectionRef.offsetHeight;
 
@@ -87,7 +91,6 @@ const AboutUs = () => {
   }, []);
 
   // xử lý liên quan đến scroll
-
   const getRefById = (id: number) => {
     switch (id) {
       case 1:
@@ -111,7 +114,7 @@ const AboutUs = () => {
   };
 
   const scrollToSection = (ref: any) => {
-    const offset = 30;
+    const offset = 40;
     const topPos = ref.current.offsetTop - offset;
     window.scrollTo({ top: topPos, behavior: "smooth" });
   };
@@ -146,8 +149,13 @@ const AboutUs = () => {
       {showTopMenu && (
         <div className="general-management__menu">
           <ul>
+            <li>
+              <a onClick={() => router.push("/")}>
+                <Image src={logo} width={55} height={55} alt="logo" />
+              </a>
+            </li>
             {ABOUT_US_HEADER.map((item, index) => (
-              <li key={index}>
+              <li key={index} className="flex items-center justify-center">
                 <a
                   className={activeSection === item.id ? "active" : ""}
                   onClick={() => handleClickItemHeader(item)}
@@ -341,15 +349,11 @@ const AboutUs = () => {
           Đội ngũ
         </h4>
 
-        <div
-          data-aos="zoom-in"
-          className="grid grid-cols-1 gap-10 my-10"
-          style={{ width: "70%" }}
-        >
-          {/* Ths */}
-          <div className="grid grid-cols-2">
-            {TEAM_MEMBER.filter((member) => member.role === "Ths").map(
-              (item, index) => (
+        <div data-aos="zoom-in" className="flex flex-row my-10 w-full">
+          <div className="grid" style={{ width: "70%" }}>
+            {/* Ths */}
+            <div className="grid grid-cols-2 mb-6">
+              {THS_TEAM.map((item, index) => (
                 <div key={index} className="flex flex-col items-center">
                   <div
                     className="rounded-full overflow-hidden border-2 border-gray-200"
@@ -376,32 +380,29 @@ const AboutUs = () => {
                     className="mt-2 font-bold text-lg"
                     style={{
                       color: "rgb(88, 126, 211)",
-                      width: `${MAX_IMG_THS}px`,
                       textAlign: "center",
                     }}
                   >
                     {item.name}
                   </h4>
                 </div>
-              )
-            )}
-          </div>
+              ))}
+            </div>
 
-          {/* student */}
-          <div className="grid grid-cols-5 ">
-            {TEAM_MEMBER.filter((member) => member.role === "Student").map(
-              (item, index) => (
+            {/* main student */}
+            <div className="grid grid-cols-2">
+              {MAIN_STUDENT_TEAM.map((item, index) => (
                 <div key={index} className="flex flex-col items-center">
                   <div
                     className="rounded-full overflow-hidden border-2 border-gray-200"
                     style={{
-                      width: `${MAX_IMG_STUDENT}px`,
-                      height: `${MAX_IMG_STUDENT}px`,
+                      width: `${MAX_IMG_MAIN_STUDENT}px`,
+                      height: `${MAX_IMG_MAIN_STUDENT}px`,
                     }}
                   >
                     <TeamMemberInfo
                       sideOffset={10}
-                      side={"top"}
+                      side={"right"}
                       dataMember={item}
                     >
                       <img
@@ -417,15 +418,51 @@ const AboutUs = () => {
                     className="mt-2 font-bold"
                     style={{
                       color: "rgb(88, 126, 211)",
-                      width: `${MAX_IMG_STUDENT}px`,
                       textAlign: "center",
                     }}
                   >
                     {item.name}
                   </h4>
                 </div>
-              )
-            )}
+              ))}
+            </div>
+          </div>
+
+          {/* sub student */}
+          <div
+            className="flex flex-col items-center gap-3"
+            style={{ width: "30%" }}
+          >
+            {SUB_STUDENT_TEAM.map((item, index) => (
+              <div key={index} className="flex flex-col items-center w-fit">
+                <div
+                  className="rounded-full overflow-hidden border-2 border-gray-200 relative"
+                  style={{
+                    width: `${MAX_IMG_SUB_STUDENT}px`,
+                    height: `${MAX_IMG_SUB_STUDENT}px`,
+                  }}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    loading="lazy"
+                    className={`mx-auto absolute ${
+                      item.id === 3 && "-bottom-9"
+                    } ${item.id === 1 && "bottom-0"}`}
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+                <h4
+                  className="mt-2 font-bold"
+                  style={{
+                    color: "rgb(88, 126, 211)",
+                    textAlign: "center",
+                  }}
+                >
+                  {item.name}
+                </h4>
+              </div>
+            ))}
           </div>
         </div>
 

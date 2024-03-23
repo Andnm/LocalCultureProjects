@@ -87,7 +87,7 @@ export const ANOTHER_OBJECT = [
   },
 ];
 
-export const TEAM_MEMBER = [
+export const THS_TEAM = [
   {
     id: 1,
     image: "https://live.staticflickr.com/65535/53601118097_66aa53b88c_k.jpg",
@@ -97,6 +97,7 @@ export const TEAM_MEMBER = [
     role: "Ths",
     link_email: "anhhvq@fe.edu.vn",
     phone: "0367082493",
+    need_style: false
   },
   {
     id: 2,
@@ -107,55 +108,67 @@ export const TEAM_MEMBER = [
     role: "Ths",
     link_email: "",
     phone: "",
+    need_style: false
   },
+];
+
+export const MAIN_STUDENT_TEAM = [
   {
-    id: 3,
+    id: 1,
     image: "https://live.staticflickr.com/65535/53602330359_51078b8d50_b.jpg",
     name: "Nguyễn Ngọc Thanh Thảo",
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
-    role: "Student",
+    role: "Main_student",
     link_email: "",
     phone: "",
+    need_style: false
   },
   {
-    id: 4,
+    id: 2,
     image: "https://live.staticflickr.com/65535/53601118072_fba443fe44_z.jpg",
     name: "Lý Quốc Phong",
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
-    role: "Student",
+    role: "Main_student",
     link_email: "",
     phone: "",
+    need_style: false
   },
+];
+
+export const SUB_STUDENT_TEAM = [
   {
-    id: 5,
-    image: "https://live.staticflickr.com/65535/53602330319_947b276587_w.jpg",
+    id: 1,
+    image: "https://live.staticflickr.com/65535/53603354044_52b7bdf761_z.jpg",
     name: "Phạm Thị Tú Ngân",
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
-    role: "Student",
+    role: "Sub_student",
     link_email: "",
     phone: "",
+    need_style: true
   },
   {
-    id: 6,
+    id: 2,
     image: "https://live.staticflickr.com/65535/53602330414_ae60e010bf_k.jpg",
     name: "Trần Đặng Minh Đắc",
     detail: "Sinh viên ngành Digital Marketing, Đại học FPT TP.HCM",
-    role: "Student",
+    role: "Sub_student",
     link_email: "",
     phone: "",
+    need_style: false
   },
   {
-    id: 7,
+    id: 3,
     image: "https://live.staticflickr.com/65535/53602454165_82e70ffe8b_k.jpg",
     name: "Nguyễn Hoàng Ái Thanh",
     detail:
       "Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
-    role: "Student",
+    role: "Sub_student",
     link_email: "",
     phone: "",
+    need_style: true
   },
 ];
 
