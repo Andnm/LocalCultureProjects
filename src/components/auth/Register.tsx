@@ -20,6 +20,7 @@ import { FcGoogle } from "react-icons/fc";
 import { auth, googleAuthProvider } from "@/src/utils/configFirebase";
 import { signInWithPopup, signInWithRedirect } from "firebase/auth";
 import toast from "react-hot-toast";
+import { validateEmail, validatePassword } from "@/src/utils/handleFunction";
 
 interface RegisterProps {
   switchFromRegisterToLogin: () => void;
@@ -35,6 +36,11 @@ const Register: React.FC<RegisterProps> = ({
     password: "",
   });
 
+  const [formError, setFormError] = React.useState({
+    email: "",
+    password: "",
+  });
+
   const [errorOtp, setErrorOtp] = React.useState("");
 
   const inputsOtpRef: React.RefObject<HTMLInputElement[]> = React.useRef([]);
@@ -46,18 +52,46 @@ const Register: React.FC<RegisterProps> = ({
 
   const { loading, error } = useAppSelector((state) => state.auth);
 
-  const handleRegister = () => {
-    dispatch(register(formData)).then((result) => {
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let newFormError = {
+      email: "",
+      password: "",
+    };
+
+    if (!formData.email.trim()) {
+      newFormError.email = "Vui lòng không để trống email!";
+    } else if (!validateEmail(formData.email)) {
+      newFormError.email = "Email không hợp lệ!";
+    }
+
+    if (!formData.password.trim()) {
+      newFormError.password = "Vui lòng không để trống password";
+    } else if (!validatePassword(formData.password)) {
+      newFormError.password =
+        "Password phải bao gồm ít nhất 1 ký tự thường, 1 ký tự in hoa, 1 ký tự số. Không bao gồm khoảng trắng và độ dài ít nhất 8 kí tự";
+    }
+
+    setFormError(newFormError);
+
+    if (newFormError.email || newFormError.password) {
+      return;
+    }
+
+    dispatch(register(formData)).then((result: any) => {
       if (register.rejected.match(result)) {
-        //do something
+        toast.error(`${result.payload}`);
       } else if (register.fulfilled.match(result)) {
-        dispatch(sendOtpRegister({ email: formData.email })).then((result) => {
-          if (sendOtpRegister.rejected.match(result)) {
-            //do something
-          } else if (sendOtpRegister.fulfilled.match(result)) {
-            setOpenOtpForm(true);
+        dispatch(sendOtpRegister({ email: formData.email })).then(
+          (resSendOtp) => {
+            if (sendOtpRegister.rejected.match(resSendOtp)) {
+              //do something
+            } else if (sendOtpRegister.fulfilled.match(resSendOtp)) {
+              setOpenOtpForm(true);
+            }
           }
-        });
+        );
       }
     });
   };
@@ -148,7 +182,7 @@ const Register: React.FC<RegisterProps> = ({
               {!openOtpForm ? (
                 <>
                   <h2>ĐĂNG KÍ</h2>
-                  <div className="form">
+                  <form className="form" onSubmit={handleRegister}>
                     <div
                       onClick={handleLoginWithGoogle}
                       className="btn-login-gg flex items-center justify-center bg-white cursor-pointer
@@ -168,32 +202,47 @@ const Register: React.FC<RegisterProps> = ({
                     <div className="input-field">
                       <input
                         type="text"
-                        required
                         value={formData.email}
-                        onChange={(event) => handleInputChange(event, "email")}
+                        onChange={(event) => {
+                          handleInputChange(event, "email");
+                          setFormError((prevState) => ({
+                            ...prevState,
+                            email: "",
+                          }));
+                        }}
                       />
                       <label>Nhập email của bạn</label>
                     </div>
+                    {formError.email && (
+                      <span className="text-red-500 text-xs">
+                        {formError.email}
+                      </span>
+                    )}
 
                     <div className="input-field">
                       <input
                         type="password"
-                        required
                         value={formData.password}
-                        onChange={(event) =>
-                          handleInputChange(event, "password")
-                        }
+                        onChange={(event) => {
+                          handleInputChange(event, "password");
+                          setFormError((prevState) => ({
+                            ...prevState,
+                            password: "",
+                          }));
+                        }}
                       />
                       <label>Tạo password</label>
                     </div>
-
-                    <br />
-                    {error && (
-                      <span className="text-red-500 text-sm">{error}</span>
+                    {formError.password && (
+                      <span className="text-red-500 text-xs">
+                        {formError.password} <br />
+                      </span>
                     )}
 
-                    <button onClick={handleRegister}>Đăng kí</button>
-                  </div>
+                    <br />
+
+                    <button type="submit">Đăng kí</button>
+                  </form>
 
                   <div className="bottom-link">
                     <span> Đã có sẵn tài khoản? </span>

@@ -9,7 +9,6 @@
 }
 
 .form-popup-container {
-
   .overlay {
     position: absolute;
     top: 0;
@@ -24,8 +23,6 @@
     position: relative;
     z-index: 3;
   }
-
-
 }
 
 .login-container {
@@ -135,10 +132,14 @@
           transition: 0.2s ease;
         }
 
-        input:is(:focus, :valid) ~ label {
-          color: #00bcd4;
+        input:is(:valid) ~ label {
+          // color: #00bcd4;
           font-size: 0.75rem;
           transform: translateY(-120%);
+        }
+
+        input:is(:focus) ~ label {
+          color: #00bcd4;
         }
       }
 

@@ -176,19 +176,19 @@ export const EXAMPLE_PROJECT = [
   {
     id: 1,
     image: "https://live.staticflickr.com/65535/53601117827_4bc9a4c891_b.jpg",
-    name: "Chiến dịch truyền thông cho thương hiệu Trà Sử Quán",
+    name: "Trà Sử Quán",
     link: "",
   },
   {
     id: 2,
     image: "	https://live.staticflickr.com/65535/53602197398_99a693b972_b.jpg",
-    name: "Chiến dịch truyền thông cho thương hiệu Đạt Foods",
+    name: "Đạt Foods",
     link: "",
   },
   {
     id: 3,
     image: "https://live.staticflickr.com/65535/53602453945_08db10201f_b.jpg",
-    name: "Chiến dịch truyền thông cho thương hiệu Gối Tựa Mệ Trí Huệ",
+    name: "Gối Tựa Mệ Trí Huệ",
     link: "",
   },
 ];

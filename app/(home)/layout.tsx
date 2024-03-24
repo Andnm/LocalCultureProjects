@@ -9,7 +9,7 @@ const HomeLayout = (props: { children: React.ReactNode }) => {
     <>
       <GeneralHeader />
       {props.children}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

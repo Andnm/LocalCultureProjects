@@ -2,7 +2,7 @@ import React from "react";
 
 const TopCompany = () => {
   return (
-    <div style={{ margin: "auto 0" }}>
+    <div style={{ margin: "auto 0", marginBottom: "50px"}}>
       <div
         className="mt-8 mb-5"
         style={{ fontSize: "20px", fontWeight: "bold" }}

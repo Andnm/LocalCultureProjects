@@ -14,11 +14,11 @@ const LandingPage = () => {
   return (
     <>
       <BannerSection />
-      <div className="container">
+      {/* <div className="container">
         <div className="h-px bg-gray-300"></div>
         <EarliestProjectList />
         <TopCompany />
-      </div>
+      </div> */}
     </>
   );
 };

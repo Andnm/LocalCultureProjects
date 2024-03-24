@@ -18,6 +18,7 @@ import {
 import { auth, googleAuthProvider } from "@/src/utils/configFirebase";
 import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
+import { validateEmail } from "@/src/utils/handleFunction";
 
 interface LoginProps {
   actionClose: () => void;
@@ -33,15 +34,42 @@ const Login: React.FC<LoginProps> = ({
     password: "",
   });
 
+  const [formError, setFormError] = React.useState({
+    email: "",
+    password: "",
+  });
+
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { loading, error } = useAppSelector((state: RootState) => state.auth);
+  const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    dispatch(login(formData)).then((result) => {
+    let newFormError = {
+      email: "",
+      password: "",
+    };
+
+    if (!formData.email.trim()) {
+      newFormError.email = "Vui lòng không để trống email!";
+    } else if (!validateEmail(formData.email)) {
+      newFormError.email = "Email không hợp lệ!";
+    }
+
+    if (!formData.password.trim()) {
+      newFormError.password = "Vui lòng không để trống password";
+    }
+
+    setFormError(newFormError);
+
+    if (newFormError.email || newFormError.password) {
+      return;
+    }
+
+    dispatch(login(formData)).then((result: any) => {
       if (login.rejected.match(result)) {
+        toast.error(`${result.payload}`);
         //do something
         // console.log(result.payload);
       } else if (login.fulfilled.match(result)) {
@@ -143,29 +171,50 @@ const Login: React.FC<LoginProps> = ({
                 <div className="input-field">
                   <input
                     type="text"
-                    required
                     value={formData.email}
-                    onChange={(event) => handleInputChange(event, "email")}
+                    placeholder=" "
+                    onChange={(event) => {
+                      handleInputChange(event, "email");
+                      setFormError((prevState) => ({
+                        ...prevState,
+                        email: "",
+                      }));
+                    }}
                   />
                   <label>Email</label>
                 </div>
+                {formError.email && (
+                  <span className="text-red-500 text-sm">
+                    {formError.email}
+                  </span>
+                )}
 
                 <div className="input-field">
                   <input
                     type="password"
-                    required
+                    placeholder=" "
                     value={formData.password}
-                    onChange={(event) => handleInputChange(event, "password")}
+                    onChange={(event) => {
+                      handleInputChange(event, "password");
+                      setFormError((prevState) => ({
+                        ...prevState,
+                        password: "",
+                      }));
+                    }}
                   />
                   <label>Password</label>
                 </div>
+                {formError.password && (
+                  <span className="text-red-500 text-sm">
+                    {formError.password} <br />
+                  </span>
+                )}
 
                 <Link href="#" className="forgot-pass">
                   Quên mật khẩu?
                 </Link>
 
                 <br />
-                {error && <span className="text-red-500 text-sm">{error}</span>}
 
                 <button type="submit">Đăng nhập</button>
               </div>

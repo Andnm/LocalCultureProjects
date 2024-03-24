@@ -171,7 +171,7 @@ const ProjectList = () => {
         className="flex-1 overflow-x-hidden overflow-y-hidden"
         ref={containerRef}
       >
-        <div className="flex" style={{ height: "calc(100vh - 114px)" }}>
+        <div className="flex" style={{ height: "calc(100vh - 140px)" }}>
           <div
             className="text-center max-w-xs flex items-center px-5"
             style={{ height: "80%" }}
