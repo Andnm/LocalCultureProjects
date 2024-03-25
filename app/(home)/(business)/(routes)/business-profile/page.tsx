@@ -28,7 +28,7 @@ const BusinessProfile = () => {
   }
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100" style={{height: "100vh"}}>
       <div className="container mx-auto p-5">
         <div className="md:flex no-wrap md:-mx-2 ">
           <div className="w-full md:w-3/12 md:mx-2">

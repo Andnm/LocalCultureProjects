@@ -14,6 +14,7 @@ import costReducer from "./features/costSlice";
 import evidenceReducer from "./features/evidenceSlice";
 import summaryReportReducer from "./features/summaryReportSlice";
 import userChatReducer from "./features/userChatSlice";
+import responsiblePersonReducer from "./features/responsiblePersonSlice";
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
     summaryReport: summaryReportReducer,
     userChat: userChatReducer,
     user: userReducer,
+    responsiblePerson: responsiblePersonReducer,
   },
 });
 

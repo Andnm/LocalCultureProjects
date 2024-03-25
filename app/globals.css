@@ -17,6 +17,11 @@
   color: red;
 }
 
+.error-message {
+  font-size: 15px;
+  color: red;
+}
+
 .react-datepicker-wrapper {
   width: 100%;
 }

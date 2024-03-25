@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import SpinnerLoading from '@/src/components/loading/SpinnerLoading';
-import { useUserLogin } from '@/src/hook/useUserLogin';
-import { getProfileUser } from '@/src/redux/features/userSlice';
-import { useAppDispatch, useAppSelector } from '@/src/redux/store';
-import { formatDate, truncateString } from '@/src/utils/handleFunction';
-import React from 'react'
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import { useUserLogin } from "@/src/hook/useUserLogin";
+import { getProfileUser } from "@/src/redux/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/src/redux/store";
+import { formatDate, truncateString } from "@/src/utils/handleFunction";
+import React from "react";
 import { CgProfile } from "react-icons/cg";
 
 const StudentProfile = () => {
@@ -28,7 +28,7 @@ const StudentProfile = () => {
   }
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100" style={{ height: "100vh" }}>
       <div className="container mx-auto p-5">
         <div className="md:flex no-wrap md:-mx-2 ">
           <div className="w-full md:w-3/12 md:mx-2">
@@ -47,7 +47,9 @@ const StudentProfile = () => {
                 Mô tả bản thân
               </h3>
               <p className="text-sm text-gray-500 hover:text-gray-600 leading-6">
-                {userData?.description ? userData?.description : "(Chưa cập nhật)"}
+                {userData?.description
+                  ? userData?.description
+                  : "(Chưa cập nhật)"}
               </p>
               <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                 <li className="flex items-center py-3">
@@ -60,12 +62,13 @@ const StudentProfile = () => {
                 </li>
                 <li className="flex items-center py-3">
                   <span>Ngày tham gia</span>
-                  <span className="ml-auto">{formatDate(userData?.createdAt)}</span>
+                  <span className="ml-auto">
+                    {formatDate(userData?.createdAt)}
+                  </span>
                 </li>
               </ul>
             </div>
             <div className="my-4"></div>
-
           </div>
           <div className="w-full md:w-9/12 mx-2 h-64">
             <div className="bg-white p-3 shadow-sm rounded-sm">
@@ -93,18 +96,24 @@ const StudentProfile = () => {
                   </div>
                   <div className="grid grid-cols-2">
                     <div className="px-4 py-2 font-semibold">Giới tính</div>
-                    <div className="px-4 py-2">{userData?.gender ? userData?.gender : "(Chưa cập nhật)"}</div>
+                    <div className="px-4 py-2">
+                      {userData?.gender ? userData?.gender : "(Chưa cập nhật)"}
+                    </div>
                   </div>
                   <div className="grid grid-cols-2">
                     <div className="px-4 py-2 font-semibold">Số điện thoại</div>
-                    <div className="px-4 py-2">{userData?.phone_number ? userData?.phone_number : "(Chưa cập nhật)"}</div>
+                    <div className="px-4 py-2">
+                      {userData?.phone_number
+                        ? userData?.phone_number
+                        : "(Chưa cập nhật)"}
+                    </div>
                   </div>
                   <div className="grid grid-cols-2">
-                    <div className="px-4 py-2 font-semibold">
-                      Địa chỉ
-                    </div>
+                    <div className="px-4 py-2 font-semibold">Địa chỉ</div>
                     <div className="px-4 py-2">
-                      {userData?.address_detail ? userData?.address_detail : "(Chưa cập nhật)"}
+                      {userData?.address_detail
+                        ? userData?.address_detail
+                        : "(Chưa cập nhật)"}
                     </div>
                   </div>
 
@@ -115,21 +124,28 @@ const StudentProfile = () => {
                         className="text-blue-800"
                         href="mailto:jane@example.com"
                       >
-                        {userData?.email ? truncateString(userData?.email, 20) : "(Chưa cập nhật)"}
+                        {userData?.email
+                          ? truncateString(userData?.email, 20)
+                          : "(Chưa cập nhật)"}
                       </a>
                     </div>
                   </div>
                   <div className="grid grid-cols-2">
                     <div className="px-4 py-2 font-semibold">Ngày sinh</div>
-                    <div className="px-4 py-2">{userData?.dob ? formatDate(userData?.dob) : "(Chưa cập nhật)"}</div>
+                    <div className="px-4 py-2">
+                      {userData?.dob
+                        ? formatDate(userData?.dob)
+                        : "(Chưa cập nhật)"}
+                    </div>
                   </div>
                   <div className="grid grid-cols-2">
                     <div className="px-4 py-2 font-semibold">Ngày cập nhật</div>
-                    <div className="px-4 py-2">{formatDate(userData?.updatedAt)}</div>
+                    <div className="px-4 py-2">
+                      {formatDate(userData?.updatedAt)}
+                    </div>
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="my-4"></div>
@@ -205,25 +221,19 @@ const StudentProfile = () => {
                       <div className="text-teal-600">
                         Trường tiểu học Cà Mau
                       </div>
-                      <div className="text-gray-500 text-xs">
-                        15/08/2012
-                      </div>
+                      <div className="text-gray-500 text-xs">15/08/2012</div>
                     </li>
                     <li>
                       <div className="text-teal-600">
                         Trường trung học cơ sở Đà Lạt
                       </div>
-                      <div className="text-gray-500 text-xs">
-                        15/08/2012
-                      </div>
+                      <div className="text-gray-500 text-xs">15/08/2012</div>
                     </li>
                     <li>
                       <div className="text-teal-600">
                         Trường trung học phổ thông Hà Nội
                       </div>
-                      <div className="text-gray-500 text-xs">
-                        15/08/2012
-                      </div>
+                      <div className="text-gray-500 text-xs">15/08/2012</div>
                     </li>
                   </ul>
                 </div>
@@ -234,6 +244,6 @@ const StudentProfile = () => {
       </div>
     </div>
   );
-}
+};
 
-export default StudentProfile
+export default StudentProfile;

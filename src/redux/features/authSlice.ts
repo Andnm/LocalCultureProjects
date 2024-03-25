@@ -34,6 +34,7 @@ const initialState: AuthState = {
 interface SignInResponse {
   accessToken: string;
   role_name?: string;
+  status?: boolean;
 }
 
 export const login = createAsyncThunk<
@@ -74,7 +75,7 @@ export const loginWithGoogle = createAsyncThunk(
 
       return user;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return thunkAPI.rejectWithValue(
         (error as ErrorType)?.response?.data?.message
       );

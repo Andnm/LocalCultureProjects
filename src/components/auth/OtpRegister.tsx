@@ -3,17 +3,21 @@ import "@/src/styles/auth/otp-register.scss";
 import Message from "../shared/Message";
 
 interface OtpRegisterProps {
+  email: string | undefined;
   verifyAction: () => void;
   inputsRef: any;
   error: string;
   setError: () => void;
+  resendOtp: () => void;
 }
 
 const OtpRegister: FC<OtpRegisterProps> = ({
+  email,
   verifyAction,
   inputsRef,
   error,
   setError,
+  resendOtp,
 }) => {
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
 
@@ -98,11 +102,14 @@ const OtpRegister: FC<OtpRegisterProps> = ({
   };
 
   return (
-    <div className="otp-register">
-      <div className="otp-Form">
+    <div className="otp-register w-full flex my-4 justify-center">
+      <div
+        className="otp-Form py-10 border-2 w-1/2"
+        style={{ borderRadius: "25px" }}
+      >
         <div className="title">Xác minh OTP</div>{" "}
         <p className="message">
-          Chúng tôi đã gửi mã xác minh tới email của bạn
+          Quý lòng nhập mã OTP đã được gửi tới email {email} của bạn
         </p>
         <div className="inputs">
           <input
@@ -168,7 +175,7 @@ const OtpRegister: FC<OtpRegisterProps> = ({
         <div className="flex items-center gap-2">
           <p className="resendNote">Bạn chưa nhận được OTP?</p>
 
-          <button className="resendBtn">
+          <button className="resendBtn" onClick={resendOtp}>
             <p>Gửi lại!</p>
           </button>
         </div>

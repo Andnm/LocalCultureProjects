@@ -1,24 +1,25 @@
 "use client";
 
-import React from "react";
-import Home from "@/src/components/landing/Home";
-import EarliestProjectList from "@/src/components/landing/EarliestProjectList";
-import ContactUs from "@/src/components/landing/ContactUs";
-import FormRegister from "@/src/components/landing/FormRegister";
-import Footer from "@/src/components/landing/Footer";
+import React, { useEffect } from "react";
 import BannerSection from "./_components/BannerSection/BannerSeciton";
-import TopCompany from "@/src/components/landing/TopCompany";
-import { AiOutlineDownload } from "react-icons/ai";
+import { useUserLogin } from "@/src/hook/useUserLogin";
+import { useRouter } from "next/navigation";
 
 const LandingPage = () => {
+  const [userLogin, setUserLogin] = useUserLogin();
+  const router = useRouter();
+
+  useEffect(() => {
+
+    if (userLogin?.status === false || userLogin?.role_name === null) {
+      router.push("/register");
+    }
+
+  }, [userLogin]);
+
   return (
     <>
       <BannerSection />
-      {/* <div className="container">
-        <div className="h-px bg-gray-300"></div>
-        <EarliestProjectList />
-        <TopCompany />
-      </div> */}
     </>
   );
 };

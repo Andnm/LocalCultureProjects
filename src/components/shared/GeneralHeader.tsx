@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import logo_remove_bg from "@/src/assets/logo-remove-bg.png";
 import logo from "@/src/assets/logo.png";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
 
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
@@ -27,6 +28,8 @@ const GeneralHeader = () => {
   const [openRegisterMode, setOpenRegisterMode] = React.useState(false);
 
   const [showTopMenu, setShowTopMenu] = React.useState(false);
+
+  const { loginInfo, setLoginInfo }: any = useAuthContext();
 
   const [userData, setUserData] = React.useState<UserType | null>(null);
   const pathName = usePathname();
@@ -56,7 +59,7 @@ const GeneralHeader = () => {
   React.useEffect(() => {
     const user = getUserFromSessionStorage();
     setUserData(user);
-  }, [isLoginModalOpen, isRegisterModalOpen]);
+  }, [isLoginModalOpen, isRegisterModalOpen, loginInfo]);
 
   const switchFromLoginToRegister = () => {
     setLoginModalOpen(false);

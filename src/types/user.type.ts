@@ -11,4 +11,5 @@ export interface UserType {
   link_web?: string;
   create_at?: Date;
   role_name: string;
+  status?: boolean;
 }

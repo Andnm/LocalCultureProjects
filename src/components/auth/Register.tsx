@@ -21,6 +21,7 @@ import { auth, googleAuthProvider } from "@/src/utils/configFirebase";
 import { signInWithPopup, signInWithRedirect } from "firebase/auth";
 import toast from "react-hot-toast";
 import { validateEmail, validatePassword } from "@/src/utils/handleFunction";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
 
 interface RegisterProps {
   switchFromRegisterToLogin: () => void;
@@ -41,15 +42,10 @@ const Register: React.FC<RegisterProps> = ({
     password: "",
   });
 
-  const [errorOtp, setErrorOtp] = React.useState("");
-
-  const inputsOtpRef: React.RefObject<HTMLInputElement[]> = React.useRef([]);
-
-  const [openOtpForm, setOpenOtpForm] = React.useState(false);
-
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const { loginInfo, setLoginInfo }: any = useAuthContext();
   const { loading, error } = useAppSelector((state) => state.auth);
 
   const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
@@ -83,44 +79,11 @@ const Register: React.FC<RegisterProps> = ({
       if (register.rejected.match(result)) {
         toast.error(`${result.payload}`);
       } else if (register.fulfilled.match(result)) {
-        dispatch(sendOtpRegister({ email: formData.email })).then(
-          (resSendOtp) => {
-            if (sendOtpRegister.rejected.match(resSendOtp)) {
-              //do something
-            } else if (sendOtpRegister.fulfilled.match(resSendOtp)) {
-              setOpenOtpForm(true);
-            }
-          }
-        );
-      }
-    });
-  };
+        setLoginInfo(formData);
 
-  const confirmOTP = async () => {
-    const otp = [
-      inputsOtpRef.current![0].value,
-      ...inputsOtpRef.current!.slice(1).map((input) => input.value),
-    ].join("");
-
-    const data = {
-      otp: parseInt(otp, 10),
-      email: formData.email,
-    };
-
-    dispatch(verifyOtp(data)).then((result) => {
-      if (verifyOtp.rejected.match(result)) {
-        setErrorOtp(result.payload as string);
-      } else if (verifyOtp.fulfilled.match(result)) {
-        setOpenOtpForm(false);
-
-        router.push("/student-board");
-
-        dispatch(login(formData)).then((result) => {
-          if (login.rejected.match(result)) {
-            //do something
-          } else if (login.fulfilled.match(result)) {
-            router.push("/student-board");
-          }
+        dispatch(login(formData)).then((result: any) => {
+          router.push("/register");
+          actionClose();
         });
       }
     });
@@ -179,84 +142,73 @@ const Register: React.FC<RegisterProps> = ({
             </div>
 
             <div className="form-content">
-              {!openOtpForm ? (
-                <>
-                  <h2>ĐĂNG KÍ</h2>
-                  <form className="form" onSubmit={handleRegister}>
-                    <div
-                      onClick={handleLoginWithGoogle}
-                      className="btn-login-gg flex items-center justify-center bg-white cursor-pointer
+              <h2>ĐĂNG KÍ</h2>
+              <form className="form" onSubmit={handleRegister}>
+                <div
+                  onClick={handleLoginWithGoogle}
+                  className="btn-login-gg flex items-center justify-center bg-white cursor-pointer
                    px-6 py-2 text-sm font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 gap-2"
-                    >
-                      <FcGoogle className="w-5 h-5" />{" "}
-                      <span>Đăng kí với Google</span>
-                    </div>
+                >
+                  <FcGoogle className="w-5 h-5" />{" "}
+                  <span>Đăng kí với Google</span>
+                </div>
 
-                    <div className="break-line my-6">
-                      <hr />
-                      <div className="text">
-                        <p>Hoặc</p>
-                      </div>
-                    </div>
-
-                    <div className="input-field">
-                      <input
-                        type="text"
-                        value={formData.email}
-                        onChange={(event) => {
-                          handleInputChange(event, "email");
-                          setFormError((prevState) => ({
-                            ...prevState,
-                            email: "",
-                          }));
-                        }}
-                      />
-                      <label>Nhập email của bạn</label>
-                    </div>
-                    {formError.email && (
-                      <span className="text-red-500 text-xs">
-                        {formError.email}
-                      </span>
-                    )}
-
-                    <div className="input-field">
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(event) => {
-                          handleInputChange(event, "password");
-                          setFormError((prevState) => ({
-                            ...prevState,
-                            password: "",
-                          }));
-                        }}
-                      />
-                      <label>Tạo password</label>
-                    </div>
-                    {formError.password && (
-                      <span className="text-red-500 text-xs">
-                        {formError.password} <br />
-                      </span>
-                    )}
-
-                    <br />
-
-                    <button type="submit">Đăng kí</button>
-                  </form>
-
-                  <div className="bottom-link">
-                    <span> Đã có sẵn tài khoản? </span>
-                    <p onClick={switchFromRegisterToLogin}>Đăng nhập</p>
+                <div className="break-line my-6">
+                  <hr />
+                  <div className="text">
+                    <p>Hoặc</p>
                   </div>
-                </>
-              ) : (
-                <OtpRegister
-                  verifyAction={confirmOTP}
-                  inputsRef={inputsOtpRef}
-                  error={errorOtp}
-                  setError={() => setErrorOtp("")}
-                />
-              )}
+                </div>
+
+                <div className="input-field">
+                  <input
+                    type="text"
+                    value={formData.email}
+                    onChange={(event) => {
+                      handleInputChange(event, "email");
+                      setFormError((prevState) => ({
+                        ...prevState,
+                        email: "",
+                      }));
+                    }}
+                  />
+                  <label>Nhập email của bạn</label>
+                </div>
+                {formError.email && (
+                  <span className="text-red-500 text-xs">
+                    {formError.email}
+                  </span>
+                )}
+
+                <div className="input-field">
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(event) => {
+                      handleInputChange(event, "password");
+                      setFormError((prevState) => ({
+                        ...prevState,
+                        password: "",
+                      }));
+                    }}
+                  />
+                  <label>Tạo password</label>
+                </div>
+                {formError.password && (
+                  <span className="text-red-500 text-xs">
+                    {formError.password} <br />
+                  </span>
+                )}
+
+                <br />
+
+                <button type="submit">Đăng kí</button>
+              </form>
+
+              <div className="bottom-link">
+                <span> Đã có sẵn tài khoản? </span>
+                <p onClick={switchFromRegisterToLogin}>Đăng nhập</p>
+              </div>
             </div>
           </div>
         </div>

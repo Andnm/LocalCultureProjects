@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { UserType } from "@/src/types/user.type";
-import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
+import {
+  getConfigHeader,
+  getTokenFromSessionStorage,
+} from "../utils/handleToken";
 import { ErrorType } from "@/src/types/error.type";
 
 export interface UserState {
@@ -94,6 +97,25 @@ export const getProfileUser = createAsyncThunk(
   }
 );
 
+export const updateUserProfile = createAsyncThunk(
+  "user/updateUserProfile",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `/users/update-profile`,
+        data,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -140,6 +162,21 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(getProfileUser.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //updateUserProfile
+    builder.addCase(updateUserProfile.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(updateUserProfile.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(updateUserProfile.rejected, (state, action) => {
       state.loadingUser = false;
       state.error = action.payload as string;
     });

@@ -65,11 +65,15 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
 }) => (
   <>
     {path ? (
-      <Link href={path}>
-        <button className="item group flex w-full items-center rounded-md px-2 py-2 text-sm">
-          {children}
-        </button>
-      </Link>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href={path}>
+            <button className="item group flex w-full items-center rounded-md px-2 py-2 text-sm">
+              {children}
+            </button>
+          </Link>
+        )}
+      </Menu.Item>
     ) : (
       <button className="item group flex w-full items-center rounded-md px-2 py-2 text-sm text-black">
         {children}

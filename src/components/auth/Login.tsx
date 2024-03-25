@@ -19,6 +19,7 @@ import { auth, googleAuthProvider } from "@/src/utils/configFirebase";
 import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { validateEmail } from "@/src/utils/handleFunction";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
 
 interface LoginProps {
   actionClose: () => void;
@@ -38,10 +39,11 @@ const Login: React.FC<LoginProps> = ({
     email: "",
     password: "",
   });
+  const { loading } = useAppSelector((state: RootState) => state.auth);
+  const { loginInfo, setLoginInfo }: any = useAuthContext();
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,28 +70,34 @@ const Login: React.FC<LoginProps> = ({
     }
 
     dispatch(login(formData)).then((result: any) => {
+      setLoginInfo(formData);
+      const user = result.payload;
+
       if (login.rejected.match(result)) {
         toast.error(`${result.payload}`);
         //do something
         // console.log(result.payload);
       } else if (login.fulfilled.match(result)) {
-        const user = result.payload;
-        switch (user?.role_name) {
-          case "Admin":
-            router.push("/dashboard");
-            break;
-          case "Business":
-            router.push("/business-board");
-            break;
-          case "Student":
-            router.push("/student-board");
-            break;
-          case "Lecturer":
-            router.push("/lecturer-board");
-            break;
-          default:
-            router.push("/");
-            break;
+        if (user.status === true && user.role_name !== null) {
+          switch (user?.role_name) {
+            case "Admin":
+              router.push("/dashboard");
+              break;
+            case "Business":
+              router.push("/business-board");
+              break;
+            case "Student":
+              router.push("/student-board");
+              break;
+            case "Lecturer":
+              router.push("/lecturer-board");
+              break;
+            default:
+              router.push("/");
+              break;
+          }
+        } else {
+          router.push("/register");
         }
 
         actionClose();
