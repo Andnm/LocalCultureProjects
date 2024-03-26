@@ -650,7 +650,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 
   return (
     <>
-      <CardBody className="px-0">
+      <CardBody className="px-0 overflow-x-scroll">
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr>
