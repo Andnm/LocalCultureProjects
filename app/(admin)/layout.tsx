@@ -18,7 +18,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = (props) => {
   React.useEffect(() => {
     dispatch(getAllNotification()).then((result) => {
       socketInstance.on("getNotifications-admin@gmail.com", (data: any) => {
-        console.log("data", data);
+        // console.log("data", data);
         setNewNotificationQuantity(data.total_notifications);
       });
     });

@@ -40,6 +40,25 @@ export const createResponsiblePerson = createAsyncThunk(
   }
 );
 
+export const checkExistResponsiblePersonByEmail = createAsyncThunk(
+  "responsiblePerson/checkExistResponsiblePersonByEmail",
+  async (email: string, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/responsible-person/check-responsible-person-exist/${email}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const responsiblePersonSlice = createSlice({
   name: "responsiblePerson",
   initialState,

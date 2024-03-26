@@ -17,6 +17,7 @@ import {
 } from "@material-tailwind/react";
 import {
   formatDate,
+  generateFallbackAvatar,
   getColorByProjectStatus,
   sortData,
 } from "@/src/utils/handleFunction";
@@ -81,8 +82,13 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
       <div className="mb-8">
         <h3 className="text-lg font-semibold mb-2">Doanh nghiệp:</h3>
         <img
-          src={selectedProject?.business?.avatar_url}
-          alt={selectedProject?.business?.fullname}
+          src={
+            !selectedProject?.business?.avatar_url ||
+            selectedProject?.business?.avatar_url === null
+              ? generateFallbackAvatar(selectedProject?.business?.fullname)
+              : selectedProject?.business?.avatar_url
+          }
+          alt={"img"}
           className="w-10 h-10 rounded-full"
         />
         <div>
@@ -656,23 +662,23 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                   <InfoText className="flex items-center gap-2 leading-none opacity-70">
                     {head.name}
                     {index !== TABLE_HEAD.length - 1 && (
-                       <span
-                       className="flex flex-col"
-                       style={{ position: "relative", zIndex: "9999" }}
-                     >
-                       <IoIosArrowUp
-                         className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
-                         onClick={() =>
-                           sortData(head.key, "desc", dataTable, setDataTable)
-                         }
-                       />
-                       <IoIosArrowDown
-                         className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
-                         onClick={() =>
-                           sortData(head.key, "asc", dataTable, setDataTable)
-                         }
-                       />
-                     </span>
+                      <span
+                        className="flex flex-col"
+                        style={{ position: "relative", zIndex: "9999" }}
+                      >
+                        <IoIosArrowUp
+                          className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                          onClick={() =>
+                            sortData(head.key, "desc", dataTable, setDataTable)
+                          }
+                        />
+                        <IoIosArrowDown
+                          className="h-4 w-4 transition duration-300 transform hover:shadow-md hover:scale-150"
+                          onClick={() =>
+                            sortData(head.key, "asc", dataTable, setDataTable)
+                          }
+                        />
+                      </span>
                     )}
                   </InfoText>
                 </th>
@@ -713,7 +719,14 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                     <td className={classes}>
                       <div className="flex items-center gap-3">
                         <Avatar
-                          src={business?.business?.avatar_url}
+                          src={
+                            !business?.business?.avatar_url ||
+                            business?.business?.avatar_url === null
+                              ? generateFallbackAvatar(
+                                  business?.business?.fullname
+                                )
+                              : business?.business?.avatar_url
+                          }
                           alt={business?.business?.fullname}
                           size="sm"
                         />

@@ -73,7 +73,7 @@ export default function CustomModal({
               >
                 <Dialog.Panel
                   className={`relative z-40 w-full ${
-                    styleWidth ? styleWidth : "max-w-6xl"
+                    styleWidth ? styleWidth: "max-w-6xl"
                   } transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all`}
                 >
                   <Dialog.Title

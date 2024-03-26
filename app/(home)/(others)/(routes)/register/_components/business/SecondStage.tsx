@@ -126,7 +126,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
             onChange={(e) => handleInputChange(e, "zalo")}
           />
           <label>Thông tin liên hệ khác</label>
-          {errorResponsiblePerson.description && (
+          {errorResponsiblePerson.zalo && (
             <span className="error-message">{errorResponsiblePerson.zalo}</span>
           )}
         </div>

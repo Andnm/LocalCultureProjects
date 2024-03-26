@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, createAction, PayloadAction } from "@red
 import http from "../utils/https";
 import { ProjectType } from "@/src/types/project.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
 
 export interface ListProjectState {
   data: ProjectType[];
@@ -21,20 +21,12 @@ const initialState: ListProjectState = {
 export const createNewProject = createAsyncThunk(
   "listProject/createNewProject",
   async (dataBody: any, thunkAPI) => {
-    const token = getTokenFromSessionStorage();
-    const configHeader = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
 
     try {
       const response = await http.post<any>(
         "/projects",
         dataBody,
-        configHeader
+        getConfigHeader()
       );
 
       return response.data;
@@ -52,6 +44,22 @@ export const getProjectById = createAsyncThunk(
   async (id: number, thunkAPI) => {
     try {
       const response = await http.get<any>(`/projects/${id}`);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const getAllFirstProjectByAdmin = createAsyncThunk(
+  "listProject/getAllFirstProjectByAdmin",
+  async (_, thunkAPI) => {
+
+    try {
+      const response = await http.get<any>("projects/firstProject", getConfigHeader());
 
       return response.data;
     } catch (error) {

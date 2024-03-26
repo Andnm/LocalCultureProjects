@@ -89,7 +89,7 @@ const GroupTable: React.FC<ProjectTableProps> = ({
   if (dataTable?.length === 0) {
     return (
       <CardBody className="text-center">
-        <InfoText>Chưa có dự án nào được tạo.</InfoText>
+        <InfoText>Chưa có nhóm nào được tạo.</InfoText>
       </CardBody>
     );
   }

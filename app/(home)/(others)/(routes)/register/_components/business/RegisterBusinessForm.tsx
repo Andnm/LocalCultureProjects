@@ -23,7 +23,10 @@ import {
   saveUserToSessionStorage,
 } from "@/src/redux/utils/handleUser";
 import { useAuthContext } from "@/src/utils/context/auth-provider";
-import { createResponsiblePerson } from "@/src/redux/features/responsiblePersonSlice";
+import {
+  checkExistResponsiblePersonByEmail,
+  createResponsiblePerson,
+} from "@/src/redux/features/responsiblePersonSlice";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { createNewProject } from "@/src/redux/features/projectSlice";
@@ -328,7 +331,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     }
   };
 
-  // xử lý API
+  // xử lý api
   const handleCallAPIUpdateProfile = async () => {
     setOpenModalConfirmAction(false);
     setIsLoading(true);
@@ -370,25 +373,43 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       }
 
       // XỬ LÝ TẠO NGƯỜI PHỤ TRÁCH
-      // const resCheckEmailExist = await dispatch(
-      //   checkEmailExist(responsiblePerson.email)
-      // );
-
-      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
-
-      const resCreateResponsiblePerson = await dispatch(
-        createResponsiblePerson({
-          ...responsiblePerson,
-          businessEmail: resUpdate.payload.email,
-          facebook: "facebook",
-        })
+      const resCheckResEmailExist = await dispatch(
+        checkExistResponsiblePersonByEmail(responsiblePerson.email)
       );
-      console.log("resCreateResponsiblePerson", resCreateResponsiblePerson);
-      if (createResponsiblePerson.rejected.match(resCreateResponsiblePerson)) {
-        toast.error(`Có lỗi xảy ra ở bước 2!`);
+
+      console.log("resCheckResEmailExist", resCheckResEmailExist);
+
+      if (
+        checkExistResponsiblePersonByEmail.fulfilled.match(
+          resCheckResEmailExist
+        )
+      ) {
+        if (!resCheckResEmailExist.payload) {
+          const resCreateResponsiblePerson = await dispatch(
+            createResponsiblePerson({
+              ...responsiblePerson,
+              businessEmail: resUpdate.payload.email,
+              facebook: "https://www.facebook.com",
+            })
+          );
+
+          console.log("resCreateResponsiblePerson", resCreateResponsiblePerson);
+
+          if (
+            createResponsiblePerson.rejected.match(resCreateResponsiblePerson)
+          ) {
+            toast.error(`Có lỗi xảy ra ở bước 2!`);
+            toast.error(`${resUpdate.payload}`);
+            return;
+          }
+        }
+      } else {
+        toast.error(`Có lỗi xảy ra ở kiểm tra người phụ trách tồn tại!`);
         toast.error(`${resUpdate.payload}`);
         return;
       }
+
+      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
 
       let juridicalFilesURLs: any = [];
 
@@ -420,7 +441,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         document_related_link: juridicalFilesURLs,
         expected_budget: removeCommas(firstProject.expected_budget as any),
         businessEmail: resUpdate.payload.email,
-        email_responsible_person: resCreateResponsiblePerson.payload.email,
+        email_responsible_person: responsiblePerson.email,
         project_start_date: projectTimeline.project_start_date,
         project_expected_end_date: projectTimeline.project_expected_end_date,
       };
@@ -440,6 +461,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
           `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
         );
         await dispatch(logout());
+        setLoginInfo("")
         router.push("/");
       }
     } catch (error) {
