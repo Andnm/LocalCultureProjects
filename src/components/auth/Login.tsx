@@ -39,7 +39,7 @@ const Login: React.FC<LoginProps> = ({
     email: "",
     password: "",
   });
-  const { loading } = useAppSelector((state: RootState) => state.auth);
+  const { loading }: any = useAppSelector((state: RootState) => state.auth);
   const { loginInfo, setLoginInfo }: any = useAuthContext();
 
   const dispatch = useAppDispatch();
@@ -109,24 +109,29 @@ const Login: React.FC<LoginProps> = ({
     signInWithPopup(auth, googleAuthProvider).then(async (data: any) => {
       dispatch(loginWithGoogle(data?.user?.accessToken) as any).then(
         (result: any) => {
+          const user = result.payload;
+
           if (loginWithGoogle.fulfilled.match(result)) {
-            const user = result.payload;
-            switch (user?.role_name) {
-              case "Admin":
-                router.push("/dashboard");
-                break;
-              case "Business":
-                router.push("/business-board");
-                break;
-              case "Student":
-                router.push("/student-board");
-                break;
-              case "Lecturer":
-                router.push("/lecturer-board");
-                break;
-              default:
-                router.push("/");
-                break;
+            if (user.status === true && user.role_name !== null) {
+              switch (user?.role_name) {
+                case "Admin":
+                  router.push("/dashboard");
+                  break;
+                case "Business":
+                  router.push("/business-board");
+                  break;
+                case "Student":
+                  router.push("/student-board");
+                  break;
+                case "Lecturer":
+                  router.push("/lecturer-board");
+                  break;
+                default:
+                  router.push("/");
+                  break;
+              }
+            } else {
+              router.push("/register");
             }
             actionClose();
           } else {
