@@ -5,10 +5,29 @@ import ThirdStage from "./ThirdStage";
 import ButtonBack from "@/src/components/shared/ButtonBack";
 import { BusinessDataType } from "../../_types/business.type";
 import { ResponsibleType } from "../../_types/responsible.type";
-import { validateEmail } from "@/src/utils/handleFunction";
+import {
+  extractProjectDates,
+  generateRandomString,
+  removeCommas,
+  validateEmail,
+} from "@/src/utils/handleFunction";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 import CustomModal from "@/src/components/shared/CustomModal";
 import { ProjectType } from "../../_types/project.type";
+import toast from "react-hot-toast";
+import { useAppDispatch } from "@/src/redux/store";
+import { useRouter } from "next/navigation";
+import { updateUserProfile } from "@/src/redux/features/userSlice";
+import {
+  getUserFromSessionStorage,
+  saveUserToSessionStorage,
+} from "@/src/redux/utils/handleUser";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
+import { createResponsiblePerson } from "@/src/redux/features/responsiblePersonSlice";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/src/utils/configFirebase";
+import { createNewProject } from "@/src/redux/features/projectSlice";
+import { checkEmailExist, logout } from "@/src/redux/features/authSlice";
 
 interface RegisterBusinessFormProps {
   selectedRole: any;
@@ -66,7 +85,6 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     purpose: "",
     target_object: "",
     note: "",
-    document_related_link: "",
     request: "",
     project_implement_time: "",
     project_start_date: "",
@@ -96,6 +114,10 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     is_first_project: "",
   });
 
+  const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]);
+  const [juridicalFilesOrigin, setJuridicalFilesOrigin] = useState([]);
+  const [errorFile, setErrorFile] = useState("");
+
   const [stageEnabled, setStageEnabled] = useState<Record<number, boolean>>({
     1: true,
     2: false,
@@ -105,6 +127,10 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
   const [currentStage, setCurrentStage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [openModalConfirmAction, setOpenModalConfirmAction] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { loginInfo, setLoginInfo }: any = useAuthContext();
 
   const handleStageClick = (stage: any) => {
     setCurrentStage(stage);
@@ -150,6 +176,12 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
             setFirstProject={setFirstProject}
             errorFirstProject={errorFirstProject}
             setErrorFirstProject={setErrorFirstProject}
+            selectedJuridicalFiles={selectedJuridicalFiles}
+            setSelectedJuridicalFiles={setSelectedJuridicalFiles}
+            juridicalFilesOrigin={juridicalFilesOrigin}
+            setJuridicalFilesOrigin={setJuridicalFilesOrigin}
+            errorFile={errorFile}
+            setErrorFile={setErrorFile}
           />
         );
       default:
@@ -271,7 +303,8 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         key !== "project_start_date" &&
         key !== "project_actual_start_date" &&
         key !== "project_expected_end_date" &&
-        key !== "project_actual_end_date"
+        key !== "project_actual_end_date" &&
+        key !== "is_extent"
       ) {
         if (!firstProject[key as keyof ProjectType]) {
           updatedErrorFirstProject[key as keyof typeof errorFirstProject] =
@@ -283,9 +316,11 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
 
     console.log("updatedErrorFirstProject", updatedErrorFirstProject);
 
+    console.log("firstProject", firstProject);
+
     if (hasError) {
-      setErrorBusinessData((prevErrorBusinessData) => ({
-        ...prevErrorBusinessData,
+      setErrorFirstProject((prevErrorFirstProject) => ({
+        ...prevErrorFirstProject,
         ...updatedErrorFirstProject,
       }));
     } else {
@@ -294,37 +329,125 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
   };
 
   // xử lý API
-  const handleCallAPIUpdateProfile = () => {
+  const handleCallAPIUpdateProfile = async () => {
+    setOpenModalConfirmAction(false);
     setIsLoading(true);
 
-    // const additionalData = { ...studentData };
+    toast("Tiến trình xử lý sẽ hơi lâu, vui lòng chờ!", {
+      style: {
+        borderRadius: "10px",
+        background: "#FFAF45",
+        color: "white",
+        fontWeight: 500,
+      },
+    });
 
-    // const data = {
-    //   role_name: selectedRole,
-    //   ...additionalData,
-    //   roll_number: studentData.roll_number.toUpperCase,
-    // };
+    // XỬ LÝ UPDATE PROFILE
+    try {
+      // XỬ LÝ UPDATE PROFILE
+      const dataUpdateProfile = {
+        role_name: selectedRole,
+        ...businessData,
+      };
 
-    // dispatch(updateUserProfile(data)).then((resUpdate) => {
-    //   console.log("resUpdate", resUpdate);
-    //   if (updateUserProfile.fulfilled.match(resUpdate)) {
-    //     const user = getUserFromSessionStorage();
+      const resUpdate = await dispatch(updateUserProfile(dataUpdateProfile));
+      console.log("resUpdate", resUpdate);
 
-    //     if (user) {
-    //       user.role_name = "Student";
-    //       user.fullname = data.fullname;
-    //       user.status = true;
-    //       saveUserToSessionStorage(user);
-    //     }
-    //     setLoginInfo(user);
+      if (updateUserProfile.fulfilled.match(resUpdate)) {
+        const user = getUserFromSessionStorage();
 
-    //     toast.success("Đăng kí tạo tài khoản thành công");
-    //     router.push("/");
-    //   } else {
-    //     toast.error(`${resUpdate.payload}`);
-    //   }
-    //   setIsLoading(false);
-    // });
+        if (user) {
+          user.role_name = "Business";
+          user.fullname = dataUpdateProfile.fullname;
+          user.status = true;
+          saveUserToSessionStorage(user);
+        }
+        setLoginInfo(user);
+      } else {
+        toast.error(`Có lỗi xảy ra ở bước 1!`);
+        toast.error(`${resUpdate.payload}`);
+        return;
+      }
+
+      // XỬ LÝ TẠO NGƯỜI PHỤ TRÁCH
+      // const resCheckEmailExist = await dispatch(
+      //   checkEmailExist(responsiblePerson.email)
+      // );
+
+      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
+
+      const resCreateResponsiblePerson = await dispatch(
+        createResponsiblePerson({
+          ...responsiblePerson,
+          businessEmail: resUpdate.payload.email,
+          facebook: "facebook",
+        })
+      );
+      console.log("resCreateResponsiblePerson", resCreateResponsiblePerson);
+      if (createResponsiblePerson.rejected.match(resCreateResponsiblePerson)) {
+        toast.error(`Có lỗi xảy ra ở bước 2!`);
+        toast.error(`${resUpdate.payload}`);
+        return;
+      }
+
+      let juridicalFilesURLs: any = [];
+
+      // XỬ LÝ TẠO PROJECT
+      if (juridicalFilesOrigin.length > 0) {
+        const uploadPromises: any[] = [];
+        const uploadedFiles: any[] = [];
+
+        const juridicalFilesDownload = juridicalFilesOrigin.map((file) => {
+          const randomFileName = generateRandomString();
+          const storageRef = ref(storage, `khoduan/${randomFileName}`);
+          const uploadTask = uploadBytes(storageRef, file);
+          uploadPromises.push(uploadTask);
+          uploadedFiles.push({ path: `khoduan/${randomFileName}`, file });
+          return uploadTask.then(() => getDownloadURL(storageRef));
+        });
+
+        await Promise.all(uploadPromises);
+
+        juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
+      }
+
+      const projectTimeline = extractProjectDates(
+        firstProject.project_implement_time
+      );
+
+      const dataFirstProject = {
+        ...firstProject,
+        document_related_link: juridicalFilesURLs,
+        expected_budget: removeCommas(firstProject.expected_budget as any),
+        businessEmail: resUpdate.payload.email,
+        email_responsible_person: resCreateResponsiblePerson.payload.email,
+        project_start_date: projectTimeline.project_start_date,
+        project_expected_end_date: projectTimeline.project_expected_end_date,
+      };
+
+      const resCreateProject = await dispatch(
+        createNewProject(dataFirstProject)
+      );
+
+      console.log("resCreateProject", resCreateProject);
+
+      if (createNewProject.rejected.match(resCreateProject)) {
+        toast.error(`Có lỗi xảy ra ở bước 3!`);
+        toast.error(`${resUpdate.payload}`);
+        return;
+      } else {
+        toast.success(
+          `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
+        );
+        await dispatch(logout());
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error occurred while updating profile:", error);
+      toast.error("Đã xảy ra lỗi khi cập nhật hồ sơ");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -381,7 +504,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
           open={openModalConfirmAction}
           title={<h2 className="text-2xl font-semibold">Xác nhận tạo</h2>}
           body={
-            "Bạn có chắc muốn tạo tài khoản với những thông tin mà bạn đã điền hay không?"
+            "Bạn có chắc muốn đăng ký tạo tài khoản với những thông tin mà bạn đã điền hay không?"
           }
           actionClose={() => setOpenModalConfirmAction(false)}
           buttonClose={"Hủy"}

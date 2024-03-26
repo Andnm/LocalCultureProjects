@@ -10,6 +10,7 @@ import { List, ListItemSuffix, Chip } from "@material-tailwind/react";
 
 import { SiSimpleanalytics } from "react-icons/si";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { IoMdPaper } from "react-icons/io";
 import { GrGroup } from "react-icons/gr";
 import { GoProjectRoadmap } from "react-icons/go";
 import { GoReport } from "react-icons/go";
@@ -85,6 +86,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
     {
       title: "Quản lý",
       features: [
+        {
+          href: "/first-project",
+          icon: <IoMdPaper className="w-4 h-4" />,
+          label: "Dự án đầu tiên",
+        },
         {
           href: "/manage-account",
           icon: <MdOutlineAccountCircle className="w-4 h-4" />,

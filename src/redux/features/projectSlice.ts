@@ -20,7 +20,7 @@ const initialState: ListProjectState = {
 
 export const createNewProject = createAsyncThunk(
   "listProject/createNewProject",
-  async (dataBody: ProjectType, thunkAPI) => {
+  async (dataBody: any, thunkAPI) => {
     const token = getTokenFromSessionStorage();
     const configHeader = {
       headers: {

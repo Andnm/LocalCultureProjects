@@ -4,7 +4,6 @@ export interface ProjectType {
   purpose: string;
   target_object: string;
   note?: string;
-  document_related_link?: string;
   request: string;
   project_implement_time: string;
   project_start_date?: string;

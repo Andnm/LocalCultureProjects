@@ -25,7 +25,7 @@ export const createResponsiblePerson = createAsyncThunk(
   async (dataBody: any, thunkAPI) => {
     try {
       const response = await http.post<any>(
-        `/responsiblePerson`,
+        `/responsible-person`,
         dataBody,
         getConfigHeader()
       );

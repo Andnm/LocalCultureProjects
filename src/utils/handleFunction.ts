@@ -303,3 +303,51 @@ export const handleLowerCaseNonAccentVietnamese = (str: string) => {
   str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
   return str;
 };
+
+export const convertToNumberFormat = (input: any) => {
+  if (typeof input === "string" && /^\d+$/.test(input)) {
+    const number = parseInt(input, 10);
+    return number.toLocaleString();
+  } else if (typeof input === "number") {
+    return input.toLocaleString();
+  } else {
+    return input;
+  }
+};
+
+export const generateRandomString = () => {
+  const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  const randomLetters = Array(7).fill("");
+
+  for (let i = 0; i < randomLetters.length; i++) {
+    const randomIndex = Math.floor(Math.random() * letters.length);
+
+    const randomLetter = letters[randomIndex];
+
+    randomLetters[i] = randomLetter;
+  }
+
+  const randomString = randomLetters.join("");
+
+  return randomString;
+};
+
+export const removeCommas = (str: string): number => {
+  return parseFloat(str.replace(/,/g, ""));
+};
+
+export const extractProjectDates = (inputString: string): any | null => {
+  const regex = /Từ (\d{1,2}\/\d{4}) tới (\d{1,2}\/\d{4})/;
+  const match = inputString.match(regex);
+
+  if (match) {
+    const [, startDate, endDate] = match;
+    return {
+      project_start_date: startDate,
+      project_expected_end_date: endDate
+    };
+  } else {
+    return null; 
+  }
+};

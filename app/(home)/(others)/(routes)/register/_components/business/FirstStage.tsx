@@ -175,7 +175,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
         </div>
 
         {/* address */}
-        <div className="form-group-material mb-0">
+        <div className="form-group-material mt-4">
           <input
             type="text"
             required={true}
@@ -193,7 +193,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
 
         {/* address detail */}
         {/* TẠM THỜI ẨN ĐI */}
-        {/* <div className="form-group-material mb-0">
+        {/* <div className="form-group-material mt-4">
           <input
             type="text"
             required={true}
@@ -213,7 +213,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
         </div> */}
 
         {/* link web */}
-        <div className="form-group-material mb-0">
+        <div className="form-group-material mt-4">
           <input
             type="text"
             className="form-control"

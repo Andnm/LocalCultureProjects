@@ -162,7 +162,24 @@
 
   .stage-2 {
     margin: 20px 0px;
-    width: 60%;
+    position: relative;
+
+    label:focus {
+      border-color: #009688;
+      outline: #009688;
+    }
+
+    .title {
+      top: -10px;
+      left: 16px;
+      font-size: 12px !important;
+      color: #6d859f !important;
+      opacity: 1;
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+      background-color: white;
+    }
 
     .photo-upload {
       width: 100%;
@@ -285,7 +302,6 @@
 
     .form-group-material {
       position: relative;
-      margin-bottom: 1rem;
 
       .form-control {
         width: 100%;

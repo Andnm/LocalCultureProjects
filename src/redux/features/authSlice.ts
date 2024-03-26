@@ -6,6 +6,7 @@ import {
   saveTokenToSessionStorage,
   removeTokenFromSessionStorage,
   decodeTokenToUser,
+  getConfigHeader,
 } from "../utils/handleToken";
 
 import {
@@ -144,6 +145,25 @@ export const verifyOtp = createAsyncThunk<string, any>(
   }
 );
 
+export const checkEmailExist = createAsyncThunk(
+  "auth/checkEmailExist",
+  async (email: string, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `/auth/checkEmailExist?email=${email}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -220,6 +240,20 @@ export const authSlice = createSlice({
       state.error = "";
     });
     builder.addCase(verifyOtp.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+    //checkEmailExist
+    builder.addCase(checkEmailExist.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(checkEmailExist.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(checkEmailExist.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });
