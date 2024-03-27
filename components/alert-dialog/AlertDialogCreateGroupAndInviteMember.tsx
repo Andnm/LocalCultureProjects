@@ -73,6 +73,7 @@ export const AlertDialogCreateGroupAndInviteMember: React.FC<
         searchEmail: event.target.value,
       })
     ).then((result) => {
+      console.log("result", result)
       setMemberResultSearch(result.payload);
       setLoadingSearchResult(false);
     });
@@ -214,8 +215,9 @@ export const AlertDialogCreateGroupAndInviteMember: React.FC<
                     >
                       <img
                         src={
-                          result.avatar_url ||
-                          generateFallbackAvatar(result.email)
+                          result.avatar_url
+                            ? result.avatar_url
+                            : generateFallbackAvatar(result.fullname)
                         }
                         alt={result.fullname}
                         className="w-10 h-10 object-cover rounded-full"

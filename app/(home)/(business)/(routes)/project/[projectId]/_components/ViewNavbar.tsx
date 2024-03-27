@@ -249,7 +249,6 @@ export const ViewNavbar = ({
         } else {
           setCheckProjectCanDoneStatus(false);
         }
-        console.log("can done", result.payload);
       }
     );
   };
@@ -271,30 +270,33 @@ export const ViewNavbar = ({
     dispatch(getSummaryReportByProjectId(extractNumberFromPath(pathName))).then(
       (result) => {
         if (getSummaryReportByProjectId.fulfilled.match(result)) {
-          socketInstance.on(
-            `getSummaryReports-${extractNumberFromPath(pathName)}`,
-            (data: any) => {
-              // console.log("ok socket");
-              setSummaryReport(data.summaryReport);
-              // console.log('data report', data.summaryReport)
-            }
-          );
-          // setSummaryReport(result.payload);
-          // console.log(result.payload);
+          // socketInstance.on(
+          //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
+          //   (data: any) => {
+          //     // console.log("ok socket");
+          //     setSummaryReport(data.summaryReport);
+          //     // console.log('data report', data.summaryReport)
+          //   }
+          // );
+
+          // socketInstance.disconnect();
+
+          setSummaryReport(result.payload);
+          console.log("result.payload", result.payload);
         } else {
-          // toast.error("Lỗi khi lấy dữ liệu");
-          socketInstance.on(
-            `getSummaryReports-${extractNumberFromPath(pathName)}`,
-            (data: any) => {
-              // console.log("ok socket fail");
-              setSummaryReport(data.summaryReport);
-              console.log("fail", data.summaryReport);
-            }
-          );
+          toast.error("Lỗi khi lấy dữ liệu");
+          // socketInstance.on(
+          //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
+          //   (data: any) => {
+          //     // console.log("ok socket fail");
+          //     setSummaryReport(data.summaryReport);
+          //     console.log("fail", data.summaryReport);
+          //   }
+          // );
         }
       }
     );
-  }, [summaryReport]);
+  }, []);
 
   return (
     <>
@@ -455,12 +457,10 @@ export const ViewNavbar = ({
                           Chưa xác nhận
                         </Typography>
                       )}
-
                     </td>
-                    
-                    <td className={` pl-5 bg-blue-gray-50/50`}>
 
-                       {summaryReport &&
+                    <td className={` pl-5 bg-blue-gray-50/50`}>
+                      {summaryReport &&
                       summaryReport.summary_report_url &&
                       summaryReport?.isLecturerConfirmed !== undefined ? (
                         <>
@@ -492,8 +492,6 @@ export const ViewNavbar = ({
                           Chưa xác nhận
                         </Typography>
                       )}
-
-                    
                     </td>
                     <td className="p-4">
                       {summaryReport?.summary_report_url &&

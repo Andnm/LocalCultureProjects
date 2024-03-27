@@ -63,16 +63,9 @@ const ProjectList = () => {
 
         socketInstance.on("getProjects", (data: any) => {
           const newListProjects = data?.projects
-            ?.filter((project: any) => {
-              const expirationDate = new Date(
-                project.project_registration_expired_date
-              );
-              const currentDate = new Date();
-              return expirationDate > currentDate;
-            })
             ?.sort((a: any, b: any) => {
-              const dateA = new Date(a.project_registration_expired_date);
-              const dateB = new Date(b.project_registration_expired_date);
+              const dateA = new Date(a.createdAt);
+              const dateB = new Date(b.createdAt);
               return dateA.getTime() - dateB.getTime();
             });
           setDataProjectList(newListProjects);
