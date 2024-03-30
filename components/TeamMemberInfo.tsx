@@ -44,15 +44,15 @@ export const TeamMemberInfo = ({
                   <h1 className="font-bold text-xl text-center mb-1">
                     {dataMember?.name}
                   </h1>
-                  <p
-                    className={`text-gray-800 text-sm ${
-                      dataMember?.role === "Ths"
-                        ? "text-justify"
-                        : "text-center"
-                    }`}
-                  >
-                    {dataMember?.detail}
-                  </p>
+
+                  {dataMember?.detail.map((item: any, index: number) => (
+                    <p
+                      key={index}
+                      className={`text-gray-800 text-sm text-justify mb-2`}
+                    >
+                      {item}
+                    </p>
+                  ))}
                 </div>
 
                 {/* liên lạc */}
