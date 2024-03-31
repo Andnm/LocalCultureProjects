@@ -93,7 +93,7 @@ export const THS_TEAM = [
     image: "https://live.staticflickr.com/65535/53601118097_66aa53b88c_k.jpg",
     name: "ThS. Hoàng Vũ Quốc Anh",
     detail: [
-      "Với gần 10 năm kinh nghiệm trong ngành Truyền thông - Tổ chức Sự kiện (từng làm việc tại các event agency uy tín trong ngành như SQUARE Experiential Communications, ST Communications với các thương hiệu/khách hàng doanh nghiệp lớn: General Motors Vietnam, Tiger Beer, Viettel, Xiaomi, CANIFA...) và Quản lý nghệ sỹ (diva Mỹ Linh), sau khi tốt nghiệp Thạc sĩ Truyền thông & Quan hệ Công chúng tại Đại học Newcastle, Vương quốc Anh (Trường thuộc Top 150 thế giới), Hoàng Vũ Quốc Anh trở thành giảng viên ngành Quản trị Truyền thông Đa phương tiện - Đại học FPT TP.HCM từ 5/2021, với trọng tâm giảng dạy - nghiên cứu trong lĩnh vực truyền thông văn hoá.",
+      "Với gần 10 năm kinh nghiệm trong ngành Truyền thông - Tổ chức Sự kiện (từng làm việc tại các event agency uy tín trong ngành như SQUARE Experiential Communications, ST Communications với các thương hiệu/khách hàng doanh nghiệp lớn: General Motors Vietnam, Tiger Beer, Viettel, Xiaomi, CANIFA...) và Quản lý nghệ sỹ (diva Mỹ Linh), sau khi tốt nghiệp Thạc sĩ Truyền thông & Quan hệ Công chúng tại Đại học Newcastle, Vương quốc Anh (Trường thuộc Top 150 thế giới), Hoàng Vũ Quốc Anh trở thành giảng viên ngành Quản trị Truyền thông Đa phương tiện - Trường Đại học FPT TP.HCM từ 5/2021, với trọng tâm giảng dạy - nghiên cứu trong lĩnh vực truyền thông văn hoá.",
     ],
     role: "Ths",
     link_email: "anhhvq@fe.edu.vn",
@@ -121,7 +121,7 @@ export const MAIN_STUDENT_TEAM = [
     name: "Nguyễn Ngọc Thanh Thảo",
     detail: [
       "- Strategy Executive (Chuyên viên Hoạch định Chiến lược) tại PMAX - đơn vị tư vấn chiến lược tiên phong trong lĩnh vực Total Performance Marketing tại Việt Nam.",
-      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Đại học FPT TP.HCM, khóa 15.",
+      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Trường Đại học FPT TP.HCM, khóa 15. ",
       "- Thủ khoa tốt nghiệp khối ngành Kinh tế đợt 3 năm 2023.",
     ],
     role: "Main_student",
@@ -134,8 +134,8 @@ export const MAIN_STUDENT_TEAM = [
     image: "https://live.staticflickr.com/65535/53601118072_fba443fe44_z.jpg",
     name: "Lý Quốc Phong",
     detail: [
-      "- Digital Executive (Chuyên viên Digital Marketing) tại Brancher.X - đơn vị tư vấn marketing được RECMA xếp hạng có năng lực hàng đầu Việt Nam. ",
-      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Đại học FPT TP.HCM, khóa 15.",
+      "- Digital Executive (Chuyên viên Digital Marketing) tại Brancher.X - đơn vị tư vấn marketing được RECMA xếp hạng có năng lực hàng đầu Việt Nam.",
+      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Trường Đại học FPT TP.HCM, khóa 15.",
     ],
     role: "Main_student",
     link_email: "",
@@ -150,7 +150,8 @@ export const SUB_STUDENT_TEAM = [
     image: "https://live.staticflickr.com/65535/53603354044_52b7bdf761_z.jpg",
     name: "Phạm Thị Tú Ngân",
     detail: [
-      "- Sinh viên ngành Quản trị truyền thông đa phương tiện, Đại học FPT TP.HCM",
+      "- Strategic Planner (Chuyên viên Hoạch định Chiến lược) tại Happiness Saigon - đơn vị tư vấn Kết nối - Sáng tạo đã chiến thắng nhiều giải thưởng danh giá trong ngành truyền thông - quảng cáo, có trụ sở tại Sài Gòn - Việt Nam và Brussels - Bỉ.",
+      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Trường Đại học FPT TP.HCM, khóa 15.",
     ],
     role: "Sub_student",
     link_email: "",
@@ -161,7 +162,10 @@ export const SUB_STUDENT_TEAM = [
     id: 2,
     image: "https://live.staticflickr.com/65535/53602330414_ae60e010bf_k.jpg",
     name: "Trần Đặng Minh Đắc",
-    detail: ["- Sinh viên ngành Digital Marketing, Đại học FPT TP.HCM"],
+    detail: [
+      "- Sustainable Development Officer (Cán bộ Phát triển Bền vững) tại Trường Đại học FPT.",
+      "- Cử nhân ngành Quản trị Kinh doanh - Digital Marketing - Trường Đại học FPT TP.HCM, khóa 15.",
+    ],
     role: "Sub_student",
     link_email: "",
     phone: "",
@@ -172,7 +176,7 @@ export const SUB_STUDENT_TEAM = [
     image: "https://live.staticflickr.com/65535/53602454165_82e70ffe8b_k.jpg",
     name: "Nguyễn Hoàng Ái Thanh",
     detail: [
-      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Đại học FPT TP.HCM, khóa 16",
+      "- Cử nhân ngành Quản trị Truyền thông Đa phương tiện - Trường Đại học FPT TP.HCM, khóa 16.",
     ],
     role: "Sub_student",
     link_email: "",
