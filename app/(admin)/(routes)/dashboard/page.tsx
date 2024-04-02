@@ -2,8 +2,10 @@
 
 import {
   statisticsAccount,
+  statisticsAccountByBusinessSector,
   statisticsBusinessFollowProvince,
   statisticsProject,
+  statisticsProjectByBusinessType,
   statisticsSpecializationField,
 } from "@/src/redux/features/statisticsSlice";
 import { useAppDispatch } from "@/src/redux/store";
@@ -17,6 +19,11 @@ import {
 import { PiStudentLight } from "react-icons/pi";
 import { MdOutlineAgriculture } from "react-icons/md";
 import { MdOutlineHandyman } from "react-icons/md";
+import { MdCardTravel } from "react-icons/md";
+import { MdOutlineMiscellaneousServices } from "react-icons/md";
+import { SiMinds } from "react-icons/si";
+import { PiPlant } from "react-icons/pi";
+import { HiOutlineLightBulb } from "react-icons/hi";
 import { getColorByProjectStatus } from "@/src/utils/handleFunction";
 import toast from "react-hot-toast";
 
@@ -32,18 +39,23 @@ const getIcon = (key: string) => {
       return <MdOutlineAgriculture />;
     case "thủ công nghiệp":
       return <MdOutlineHandyman />;
+    case "du lịch":
+      return <MdCardTravel />;
+    case "lên ý tưởng":
+      return <HiOutlineLightBulb />;
+    case "triển khai thực tế":
+      return <PiPlant />;
     default:
-      return <RiAccountCircleLine />;
+      return <MdOutlineMiscellaneousServices />;
   }
 };
 
 const Dashboard = () => {
-  // const [specializationFieldData, setSpecializationFieldData] = React.useState(
-  //   []
-  // );
+  const [businessSectorList, setBusinessSectorList] = React.useState([]);
   const [projectData, setProjectData] = React.useState([]);
   const [businessFollowProvinceData, setBusinessFollowProvinceData] =
     React.useState([]);
+  const [projectTypeListData, setProjectTypeListData] = React.useState([]);
   const [accountData, setAccountData] = React.useState([]);
 
   const dispatch = useAppDispatch();
@@ -51,9 +63,17 @@ const Dashboard = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        // dispatch(statisticsSpecializationField()).then((result) =>
-        //   setSpecializationFieldData(result.payload)
-        // );
+        dispatch(statisticsProjectByBusinessType()).then((result) => {
+          setProjectTypeListData(result.payload);
+        });
+
+        dispatch(statisticsProjectByBusinessType()).then((result) => {
+          setBusinessSectorList(result.payload);
+        });
+
+        dispatch(statisticsAccountByBusinessSector()).then((result) => {
+          setBusinessSectorList(result.payload);
+        });
 
         dispatch(statisticsProject()).then((result) =>
           setProjectData(result.payload)
@@ -85,6 +105,14 @@ const Dashboard = () => {
     0
   );
 
+  const totalBusiness = accountData.reduce((total: any, item: any) => {
+    if (item.key === "Business") {
+      return total + item.value;
+    } else {
+      return total;
+    }
+  }, 0);
+
   return (
     <div className="flex overflow-hidden bg-white">
       <div
@@ -99,18 +127,18 @@ const Dashboard = () => {
           <div className="pt-6 px-4">
             <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
               <div className=" rounded-lg xl:col-span-2">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-white shadow rounded-lg p-6">
-                    <h2 className="text-2xl font-bold text-center">
-                      Tài khoản
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="bg-white shadow rounded-lg p-4">
+                    <h2 className="text-xl font-bold text-center">
+                      Tổng quan tài khoản
                     </h2>
 
                     <div className="flex justify-between items-center h-full">
                       <div className="flex items-center justify-center flex-col">
-                        <h3 className="text-base font-normal text-gray-500">
+                        <h3 className="text-sm font-normal text-gray-500">
                           Tổng cộng
                         </h3>
-                        <span className="text-2xl sm:text-3xl leading-none font-bold text-gray-900">
+                        <span className="text-xl leading-none font-bold text-gray-900">
                           {totalAccounts}
                         </span>
                       </div>
@@ -123,7 +151,7 @@ const Dashboard = () => {
                                 <div className="text-green-500 text-2xl font-bold">
                                   {getIcon(item?.key)}
                                 </div>
-                                <span className="text-xl sm:text-2xl leading-none font-bold text-gray-900">
+                                <span className="text-xl leading-none font-bold text-gray-900">
                                   {item?.value}
                                 </span>
                               </div>
@@ -138,21 +166,59 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white shadow rounded-lg p-6">
-                    <h2 className="text-2xl font-bold text-center">Dự án</h2>
+                  <div className="bg-white shadow rounded-lg p-4">
+                    <h2 className="text-xl font-bold text-center">
+                      Doanh nghiệp
+                    </h2>
 
                     <div className="flex justify-between items-center h-full">
                       <div className="flex items-center justify-center flex-col">
-                        <h3 className="text-base font-normal text-gray-500">
+                        <h3 className="text-sm font-normal text-gray-500">
                           Tổng cộng
                         </h3>
-                        <span className="text-2xl sm:text-3xl leading-none font-bold text-gray-900">
+                        <span className="text-xl leading-none font-bold text-gray-900">
+                          {totalBusiness}
+                        </span>
+                      </div>
+
+                      <div>
+                        {businessSectorList.map((item: any, index) => (
+                          <div key={index}>
+                            <div className="flex flex-col items-center justify-center">
+                              <div className="flex items-center flex-row gap-2 ">
+                                <div className="text-green-500 text-2xl font-bold">
+                                  {getIcon(item?.key)}
+                                </div>
+                                <span className="text-xl leading-none font-bold text-gray-900">
+                                  {item?.value}
+                                </span>
+                              </div>
+
+                              <div className="text-sm font-normal text-gray-500">
+                                <h3>{item?.key}</h3>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white shadow rounded-lg p-4">
+                    <h2 className="text-xl font-bold text-center">Dự án</h2>
+
+                    <div className="flex justify-between items-center h-full">
+                      <div className="flex items-center justify-center flex-col">
+                        <h3 className="text-sm font-normal text-gray-500">
+                          Tổng cộng
+                        </h3>
+                        <span className="text-xl leading-none font-bold text-gray-900">
                           {totalProject}
                         </span>
                       </div>
 
                       <div>
-                        {/* {specializationFieldData.map((item: any, index) => (
+                        {projectTypeListData.map((item: any, index) => (
                           <div key={index}>
                             <div className="flex flex-col items-center justify-center">
                               <div className="flex items-center flex-row gap-2 ">
@@ -164,12 +230,12 @@ const Dashboard = () => {
                                 </span>
                               </div>
 
-                              <div className="text-base font-normal text-gray-500">
+                              <div className="text-sm font-normal text-gray-500">
                                 <h3>{item?.key}</h3>
                               </div>
                             </div>
                           </div>
-                        ))} */}
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -208,7 +274,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mt-4">
+                {/* <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mt-4">
                   <div className="">
                     <h2 className="text-xl leading-none font-bold mb-3 text-gray-900">
                       Dự án theo trạng thái
@@ -239,7 +305,7 @@ const Dashboard = () => {
                       ))}
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">

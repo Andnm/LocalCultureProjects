@@ -37,9 +37,9 @@ export const createNewSupport = createAsyncThunk(
 
 export const getAllSupport = createAsyncThunk(
   "support/getAllSupport",
-  async (dataBody: any, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await http.get<any>(`/support`, dataBody);
+      const response = await http.get<any>(`/support`, getConfigHeader());
 
       return response.data;
     } catch (error) {

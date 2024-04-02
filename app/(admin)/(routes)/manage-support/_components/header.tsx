@@ -19,7 +19,7 @@ interface ManageAccountHeaderProps {
   setFilterOption: any;
 }
 
-const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
+const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
   onSearchChange,
   filterOption,
   setFilterOption,
@@ -34,7 +34,7 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
         <div className="mb-8 flex items-center justify-between gap-8">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Quản lý tài khoản
+              Quản lý hỗ trợ
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
@@ -125,4 +125,4 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
   );
 };
 
-export default ManageAccountHeader;
+export default ManageSupportHeader;

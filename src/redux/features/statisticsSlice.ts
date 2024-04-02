@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { UserType } from "@/src/types/user.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
 import { ErrorType } from "@/src/types/error.type";
 
 export interface StatisticsState {
@@ -128,6 +128,49 @@ export const statisticsSpecializationField = createAsyncThunk(
   }
 );
 
+export const statisticsAccountByBusinessSector = createAsyncThunk(
+  "statistics/statisticsAccountByBusinessSector",
+  async (_, thunkAPI) => {
+    const token = getTokenFromSessionStorage();
+
+    try {
+      const response = await http.get<any>(
+        `/users/admin/statisticsAccountByBusinessSector`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const statisticsProjectByBusinessType = createAsyncThunk(
+  "statistics/statisticsProjectByBusinessType",
+  async (_, thunkAPI) => {
+    const token = getTokenFromSessionStorage();
+
+    try {
+      const response = await http.get<any>(
+        `/projects/admin/statisticsProjectByBusinessType`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+
 export const statisticsSlice = createSlice({
   name: "statistics",
   initialState,
@@ -198,6 +241,42 @@ export const statisticsSlice = createSlice({
       }
     );
     builder.addCase(statisticsSpecializationField.rejected, (state, action) => {
+      state.loadingStatistics = false;
+      state.error = action.payload as string;
+    });
+
+    //statisticsAccountByBusinessSector
+    builder.addCase(statisticsAccountByBusinessSector.pending, (state) => {
+      state.loadingStatistics = true;
+      state.error = "";
+    });
+    builder.addCase(
+      statisticsAccountByBusinessSector.fulfilled,
+      (state, action) => {
+        state.loadingStatistics = false;
+        // state.data = action.payload;
+        state.error = "";
+      }
+    );
+    builder.addCase(statisticsAccountByBusinessSector.rejected, (state, action) => {
+      state.loadingStatistics = false;
+      state.error = action.payload as string;
+    });
+
+    //statisticsProjectByBusinessType
+    builder.addCase(statisticsProjectByBusinessType.pending, (state) => {
+      state.loadingStatistics = true;
+      state.error = "";
+    });
+    builder.addCase(
+      statisticsProjectByBusinessType.fulfilled,
+      (state, action) => {
+        state.loadingStatistics = false;
+        // state.data = action.payload;
+        state.error = "";
+      }
+    );
+    builder.addCase(statisticsProjectByBusinessType.rejected, (state, action) => {
       state.loadingStatistics = false;
       state.error = action.payload as string;
     });

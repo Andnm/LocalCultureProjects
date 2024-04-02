@@ -54,10 +54,10 @@ interface ProjectTableProps {
 }
 
 const TABLE_HEAD = [
-  { name: "Tên người dùng", key: "fullname" },
-  { name: "Số điện thoại", key: "phone_number" },
-  { name: "Vai trò", key: "role_name" },
-  { name: "Trạng thái", key: "status" },
+  { name: "Người gửi", key: "fullname" },
+  { name: "Loại hỗ trợ", key: "support_type" },
+  { name: "Nội dung", key: "support_content" },
+  { name: "Hình ảnh", key: "support_image" },
   { name: "Ngày tạo", key: "createdAt" },
   { name: "", key: "" },
 ];
@@ -71,12 +71,12 @@ const POPOVER_OPTION = [
 
   {
     name: "Xóa tài khoản",
-    icon: <MdOutlinePersonRemove  />,
+    icon: <MdOutlinePersonRemove />,
     onClick: () => {},
   },
 ];
 
-const AccountTable: React.FC<ProjectTableProps> = ({
+const SupportTable: React.FC<ProjectTableProps> = ({
   totalObject,
   dataTable,
   setDataTable,
@@ -85,7 +85,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   onPageChange,
 }) => {
   const dispatch = useAppDispatch();
-
+console.log("dataTable", dataTable)
   //quản lý thông tin hiện ra
   const [selectedProject, setSelectedProject] = React.useState<any | null>(
     null
@@ -139,14 +139,6 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                 <tr>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
-                      <Avatar
-                        src={
-                          user?.avatar_url ||
-                          generateFallbackAvatar(user?.fullname)
-                        }
-                        alt={user?.fullname}
-                        size="sm"
-                      />
                       <div className="flex flex-col">
                         <InfoText>{user?.fullname}</InfoText>
 
@@ -198,4 +190,4 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   );
 };
 
-export default AccountTable;
+export default SupportTable;

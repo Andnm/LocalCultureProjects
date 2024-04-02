@@ -4,10 +4,11 @@ import "@/src/styles/admin/manage-project.scss";
 import { Card } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
 import AdminSpinnerLoading from "@/src/components/loading/AdminSpinnerLoading";
-import ManageAccountHeader from "./_components/header";
-import AccountTable from "./_components/table";
 import { getAllUser } from "@/src/redux/features/userSlice";
 import toast from "react-hot-toast";
+import { getAllSupport } from "@/src/redux/features/supportSlice";
+import ManageSupportHeader from "./_components/header";
+import SupportTable from "./_components/table";
 
 const ManageSupport = () => {
   const dispatch = useAppDispatch();
@@ -88,22 +89,21 @@ const ManageSupport = () => {
   }, [filterOption, originalDataTable]);
 
   React.useEffect(() => {
-    dispatch(getAllUser(currentPage)).then((result) => {
-      if (getAllUser.rejected.match(result)) {
-        console.log(result.payload);
+    dispatch(getAllSupport()).then((result) => {
+      if (getAllSupport.rejected.match(result)) {
         toast.error(`${result.payload}`);
       } else if (getAllUser.fulfilled.match(result)) {
-        
-        setTotalObject(result.payload[0]?.totalUsers);
-        setDataTable(result.payload[1]);
-        setOriginalDataTable(result.payload[1]);
+        setTotalObject(result.payload.length);
+        setDataTable(result.payload);
+        setOriginalDataTable(result.payload);
       }
+      console.log(result.payload.length);
     });
-  }, [currentPage]);
+  }, []);
 
   return (
     <Card className="p-4 manager-project">
-      <ManageAccountHeader
+      <ManageSupportHeader
         onSearchChange={onSearchChange}
         filterOption={filterOption}
         setFilterOption={setFilterOption}
@@ -113,7 +113,7 @@ const ManageSupport = () => {
         <AdminSpinnerLoading />
       ) : (
         <>
-          <AccountTable
+          <SupportTable
             currentPage={currentPage}
             onPageChange={onPageChange}
             totalObject={totalObject}
