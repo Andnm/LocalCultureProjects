@@ -20,6 +20,7 @@ import {
   generateFallbackAvatar,
   getColorByProjectStatus,
   sortData,
+  truncateString,
 } from "@/src/utils/handleFunction";
 import CustomModal from "@/src/components/shared/CustomModal";
 import InfoText from "./InfoText";
@@ -650,7 +651,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 
   return (
     <>
-      <CardBody className="px-0 overflow-x-scroll">
+      <CardBody className="px-0">
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -701,11 +702,11 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                 },
 
                 //Tạm thời ẩn đi
-                // {
-                //   name: "Sửa thông tin",
-                //   icon: <CiEdit />,
-                //   onClick: () => handleClickOpenInfo(business),
-                // },
+                {
+                  name: "Sửa thông tin",
+                  icon: <CiEdit />,
+                  onClick: () => handleClickOpenInfo(business),
+                },
                 {
                   name: "Xóa dự án",
                   icon: <MdOutlinePlaylistRemove />,
@@ -734,12 +735,12 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                           <InfoText>{business?.business?.fullname}</InfoText>
 
                           <InfoText className="opacity-70">
-                            {business?.business?.email}
+                            {truncateString(business?.business?.email, 20)}
                           </InfoText>
                         </div>
                       </div>
                     </td>
-                    <td className={classes}>
+                    <td className={classes} style={{ width: "220px" }}>
                       <InfoText>{business?.name_project}</InfoText>
                     </td>
                     <td className={classes}>

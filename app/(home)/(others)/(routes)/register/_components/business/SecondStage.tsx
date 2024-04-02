@@ -122,12 +122,13 @@ const SecondStage: React.FC<SecondStageProps> = ({
             required={true}
             className="form-control"
             spellCheck="false"
-            value={responsiblePerson.zalo}
-            onChange={(e) => handleInputChange(e, "zalo")}
+            value={responsiblePerson.other_contact}
+            onChange={(e) => handleInputChange(e, "other_contact")}
+            placeholder="Zalo/facebook/..."
           />
           <label>Thông tin liên hệ khác</label>
-          {errorResponsiblePerson.zalo && (
-            <span className="error-message">{errorResponsiblePerson.zalo}</span>
+          {errorResponsiblePerson.other_contact && (
+            <span className="error-message">{errorResponsiblePerson.other_contact}</span>
           )}
         </div>
       </div>

@@ -19,6 +19,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { GrConfigure } from "react-icons/gr";
 
 import { logout } from "@/src/redux/features/authSlice";
+import { BiSupport } from "react-icons/bi";
 
 interface NavLinkProps {
   href: string;
@@ -101,6 +102,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
           href: "/manage-project",
           icon: <GoProjectRoadmap className="w-4 h-4" />,
           label: "Dự án",
+        },
+        {
+          href: "/manage-support",
+          icon: <BiSupport  className="w-4 h-4" />,
+          label: "Hỗ trợ vấn đề",
         },
         {
           href: "/configure",

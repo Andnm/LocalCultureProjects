@@ -185,7 +185,11 @@ export const generateFallbackAvatar = (
   fullname: string | undefined
 ): string => {
   const fallbackColor = "#FF9966";
-  const initials = fullname?.charAt(0).toUpperCase() || "";
+
+  const initials = handleLowerCaseNonAccentVietnamese(
+    fullname?.charAt(0).toUpperCase() || ""
+  );
+  
   const svgString = `
   <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
     <rect width="100%" height="100%" fill="${fallbackColor}" />
@@ -345,9 +349,9 @@ export const extractProjectDates = (inputString: string): any | null => {
     const [, startDate, endDate] = match;
     return {
       project_start_date: startDate,
-      project_expected_end_date: endDate
+      project_expected_end_date: endDate,
     };
   } else {
-    return null; 
+    return null;
   }
 };

@@ -462,7 +462,7 @@ export const AlertDialogConfirmPitching: React.FC<
                         <img
                           src={
                             result.avatar_url ||
-                            generateFallbackAvatar(result.email)
+                            generateFallbackAvatar(result.fullname)
                           }
                           alt={result.fullname}
                           className="w-10 h-10 object-cover rounded-full"
@@ -503,7 +503,7 @@ export const AlertDialogConfirmPitching: React.FC<
                       <img
                         src={
                           member.avatar_url ||
-                          generateFallbackAvatar(member.email)
+                          generateFallbackAvatar(member.fullname)
                         }
                         alt={""}
                         className="w-10 h-10 object-cover rounded-full"

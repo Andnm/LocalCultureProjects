@@ -1,0 +1,20 @@
+.delete-item {
+  cursor: pointer;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 0;
+  border: 1px solid #f5f5f7;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(28, 30, 34, 0.04);
+  font-size: 16px;
+  color: #5f666d;
+}

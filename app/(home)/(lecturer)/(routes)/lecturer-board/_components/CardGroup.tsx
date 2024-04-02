@@ -77,7 +77,7 @@ const CardGroup = ({ group }: CardGroupProps) => {
                   }`}
                   src={
                     filteredMember.user.avatar_url ||
-                    generateFallbackAvatar(filteredMember?.user?.email)
+                    generateFallbackAvatar(filteredMember?.user?.fullname)
                   }
                   style={{
                     right: `${16 + 40 * index}px`,

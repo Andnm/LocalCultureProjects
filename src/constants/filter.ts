@@ -5,7 +5,7 @@ export const FILTER_ACCOUNT_BY_ADMIN = [
     options: [
       { label: "Student", value: "Student" },
       { label: "Business", value: "Business" },
-      { label: "Staff", value: "Staff" },
+      { label: "Other", value: "Other" },
     ],
   },
   {
@@ -48,4 +48,5 @@ export const FILTER_GROUP_BY_ADMIN = [
       { label: "Đang rãnh rỗi", value: "Free" },
     ],
   },
+  
 ]

@@ -38,9 +38,9 @@ const getIcon = (key: string) => {
 };
 
 const Dashboard = () => {
-  const [specializationFieldData, setSpecializationFieldData] = React.useState(
-    []
-  );
+  // const [specializationFieldData, setSpecializationFieldData] = React.useState(
+  //   []
+  // );
   const [projectData, setProjectData] = React.useState([]);
   const [businessFollowProvinceData, setBusinessFollowProvinceData] =
     React.useState([]);
@@ -51,9 +51,9 @@ const Dashboard = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(statisticsSpecializationField()).then((result) =>
-          setSpecializationFieldData(result.payload)
-        );
+        // dispatch(statisticsSpecializationField()).then((result) =>
+        //   setSpecializationFieldData(result.payload)
+        // );
 
         dispatch(statisticsProject()).then((result) =>
           setProjectData(result.payload)
@@ -63,9 +63,10 @@ const Dashboard = () => {
           setBusinessFollowProvinceData(result.payload.slice(0, 6));
         });
 
-        dispatch(statisticsAccount()).then((result) =>
-          setAccountData(result.payload)
-        );
+        dispatch(statisticsAccount()).then((result) => {
+          setAccountData(result.payload);
+          console.log("acc", result.payload);
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -79,7 +80,7 @@ const Dashboard = () => {
     0
   );
 
-  const totalProject = specializationFieldData.reduce(
+  const totalProject = projectData.reduce(
     (total: any, item: any) => total + item.value,
     0
   );
@@ -99,7 +100,6 @@ const Dashboard = () => {
             <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
               <div className=" rounded-lg xl:col-span-2">
                 <div className="grid grid-cols-2 gap-4 mb-4">
-
                   <div className="bg-white shadow rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-center">
                       Tài khoản
@@ -152,7 +152,7 @@ const Dashboard = () => {
                       </div>
 
                       <div>
-                        {specializationFieldData.map((item: any, index) => (
+                        {/* {specializationFieldData.map((item: any, index) => (
                           <div key={index}>
                             <div className="flex flex-col items-center justify-center">
                               <div className="flex items-center flex-row gap-2 ">
@@ -169,7 +169,7 @@ const Dashboard = () => {
                               </div>
                             </div>
                           </div>
-                        ))}
+                        ))} */}
                       </div>
                     </div>
                   </div>
@@ -561,8 +561,6 @@ const Dashboard = () => {
                 </div>
               </div>
             </div> */}
-
-
           </div>
         </main>
       </div>

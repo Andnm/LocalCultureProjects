@@ -448,7 +448,7 @@ const MemberGroup = ({ params }: { params: { groupId: number } }) => {
                                 className="h-12 w-12 rounded-full group-hover:opacity-75 object-cover object-center"
                                 src={
                                   member?.user?.avatar_url ||
-                                  generateFallbackAvatar(member?.user?.email)
+                                  generateFallbackAvatar(member?.user?.fullname)
                                 }
                                 alt=""
                               />

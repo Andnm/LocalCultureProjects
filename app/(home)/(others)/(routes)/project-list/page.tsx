@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
 import { getAllProjectByEveryOne } from "@/src/redux/features/projectSlice";
-import { formatDate } from "@/src/utils/handleFunction";
+import { formatDate, generateFallbackAvatar } from "@/src/utils/handleFunction";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
@@ -52,22 +52,24 @@ const ProjectList = () => {
   React.useEffect(() => {
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        // getProjects
-        // const filteredProjects = result.payload[1].filter((project: any) => {
-        //   const expirationDate = new Date(
-        //     project.project_registration_expired_date
-        //   );
-        //   const currentDate = new Date();
-        //   return expirationDate > currentDate;
-        // });
+        // console.log("result", result.payload);
+        // // getProjects
+        // const newListProjects = result.payload[1]?.sort(
+        //   (a: any, b: any) => {
+        //     const dateA = new Date(a.createdAt);
+        //     const dateB = new Date(b.createdAt);
+        //     return dateA.getTime() - dateB.getTime();
+        //   }
+        // );
+        // setDataProjectList(newListProjects);
+
 
         socketInstance.on("getProjects", (data: any) => {
-          const newListProjects = data?.projects
-            ?.sort((a: any, b: any) => {
-              const dateA = new Date(a.createdAt);
-              const dateB = new Date(b.createdAt);
-              return dateA.getTime() - dateB.getTime();
-            });
+          const newListProjects = data?.projects?.sort((a: any, b: any) => {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            return dateA.getTime() - dateB.getTime();
+          });
           setDataProjectList(newListProjects);
         });
       } else {
@@ -145,7 +147,11 @@ const ProjectList = () => {
           />
         </div>
 
-        <Button className="gap-2 border" onClick={openDrawerAction}>
+        <Button
+          className="gap-2 border-2"
+          onClick={openDrawerAction}
+          style={{ borderRadius: 15 }}
+        >
           <MdFilterList className="w-5 h-5" />
           Bộ lọc
         </Button>
@@ -174,7 +180,7 @@ const ProjectList = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap flex-col ml-10">
+          <div className="flex flex-wrap flex-col ml-10 pt-3">
             {loadingProjectList ? (
               <>
                 <div className="w-80 h-32 relative shrink-0 mb-4">
@@ -220,12 +226,17 @@ const ProjectList = () => {
                   href={`/project-list/detail/${project.id}`}
                   className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2"
                   key={index}
-                  style={{ borderRadius: "10px" }}
+                  style={{ borderRadius: "10px", width: 500}}
+                  target="_blank"
                 >
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
                     <img
-                      src={project?.business?.avatar_url}
-                      alt={project?.business?.fullname}
+                      src={
+                        project?.business?.avatar_url
+                          ? project?.business?.avatar_url
+                          : generateFallbackAvatar(project?.business?.fullname)
+                      }
+                      alt={project?.business?.email}
                       className="h-full w-full object-cover object-center"
                     />
                   </div>
@@ -236,16 +247,15 @@ const ProjectList = () => {
                         <h3 className="overflow-hidden">
                           {project?.name_project}
                         </h3>
-                        <p className="text-sm text-gray-400 italic">
-                          {project?.specialized_field}
+                        <p className="overflow-hidden text-sm text-gray-400 ">
+                          Doanh nghiệp: {project?.business?.fullname}
                         </p>
                       </div>
                       <p className="mt-1 text-sm text-gray-500">{""}</p>
                     </div>
                     <div className="flex flex-1 items-end justify-between text-sm">
                       <p className="text-gray-500">
-                        Ngày hết hạn đăng kí:{" "}
-                        {formatDate(project?.project_registration_expired_date)}
+                        Thời gian diễn ra: {project?.project_implement_time}
                       </p>
                     </div>
                   </div>

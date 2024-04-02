@@ -391,7 +391,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
           {fileRejections.length > 0 && (
             <div className="form-group mb-0 mt-6">
               <div className="photo-uploaded">
-                <p className="font-semibold text-sm text-center">
+                <p className="font-semibold text-sm text-center text-red-500">
                   File bị từ chối
                 </p>
 

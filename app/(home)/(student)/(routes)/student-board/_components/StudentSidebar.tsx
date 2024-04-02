@@ -38,16 +38,16 @@ const StudentSidebar: React.FC<SidebarProps> = ({
       icon: <MdOutlineAnalytics className="w-5 h-5" />,
       href: "/student-board",
     },
-    {
-      label: "Lịch sử hoạt động",
-      icon: <LuHistory className="w-5 h-5" />,
-      href: "/student-board/#",
-    },
-    {
-      label: "Dự án mẫu",
-      icon: <GoProjectRoadmap className="w-5 h-5" />,
-      href: "/student-board/#",
-    },
+    // {
+    //   label: "Lịch sử hoạt động",
+    //   icon: <LuHistory className="w-5 h-5" />,
+    //   href: "/student-board/#",
+    // },
+    // {
+    //   label: "Dự án mẫu",
+    //   icon: <GoProjectRoadmap className="w-5 h-5" />,
+    //   href: "/student-board/#",
+    // },
   ];
 
   const routesInProject = [

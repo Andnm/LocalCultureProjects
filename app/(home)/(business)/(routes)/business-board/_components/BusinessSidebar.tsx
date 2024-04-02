@@ -48,16 +48,16 @@ const BusinessSidebar: React.FC<SidebarProps> = ({
       icon: <MdOutlineAnalytics className="w-5 h-5" />,
       href: "/business-board",
     },
-    {
-      label: "Lịch sử hoạt động",
-      icon: <LuHistory className="w-5 h-5" />,
-      href: "/business-board/#",
-    },
-    {
-      label: "Dự án mẫu",
-      icon: <GoProjectRoadmap className="w-5 h-5" />,
-      href: "/business-board/#",
-    },
+    // {
+    //   label: "Lịch sử hoạt động",
+    //   icon: <LuHistory className="w-5 h-5" />,
+    //   href: "/business-board/#",
+    // },
+    // {
+    //   label: "Dự án mẫu",
+    //   icon: <GoProjectRoadmap className="w-5 h-5" />,
+    //   href: "/business-board/#",
+    // },
   ];
 
   const routesInProject = [

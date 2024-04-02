@@ -48,7 +48,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     other_business_sector: "",
     business_description: "",
     address: "",
-    // address_detail: "",
+    address_detail: "",
     link_web: "",
   });
 
@@ -58,7 +58,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     other_business_sector: "",
     business_description: "",
     address: "",
-    // address_detail: "",
+    address_detail: "",
     link_web: "",
   });
 
@@ -67,8 +67,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     position: "",
     email: "",
     phone_number: "",
-    zalo: "",
-    facebook: "",
+    other_contact: "",
     businessEmail: "",
   });
 
@@ -77,8 +76,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     position: "",
     email: "",
     phone_number: "",
-    zalo: "",
-    facebook: "",
+    other_contact: "",
     businessEmail: "",
   });
 
@@ -252,7 +250,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       > = {};
 
       Object.keys(responsiblePerson).forEach((key) => {
-        if (key !== "zalo" && key !== "facebook" && key !== "businessEmail") {
+        if (key !== "other_contact" && key !== "businessEmail") {
           if (!responsiblePerson[key as keyof ResponsibleType]) {
             updatedErrorResponsiblePerson[
               key as keyof typeof errorResponsiblePerson
@@ -336,7 +334,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     setOpenModalConfirmAction(false);
     setIsLoading(true);
 
-    toast("Tiến trình xử lý sẽ hơi lâu, vui lòng chờ!", {
+    toast("Tiến trình xử lý sẽ hơi lâu, vui lòng chờ trong giây lát!", {
       style: {
         borderRadius: "10px",
         background: "#FFAF45",
@@ -345,7 +343,6 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       },
     });
 
-    // XỬ LÝ UPDATE PROFILE
     try {
       // XỬ LÝ UPDATE PROFILE
       const dataUpdateProfile = {
@@ -379,6 +376,8 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
 
       console.log("resCheckResEmailExist", resCheckResEmailExist);
 
+      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
+
       if (
         checkExistResponsiblePersonByEmail.fulfilled.match(
           resCheckResEmailExist
@@ -389,7 +388,6 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
             createResponsiblePerson({
               ...responsiblePerson,
               businessEmail: resUpdate.payload.email,
-              facebook: "https://www.facebook.com",
             })
           );
 
@@ -399,21 +397,22 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
             createResponsiblePerson.rejected.match(resCreateResponsiblePerson)
           ) {
             toast.error(`Có lỗi xảy ra ở bước 2!`);
-            toast.error(`${resUpdate.payload}`);
+            toast.error(`${resCreateResponsiblePerson.payload}`);
             return;
           }
+        } else {
+          toast.error(`Người phụ trách này đã tồn tại ở doanh nghiệp khác!`);
+          return;
         }
       } else {
         toast.error(`Có lỗi xảy ra ở kiểm tra người phụ trách tồn tại!`);
-        toast.error(`${resUpdate.payload}`);
+        toast.error(`${resCheckResEmailExist.payload}`);
         return;
       }
 
-      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
-
+      // XỬ LÝ TẠO PROJECT
       let juridicalFilesURLs: any = [];
 
-      // XỬ LÝ TẠO PROJECT
       if (juridicalFilesOrigin.length > 0) {
         const uploadPromises: any[] = [];
         const uploadedFiles: any[] = [];
@@ -444,6 +443,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         email_responsible_person: responsiblePerson.email,
         project_start_date: projectTimeline.project_start_date,
         project_expected_end_date: projectTimeline.project_expected_end_date,
+        businessName: businessData.fullname,
       };
 
       const resCreateProject = await dispatch(
@@ -454,14 +454,14 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
 
       if (createNewProject.rejected.match(resCreateProject)) {
         toast.error(`Có lỗi xảy ra ở bước 3!`);
-        toast.error(`${resUpdate.payload}`);
+        toast.error(`${resCreateProject.payload}`);
         return;
       } else {
         toast.success(
           `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
         );
         await dispatch(logout());
-        setLoginInfo("")
+        setLoginInfo("");
         router.push("/");
       }
     } catch (error) {

@@ -256,7 +256,7 @@ export const AlertDialogCreateGroupAndInviteMember: React.FC<
                     <img
                       src={
                         member.avatar_url ||
-                        generateFallbackAvatar(member.email)
+                        generateFallbackAvatar(member.fullname)
                       }
                       alt={""}
                       className="w-10 h-10 object-cover rounded-full"

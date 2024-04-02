@@ -105,6 +105,36 @@
     font-style: italic;
   }
 
+  .select_option {
+    position: relative;
+    width: 200px;
+
+    .css-13cymwt-control {
+      border-color: #009688;
+    }
+
+    .css-1nmdiq5-menu {
+      position: absolute;
+      z-index: 999;
+    }
+
+    .css-1dimb5e-singleValue {
+      font-size: 12px;
+    }
+
+    .css-1jqq78o-placeholder {
+      font-size: 12px;
+    }
+
+    .css-olqui2-singleValue {
+      font-size: 12px;
+    }
+
+    .css-1nmdiq5-menu {
+      font-size: 12px;
+    }
+  }
+
   .stage-1 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

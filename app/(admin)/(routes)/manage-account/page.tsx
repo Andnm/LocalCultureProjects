@@ -93,6 +93,7 @@ const ManageAccount = () => {
         console.log(result.payload);
         toast.error(`${result.payload}`);
       } else if (getAllUser.fulfilled.match(result)) {
+        
         setTotalObject(result.payload[0]?.totalUsers);
         setDataTable(result.payload[1]);
         setOriginalDataTable(result.payload[1]);

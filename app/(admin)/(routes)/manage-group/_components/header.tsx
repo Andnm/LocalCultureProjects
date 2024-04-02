@@ -7,7 +7,7 @@ import { MdFilterList } from "react-icons/md";
 import { MdOutlineClear } from "react-icons/md";
 import { GrPowerReset } from "react-icons/gr";
 import DrawerFilterAdmin from "@/components/drawer/DrawerFilterAdmin";
-import { FILTER_ACCOUNT_BY_ADMIN } from "@/src/constants/filter";
+import { FILTER_ACCOUNT_BY_ADMIN, FILTER_GROUP_BY_ADMIN } from "@/src/constants/filter";
 import { CardHeader, Typography } from "@material-tailwind/react";
 import { cn } from "@/lib/utils";
 
@@ -97,8 +97,7 @@ const ManageGroupHeader: React.FC<ManageGroupHeaderProps> = ({
               style={{ borderRadius: "7px" }}
               onClick={() =>
                 setFilterOption({
-                  role_name: [],
-                  status: [],
+                  group_status: [],
                   searchValue: filterOption?.searchValue,
                 })
               }
@@ -112,7 +111,7 @@ const ManageGroupHeader: React.FC<ManageGroupHeaderProps> = ({
 
       {openDrawer && (
         <DrawerFilterAdmin
-          listFilter={FILTER_ACCOUNT_BY_ADMIN}
+          listFilter={FILTER_GROUP_BY_ADMIN}
           openDrawer={openDrawer}
           closeDrawerAction={closeDrawerAction}
           filterOption={filterOption}

@@ -1,11 +1,31 @@
 export interface ProjectType {
   id?: number;
+  responsible_person?:
+    | {
+        position?: string;
+        address?: string;
+        email?: string;
+        avatar_url?: string;
+        fullname?: string;
+        link_web?: string;
+        phone_number?: string;
+        address_detail?: string;
+        business_sector?: string;
+        business_description?: string;
+        other_contact?: string;
+      }
+    | undefined;
   business?:
     | {
         address?: string;
         email?: string;
         avatar_url?: string;
         fullname?: string;
+        link_web?: string;
+        phone_number?: string;
+        address_detail?: string;
+        business_sector?: string;
+        business_description?: string;
       }
     | undefined;
   fullname: string;
@@ -27,4 +47,7 @@ export interface ProjectType {
   business_type?: string;
   business_model?: string;
   createdAt?: string;
+  project_implement_time?: string;
+  target_object?: string;
+  expected_budget?: number;
 }

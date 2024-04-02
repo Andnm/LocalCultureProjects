@@ -3,7 +3,6 @@ export interface ResponsibleType {
   phone_number: string;
   position: string;
   email: string;
-  zalo?: string;
-  facebook?: string;
+  other_contact?: string;
   businessEmail: string;
 }

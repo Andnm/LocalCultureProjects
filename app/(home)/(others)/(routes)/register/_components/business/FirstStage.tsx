@@ -1,3 +1,4 @@
+import SelectedProvince from "@/src/components/shared/SelectedProvince";
 import React, { useState } from "react";
 
 interface FirstStageProps {
@@ -175,31 +176,22 @@ const FirstStage: React.FC<FirstStageProps> = ({
         </div>
 
         {/* address */}
-        <div className="form-group-material mt-4">
-          <input
-            type="text"
-            required={true}
-            className="form-control"
-            value={businessData.address}
-            onChange={(e) => handleInputChange(e, "address")}
-          />
-          <label>
-            Địa chỉ <span className="text-red-700">*</span>
-          </label>
-          {errorBusinessData.address && (
-            <span className="error-message">{errorBusinessData.address}</span>
-          )}
-        </div>
+        <SelectedProvince
+          businessData={businessData}
+          setBusinessData={setBusinessData}
+          errorBusinessData={errorBusinessData}
+          setErrorBusinessData={setErrorBusinessData}
+        />
 
         {/* address detail */}
-        {/* TẠM THỜI ẨN ĐI */}
-        {/* <div className="form-group-material mt-4">
+        <div className="form-group-material mt-4">
           <input
             type="text"
             required={true}
             className="form-control"
             value={businessData.address_detail}
             onChange={(e) => handleInputChange(e, "address_detail")}
+            placeholder="Số nhà, đường (Không bao gồm những thông tin đã chọn ở trên)"
           />
           <label>
             Địa chỉ cụ thể
@@ -210,7 +202,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
               {errorBusinessData.address_detail}
             </span>
           )}
-        </div> */}
+        </div>
 
         {/* link web */}
         <div className="form-group-material mt-4">

@@ -127,7 +127,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
 
   return (
     <>
-      <CardBody className="px-0 overflow-x-scroll">
+      <CardBody className="px-0 ">
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr>

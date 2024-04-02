@@ -3,20 +3,16 @@ import React from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { Card } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
-import {
-  getAllProjectByAdmin,
-  getAllProjectByEveryOne,
-} from "@/src/redux/features/projectSlice";
 import AdminSpinnerLoading from "@/src/components/loading/AdminSpinnerLoading";
-import ManageGroupHeader from "./_components/header";
-import GroupTable from "./_components/table";
-import { getAllGroupByAdmin, getAllMemberByGroupId } from "@/src/redux/features/groupSlice";
+import ManageAccountHeader from "./_components/header";
+import AccountTable from "./_components/table";
+import { getAllUser } from "@/src/redux/features/userSlice";
 import toast from "react-hot-toast";
 
-const ManageGroup = () => {
+const ManageSupport = () => {
   const dispatch = useAppDispatch();
-  const [originalDataTable, setOriginalDataTable] = React.useState<any[]>([]);
   const [dataTable, setDataTable] = React.useState<any[]>([]);
+  const [originalDataTable, setOriginalDataTable] = React.useState<any[]>([]);
   const [totalObject, setTotalObject] = React.useState(1);
   const { loadingUser, error } = useAppSelector((state) => state.user);
 
@@ -28,7 +24,8 @@ const ManageGroup = () => {
 
   // filter
   const [filterOption, setFilterOption] = React.useState<any>({
-    group_status: [],
+    role_name: [],
+    status: [],
     searchValue: "",
   });
 
@@ -60,16 +57,22 @@ const ManageGroup = () => {
   React.useEffect(() => {
     const filteredData = originalDataTable.filter((item) => {
       if (
-        filterOption.group_status.length > 0 &&
-        !filterOption.group_status.includes(item.group_status)
+        filterOption.role_name.length > 0 &&
+        !filterOption.role_name.includes(item.role?.role_name)
+      ) {
+        return false;
+      }
+      if (
+        filterOption.status.length > 0 &&
+        !filterOption.status.includes(item.status ? "Active" : "Inactive")
       ) {
         return false;
       }
       if (
         filterOption.searchValue &&
         !(
-          item.group_name.toLowerCase().includes(filterOption.searchValue) ||
-          item.group_status
+          item.email.toLowerCase().includes(filterOption.searchValue) ||
+          item.role?.role_name
             .toLowerCase()
             .includes(filterOption.searchValue) ||
           (item.status ? "active" : "inactive").includes(
@@ -84,44 +87,23 @@ const ManageGroup = () => {
     setDataTable(filteredData);
   }, [filterOption, originalDataTable]);
 
-  console.log("originalDataTable", originalDataTable)
-
-  //load data
   React.useEffect(() => {
-    dispatch(getAllGroupByAdmin()).then((result) => {
-      if (getAllGroupByAdmin.fulfilled.match(result)) {
-        setTotalObject(result?.payload?.length);
-        setOriginalDataTable(result?.payload);
-        
-        result?.payload.forEach((object: any) => {
-          dispatch(getAllMemberByGroupId(object.id)).then((memberResult) => {
-            if (getAllMemberByGroupId.fulfilled.match(memberResult)) {
-              setOriginalDataTable((prevOriginalDataTable) => {
-                const updatedDataTable = prevOriginalDataTable.map((item) => {
-                  if (item.id === object.id) {
-                    return {
-                      ...item,
-                      members: memberResult.payload,
-                    };
-                  }
-                  return item;
-                });
-                return updatedDataTable;
-              });
-            } else {
-              toast.error(`${memberResult.payload}`);
-            }
-          });
-        });
-      } else {
+    dispatch(getAllUser(currentPage)).then((result) => {
+      if (getAllUser.rejected.match(result)) {
+        console.log(result.payload);
         toast.error(`${result.payload}`);
+      } else if (getAllUser.fulfilled.match(result)) {
+        
+        setTotalObject(result.payload[0]?.totalUsers);
+        setDataTable(result.payload[1]);
+        setOriginalDataTable(result.payload[1]);
       }
     });
   }, [currentPage]);
-  
+
   return (
     <Card className="p-4 manager-project">
-      <ManageGroupHeader
+      <ManageAccountHeader
         onSearchChange={onSearchChange}
         filterOption={filterOption}
         setFilterOption={setFilterOption}
@@ -131,13 +113,13 @@ const ManageGroup = () => {
         <AdminSpinnerLoading />
       ) : (
         <>
-          <GroupTable
+          <AccountTable
             currentPage={currentPage}
             onPageChange={onPageChange}
             totalObject={totalObject}
             dataTable={dataTable}
             setDataTable={setDataTable}
-            loadingProject={loadingUser}
+            loadingUser={loadingUser}
           />
         </>
       )}
@@ -145,4 +127,4 @@ const ManageGroup = () => {
   );
 };
 
-export default ManageGroup;
+export default ManageSupport;
