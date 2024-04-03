@@ -81,9 +81,19 @@ const Register: React.FC<RegisterProps> = ({
       } else if (register.fulfilled.match(result)) {
         setLoginInfo(formData);
 
-        dispatch(login(formData)).then((result: any) => {
-          router.push("/register");
-          actionClose();
+        dispatch(login(formData)).then((resLogin: any) => {
+          if (login.fulfilled.match(resLogin)) {
+            if (resLogin.payload.role_name === "Lecturer") {
+              router.push("/lecturer-board");
+            } else {
+              router.push("/register");
+              actionClose();
+            }
+          } else {
+            toast.error(
+              "Có lỗi xảy ra lúc đăng nhập ngay sau khi đăng kí. Vui lòng thử lại sau!"
+            );
+          }
         });
       }
     });

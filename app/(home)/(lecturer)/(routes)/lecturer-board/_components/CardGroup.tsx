@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { getAllMemberByGroupId } from "@/src/redux/features/groupSlice";
 import { useAppDispatch } from "@/src/redux/store";
@@ -22,13 +22,14 @@ interface CardGroupProps {
 
 const CardGroup = ({ group }: CardGroupProps) => {
   const [memberInGroup, setMemberInGroup] = React.useState([]);
-  const { selectedProjectContext, setSelectedProjectContext }: any = useAuthContext();
+  const { selectedProjectContext, setSelectedProjectContext }: any =
+    useAuthContext();
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const handleNavigateIntoGroupDetail = (groupId: number, group: any) => {
-    setSelectedProjectContext(group)
+    setSelectedProjectContext(group);
     router.push(`/group/${groupId}/info`);
   };
 
@@ -49,8 +50,8 @@ const CardGroup = ({ group }: CardGroupProps) => {
       className="cursor-pointer hover:scale-102 transition-transform duration-300 transform h-full border-2 border-gray-200 border-opacity-60 rounded-2xl overflow-hidden"
       onClick={() => handleNavigateIntoGroupDetail(group?.group?.id, group)}
     >
-      <div className="h-32 w-full bg-[#1a679e] relative">
-        <div className="flex flex-col pt-5 pl-5">
+      <div className="w-full bg-[#1a679e] relative" style={{ height: "185px" }}>
+        <div className="flex flex-col p-5">
           <p className="text-white text-lg ">Tên dự án: </p>
           <p className="text-white text-lg italic pl-2">
             {group?.project?.name_project}
@@ -58,7 +59,7 @@ const CardGroup = ({ group }: CardGroupProps) => {
           <div
             className={`${getColorByProjectStatus(
               group?.register_pitching_status
-            )} px-3 py-1 rounded-xl text-sm text-center`}
+            )} px-3 py-1 rounded-xl text-sm text-center mt-3`}
             style={{ width: "100px" }}
           >
             {changeStatusPitchingFromEnToVn(group?.register_pitching_status)}

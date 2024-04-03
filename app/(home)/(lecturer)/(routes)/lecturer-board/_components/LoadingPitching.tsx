@@ -23,7 +23,7 @@ const LoadingPitching: React.FC<LoadingProps> = ({
 
       <main className="mt-3 grid grid-cols-4 gap-2">
         <div className="h-auto border rounded-2xl">
-          <Skeleton className="h-32 relative rounded-t-2xl">
+          <Skeleton className="h-44 relative rounded-t-2xl">
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[16px] z-40" />
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[56px] z-30" />
           </Skeleton>
@@ -38,7 +38,7 @@ const LoadingPitching: React.FC<LoadingProps> = ({
         </div>
 
         <div className="h-auto border rounded-2xl">
-          <Skeleton className="h-32 relative rounded-t-2xl">
+          <Skeleton className="h-44 relative rounded-t-2xl">
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[16px] z-40" />
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[56px] z-30" />
           </Skeleton>
@@ -53,7 +53,7 @@ const LoadingPitching: React.FC<LoadingProps> = ({
         </div>
 
         <div className="h-auto border rounded-2xl">
-          <Skeleton className="h-32 relative rounded-t-2xl">
+          <Skeleton className="h-44 relative rounded-t-2xl">
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[16px] z-40" />
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[56px] z-30" />
           </Skeleton>
@@ -68,7 +68,7 @@ const LoadingPitching: React.FC<LoadingProps> = ({
         </div>
 
         <div className="h-auto border rounded-2xl">
-          <Skeleton className="h-32 relative rounded-t-2xl">
+          <Skeleton className="h-44 relative rounded-t-2xl">
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[16px] z-40" />
             <Skeleton className="h-14 w-14 object-cover rounded-full border-2 absolute -bottom-6 right-[56px] z-30" />
           </Skeleton>

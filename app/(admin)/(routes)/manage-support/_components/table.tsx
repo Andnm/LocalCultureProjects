@@ -159,7 +159,7 @@ const SupportTable: React.FC<SupportTableProps> = ({
                   <td className={classes}>
                     {user?.support_image ? (
                       <img
-                        className="w-24"
+                        className="w-24 h-20 object-cover"
                         src={user?.support_image}
                         alt="img"
                       />

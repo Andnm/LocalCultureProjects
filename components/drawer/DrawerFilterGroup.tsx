@@ -110,9 +110,10 @@ const DrawerFilterGroup = ({
           variant="ghost"
           onClick={() =>
             setFilterOption({
-              role_name: [],
-              status: [],
-              searchValue: filterOption?.searchValue,
+              subject_code: [],
+              register_pitching_status: [],
+              relationship_status: [],
+              searchValue: "",
             })
           }
         >

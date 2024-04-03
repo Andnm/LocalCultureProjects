@@ -37,7 +37,23 @@ export const FILTER_GROUP_BY_LECTURER = [
       { label: "Đang chờ xét duyệt", value: "Pending" },
     ],
   },
-]
+  {
+    label: "Môn học",
+    value: "subject_code",
+    options: [
+      { value: "MKT304", label: "MKT304" },
+      { value: "CCO201", label: "CCO201" },
+      { value: "MPL201", label: "MPL201" },
+      { value: "BRA301", label: "BRA301" },
+      { value: "MCO201m", label: "MCO201m" },
+      { value: "MEP201", label: "MEP201" },
+      { value: "GRA497", label: "GRA497" },
+      { value: "CSP201m", label: "CSP201m" },
+      { value: "MCO206m", label: "MCO206m" },
+      { value: "PRE202", label: "PRE202" },
+    ],
+  },
+];
 
 export const FILTER_GROUP_BY_ADMIN = [
   {
@@ -48,5 +64,4 @@ export const FILTER_GROUP_BY_ADMIN = [
       { label: "Đang rãnh rỗi", value: "Free" },
     ],
   },
-  
-]
+];

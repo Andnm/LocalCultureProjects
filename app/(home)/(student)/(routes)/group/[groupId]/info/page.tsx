@@ -28,6 +28,7 @@ const InfoGroup = ({ params }: { params: { groupId: number } }) => {
   const { selectedProjectContext, setSelectedProjectContext }: any =
     useAuthContext();
   const projectId = selectedProjectContext?.project?.id;
+  console.log("selectedProjectContext",selectedProjectContext)
   const router = useRouter();
   const [selectedMenu, setSelectedMenu] = React.useState("Thành viên nhóm");
 

@@ -59,6 +59,7 @@ const LecturerBoard = () => {
 
   // filter
   const [filterOption, setFilterOption] = React.useState<any>({
+    subject_code: [],
     register_pitching_status: [],
     relationship_status: [],
     searchValue: "",
@@ -78,9 +79,10 @@ const LecturerBoard = () => {
     } else {
       const filteredData = mergeDataOrigin.filter(
         (item: any) =>
-          item?.project?.name_project?.toLowerCase().includes(searchValue) ||
+          item?.group?.group_name?.toLowerCase().includes(searchValue) ||
           item?.register_pitching_status?.toLowerCase().includes(searchValue) ||
-          item?.relationship_status?.toLowerCase().includes(searchValue)
+          item?.relationship_status?.toLowerCase().includes(searchValue) ||
+          item?.subject_code?.toLowerCase().includes(searchValue)
       );
       setMergeData(filteredData);
     }
@@ -89,6 +91,13 @@ const LecturerBoard = () => {
   // hàm filter
   React.useEffect(() => {
     const filteredData = mergeDataOrigin.filter((item) => {
+      console.log("item", item);
+      if (
+        filterOption.subject_code.length > 0 &&
+        !filterOption.subject_code.includes(item.subject_code)
+      ) {
+        return false;
+      }
       if (
         filterOption.register_pitching_status.length > 0 &&
         !filterOption.register_pitching_status.includes(
@@ -106,7 +115,10 @@ const LecturerBoard = () => {
       if (
         filterOption.searchValue &&
         !(
-          item?.project?.name_project
+          item?.subject_code
+            ?.toLowerCase()
+            .includes(filterOption.searchValue) ||
+          item?.group?.group_name
             ?.toLowerCase()
             .includes(filterOption.searchValue) ||
           item?.register_pitching_status

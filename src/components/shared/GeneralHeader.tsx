@@ -180,17 +180,17 @@ const GeneralHeader = () => {
               </>
             )}
 
-            {(userData?.role_name !== "Student" ||
-              userData?.role_name !== "Lecturer") && (
-              <button
-                className="hidden lg:inline-block btn-login"
-                onClick={() => {
-                  setOpenModalCreateProject(true);
-                }}
-              >
-                <span className="text-black">Đăng dự án ngay</span>
-              </button>
-            )}
+            {userData?.role_name !== "Student" &&
+              userData?.role_name !== "Lecturer" && (
+                <button
+                  className="hidden lg:inline-block btn-login"
+                  onClick={() => {
+                    setOpenModalCreateProject(true);
+                  }}
+                >
+                  <span className="text-black">Đăng dự án ngay</span>
+                </button>
+              )}
 
             {openModalCreateProject && (
               <ModalCreateProject

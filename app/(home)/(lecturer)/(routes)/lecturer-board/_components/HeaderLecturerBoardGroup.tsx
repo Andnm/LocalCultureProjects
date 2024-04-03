@@ -48,6 +48,7 @@ const HeaderLecturerBoardGroup: React.FC<HeaderLecturerBoardGroupProps> = ({
             style={{ borderRadius: "7px" }}
             onClick={() =>
               setFilterOption({
+                subject_code: [],
                 register_pitching_status: [],
                 relationship_status: [],
                 searchValue: "",

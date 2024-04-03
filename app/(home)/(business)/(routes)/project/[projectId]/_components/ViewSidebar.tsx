@@ -60,7 +60,12 @@ const ViewSidebar = ({ dataProject }: BoardTitleFormProps) => {
 
   const routesInProject =
     isStudent || isLecturer
-      ? initialRoutesInProject.filter((route) => route.label !== "Nhóm đăng kí Pitching")
+      ? initialRoutesInProject.filter((route) => {
+          if (isLecturer && route.label === "Thông tin dự án") {
+            return false; 
+          }
+          return route.label !== "Nhóm đăng kí Pitching";
+        })
       : initialRoutesInProject;
 
   const handleNavigate = (href: string) => {

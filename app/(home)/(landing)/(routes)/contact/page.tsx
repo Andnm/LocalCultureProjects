@@ -18,6 +18,8 @@ import toast from "react-hot-toast";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import { createNewNotification } from "@/src/redux/features/notificationSlice";
+import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 
 const supportTypes = [
   "Về kỹ thuật",
@@ -122,8 +124,8 @@ const ContactUs = () => {
   const handleCallApiSendSupport = async () => {
     // Xử lý UP ẢNH LÊN FIREBASE TRƯỚC
     let supportImageURLs: any = [];
+    let supportImageURL = "";
 
-    // XỬ LÝ TẠO PROJECT
     if (supportImageOrigin.length > 0) {
       const uploadPromises: any[] = [];
       const uploadedFiles: any[] = [];
@@ -140,12 +142,14 @@ const ContactUs = () => {
       await Promise.all(uploadPromises);
 
       supportImageURLs = await Promise.all(supportImageOriginDownload);
+      if (supportImageURLs.length > 0) {
+        supportImageURL = supportImageURLs[0];
+      }
     }
 
     const dataBody = {
       ...formData,
-      support_image:
-        "https://hcmuni.fpt.edu.vn/Data/Sites/1/media/2020-kim-vi/seo/campus/1-truong-dai-hoc-fpt-tphcm/truong-dai-hoc-fpt-tp-hcm-(1).jpg",
+      support_image: supportImageURL,
     };
 
     const resCreate = await dispatch(createNewSupport(dataBody));
@@ -153,7 +157,22 @@ const ContactUs = () => {
     if (createNewSupport.fulfilled.match(resCreate)) {
       toast.success("Gửi mail thành công !");
 
+      // Gửi noti khi thành công
+      const dataBodyNoti = {
+        notification_type: NOTIFICATION_TYPE.SEND_SUPPORT_TO_ADMIN,
+        information: "Có một yêu cầu hỗ trợ vừa mới gửi tới!",
+        sender_email: formData.email,
+        receiver_email: "admin@gmail.com",
+      };
+
+      dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
+        console.log(resNoti);
+      });
+
       setOpenModalConfirmAction(false);
+
+      setSupportImageOrigin([]);
+      setSupportImage([]);
 
       setFormData({
         fullname: "",
