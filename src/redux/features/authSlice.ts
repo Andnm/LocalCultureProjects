@@ -38,28 +38,48 @@ interface SignInResponse {
   status?: boolean;
 }
 
-export const login = createAsyncThunk<
-  SignInResponse,
-  { email: string; password: string }
->("auth/signIn", async (data, thunkAPI) => {
-  try {
-    const response = await http.post<SignInResponse>("/auth/signin", {
-      email: data.email,
-      password: data.password,
-    });
+export const login = createAsyncThunk(
+  "auth/signIn",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.post<SignInResponse>("/auth/signin", {
+        email: data.email,
+        password: data.password,
+      });
 
-    saveTokenToSessionStorage(response.data.accessToken);
+      const configHeader = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${response.data.accessToken}`,
+        },
+      };
 
-    const user = decodeTokenToUser(response.data.accessToken);
-    saveUserToSessionStorage(user);
+      const resGetProfile = await http.get<any>(
+        `/users/${data.email}`,
+        configHeader
+      );
 
-    return user;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      (error as ErrorType)?.response?.data?.message
-    );
+      console.log("resGetProfile", resGetProfile);
+
+      saveTokenToSessionStorage(response.data.accessToken);
+
+      const userData = {
+        responsiblePerson: resGetProfile.data.responsiblePerson,
+        ...resGetProfile.data.user,
+        ...decodeTokenToUser(response.data.accessToken),
+      };
+
+      saveUserToSessionStorage(userData);
+
+      return userData;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
   }
-});
+);
 
 export const loginWithGoogle = createAsyncThunk(
   "auth/loginWithGoogle",

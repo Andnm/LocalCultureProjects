@@ -21,17 +21,20 @@ import Image from "next/image";
 import logo_remove_bg from "@/src/assets/logo-remove-bg.png";
 import logo from "@/src/assets/logo.png";
 import { useAuthContext } from "@/src/utils/context/auth-provider";
+import ModalCreateProject from "./ModalCreateProject";
 
 const GeneralHeader = () => {
   const [isLoginModalOpen, setLoginModalOpen] = React.useState(false);
   const [isRegisterModalOpen, setRegisterModalOpen] = React.useState(false);
   const [openRegisterMode, setOpenRegisterMode] = React.useState(false);
+  const [openModalCreateProject, setOpenModalCreateProject] =
+    React.useState(false);
 
   const [showTopMenu, setShowTopMenu] = React.useState(false);
 
   const { loginInfo, setLoginInfo }: any = useAuthContext();
 
-  const [userData, setUserData] = React.useState<UserType | null>(null);
+  const [userData, setUserData] = React.useState<any | null>(null);
   const pathName = usePathname();
 
   //scroll thì sẽ thêm fixed
@@ -144,7 +147,7 @@ const GeneralHeader = () => {
             ) : (
               <>
                 <button
-                  className="hidden lg:inline-block btn-login"
+                  className="hidden lg:inline-block btn-signup"
                   onClick={() => {
                     setLoginModalOpen(true);
                   }}
@@ -158,7 +161,7 @@ const GeneralHeader = () => {
                     switchFromLoginToRegister={switchFromLoginToRegister}
                   />
                 )}
-
+                {/* 
                 <button
                   className="hidden lg:inline-block btn-signup"
                   onClick={() => {
@@ -166,7 +169,7 @@ const GeneralHeader = () => {
                   }}
                 >
                   <span className="text-black hover:text-white">Đăng kí</span>
-                </button>
+                </button> */}
 
                 {isRegisterModalOpen && (
                   <Register
@@ -175,6 +178,28 @@ const GeneralHeader = () => {
                   />
                 )}
               </>
+            )}
+
+            {(userData?.role_name !== "Student" ||
+              userData?.role_name !== "Lecturer") && (
+              <button
+                className="hidden lg:inline-block btn-login"
+                onClick={() => {
+                  setOpenModalCreateProject(true);
+                }}
+              >
+                <span className="text-black">Đăng dự án ngay</span>
+              </button>
+            )}
+
+            {openModalCreateProject && (
+              <ModalCreateProject
+                open={openModalCreateProject}
+                actionClose={() => setOpenModalCreateProject(false)}
+                buttonClose="Hủy"
+                actionConfirm={() => setOpenModalCreateProject(false)}
+                buttonConfirm="Xác nhận"
+              />
             )}
           </div>
         </div>

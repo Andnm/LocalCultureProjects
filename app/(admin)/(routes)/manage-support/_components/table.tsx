@@ -44,7 +44,7 @@ import { IoIosArrowDown } from "react-icons/io";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
-interface ProjectTableProps {
+interface SupportTableProps {
   totalObject: any;
   dataTable: any[];
   setDataTable: React.Dispatch<React.SetStateAction<any[]>>;
@@ -76,7 +76,7 @@ const POPOVER_OPTION = [
   },
 ];
 
-const SupportTable: React.FC<ProjectTableProps> = ({
+const SupportTable: React.FC<SupportTableProps> = ({
   totalObject,
   dataTable,
   setDataTable,
@@ -85,7 +85,7 @@ const SupportTable: React.FC<ProjectTableProps> = ({
   onPageChange,
 }) => {
   const dispatch = useAppDispatch();
-console.log("dataTable", dataTable)
+  console.log("dataTable", dataTable);
   //quản lý thông tin hiện ra
   const [selectedProject, setSelectedProject] = React.useState<any | null>(
     null
@@ -149,21 +149,24 @@ console.log("dataTable", dataTable)
                     </div>
                   </td>
                   <td className={classes}>
-                    <InfoText className={user?.phone_number ? "" : "italic"}>
-                      {user?.phone_number
-                        ? user?.phone_number
-                        : "(Chưa cập nhập)"}
-                    </InfoText>
+                    <InfoText>{user?.support_type}</InfoText>
                   </td>
 
                   <td className={classes}>
-                    <InfoText>{user?.role?.role_name}</InfoText>
+                    <InfoText>{truncateString(user?.support_content, 30)}</InfoText>
                   </td>
 
-                  <StatusCell
-                    status={user.status ? "Active" : "Inactive"}
-                    classes={classes}
-                  />
+                  <td className={classes}>
+                    {user?.support_image ? (
+                      <img
+                        className="w-24"
+                        src={user?.support_image}
+                        alt="img"
+                      />
+                    ) : (
+                      <InfoText className="italic">Không có ảnh</InfoText>
+                    )}
+                  </td>
 
                   <td className={classes}>
                     <InfoText>{formatDate(user?.createdAt)}</InfoText>

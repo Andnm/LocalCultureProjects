@@ -32,10 +32,6 @@ export const NAV_ITEMS_STUDENT = [
     path: "/guideline",
   },
   {
-    nameItem: "Liên hệ",
-    path: "/contact",
-  },
-  {
     nameItem: "Bảng làm việc",
     path: "/student-board",
   },
@@ -55,10 +51,6 @@ export const NAV_ITEMS_BUSINESS = [
     path: "/guideline",
   },
   {
-    nameItem: "Liên hệ",
-    path: "/contact",
-  },
-  {
     nameItem: "Bảng làm việc",
     path: "/business-board",
   },
@@ -76,10 +68,6 @@ export const NAV_ITEMS_LECTURER = [
   {
     nameItem: "Hướng dẫn sử dụng",
     path: "/guideline",
-  },
-  {
-    nameItem: "Liên hệ",
-    path: "/contact",
   },
   {
     nameItem: "Bảng làm việc",

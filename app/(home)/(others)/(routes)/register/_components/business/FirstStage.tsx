@@ -6,6 +6,7 @@ interface FirstStageProps {
   setBusinessData: any;
   errorBusinessData: any;
   setErrorBusinessData: any;
+  userLogin?: any;
 }
 
 const FirstStage: React.FC<FirstStageProps> = ({
@@ -13,6 +14,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
   setBusinessData,
   errorBusinessData,
   setErrorBusinessData,
+  userLogin,
 }) => {
   const handleInputChange = (e: any, field: string) => {
     let value = e.target.value;
@@ -91,6 +93,28 @@ const FirstStage: React.FC<FirstStageProps> = ({
             <span className="error-message">{errorBusinessData.fullname}</span>
           )}
         </div>
+
+        {/* Địa chỉ email Doanh nghiệp, có thể có hoặc ko tùy vào data đầu vào tồn tại hay ko */}
+
+        {businessData?.businessEmail !== undefined && (
+          <div className="form-group-material mt-4">
+            <input
+              type="text"
+              required={true}
+              className="form-control"
+              value={businessData.businessEmail}
+              onChange={(e) => handleInputChange(e, "businessEmail")}
+            />
+            <label>
+              Địa chỉ email <span className="text-red-700">*</span>
+            </label>
+            {errorBusinessData.businessEmail && (
+              <span className="error-message">
+                {errorBusinessData.businessEmail}
+              </span>
+            )}
+          </div>
+        )}
 
         {/*  */}
         <fieldset
@@ -176,12 +200,42 @@ const FirstStage: React.FC<FirstStageProps> = ({
         </div>
 
         {/* address */}
-        <SelectedProvince
-          businessData={businessData}
-          setBusinessData={setBusinessData}
-          errorBusinessData={errorBusinessData}
-          setErrorBusinessData={setErrorBusinessData}
-        />
+        {/*  
+        - kiểm tra !userLogin để xem liệu userLogin có tồn tại không. Nếu không, 
+        hoặc là null hoặc là undefined, thì hiển thị <SelectedProvince />.  
+        
+        - userLogin tồn tại, kiểm tra xem userLogin.role_name có khác "Business" không. 
+        Nếu không phải "Business", thì cũng hiển thị <SelectedProvince />.
+
+        - Nếu userLogin.role_name là "Business", kiểm tra xem userLogin.address có tồn 
+        tại hoặc bằng null không. Nếu không tồn tại hoặc bằng null, thì cũng hiển thị 
+        <SelectedProvince />.  
+       */}
+
+        {!userLogin ||
+        userLogin?.role_name !== "Business" ||
+        !userLogin?.address ? (
+          <SelectedProvince
+            businessData={businessData}
+            setBusinessData={setBusinessData}
+            errorBusinessData={errorBusinessData}
+            setErrorBusinessData={setErrorBusinessData}
+          />
+        ) : (
+          <div className="form-group-material mt-4">
+            <input
+              type="text"
+              required={true}
+              className="form-control"
+              value={businessData.address}
+              readOnly
+            />
+            <label>
+              Địa chỉ
+              <span className="text-red-700">*</span>
+            </label>
+          </div>
+        )}
 
         {/* address detail */}
         <div className="form-group-material mt-4">

@@ -1,6 +1,6 @@
 import { UserType } from "@/src/types/user.type";
 
-export const saveUserToSessionStorage = (user: UserType): void => {
+export const saveUserToSessionStorage = (user: any): void => {
   sessionStorage.setItem("user", JSON.stringify(user));
 };
 

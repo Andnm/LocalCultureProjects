@@ -1,5 +1,6 @@
 export interface UserType {
   email: string;
+  responsiblePerson?: any;
   avatar_url?: string;
   fullname?: string | undefined;
   dob?: Date;
@@ -12,4 +13,7 @@ export interface UserType {
   create_at?: Date;
   role_name: string;
   status?: boolean;
+  business_sector?: string;
+  business_description?: string;
+  address_detail?: string;
 }

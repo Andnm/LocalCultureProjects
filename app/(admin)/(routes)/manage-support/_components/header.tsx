@@ -15,8 +15,8 @@ import { FILTER_ACCOUNT_BY_ADMIN } from "@/src/constants/filter";
 
 interface ManageAccountHeaderProps {
   onSearchChange: any;
-  filterOption: any;
-  setFilterOption: any;
+  filterOption?: any;
+  setFilterOption?: any;
 }
 
 const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
@@ -87,28 +87,7 @@ const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
               />
             )}
           </div>
-
-          {(filterOption.role_name !== "" ||
-            filterOption.status !== "" ||
-            filterOption.searchValue !== "") && (
-            <Button
-              variant={"default"}
-              className={cn(
-                "font-normal justify-center items-center ph-10 text-orange-900 bg-orange-300 hover:bg-orange-400 gap-2"
-              )}
-              style={{ borderRadius: "7px" }}
-              onClick={() =>
-                setFilterOption({
-                  role_name: [],
-                  status: [],
-                  searchValue: filterOption?.searchValue,
-                })
-              }
-            >
-              <GrPowerReset />
-              <p>Reset</p>
-            </Button>
-          )}
+    
         </div>
       </CardHeader>
 

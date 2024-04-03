@@ -1,28 +1,26 @@
-import React, { useState } from "react";
-import FirstStage from "./FirstStage";
-import SecondStage from "./SecondStage";
-import ThirdStage from "./ThirdStage";
-import ButtonBack from "@/src/components/shared/ButtonBack";
-import { BusinessDataType } from "../../_types/business.type";
-import { ResponsibleType } from "../../_types/responsible.type";
+import SecondStage from "@/app/(home)/(others)/(routes)/register/_components/business/SecondStage";
+import FirstStage from "@/app/(home)/(others)/(routes)/register/_components/business/FirstStage";
+import ThirdStage from "@/app/(home)/(others)/(routes)/register/_components/business/ThirdStage";
+import { Dialog, Transition } from "@headlessui/react";
+import { X } from "lucide-react";
+import { CSSProperties, Fragment, useEffect, useState } from "react";
+import { useAppDispatch } from "@/src/redux/store";
+import { useAuthContext } from "@/src/utils/context/auth-provider";
+import { BusinessDataType } from "@/app/(home)/(others)/(routes)/register/_types/business.type";
+import { ResponsibleType } from "@/app/(home)/(others)/(routes)/register/_types/responsible.type";
+import { ProjectType } from "@/app/(home)/(others)/(routes)/register/_types/project.type";
+import toast from "react-hot-toast";
 import {
   extractProjectDates,
   generateRandomString,
   removeCommas,
   validateEmail,
 } from "@/src/utils/handleFunction";
-import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
-import CustomModal from "@/src/components/shared/CustomModal";
-import { ProjectType } from "../../_types/project.type";
-import toast from "react-hot-toast";
-import { useAppDispatch } from "@/src/redux/store";
-import { useRouter } from "next/navigation";
 import { updateUserProfile } from "@/src/redux/features/userSlice";
 import {
   getUserFromSessionStorage,
   saveUserToSessionStorage,
 } from "@/src/redux/utils/handleUser";
-import { useAuthContext } from "@/src/utils/context/auth-provider";
 import {
   checkExistResponsiblePersonByEmail,
   createResponsiblePerson,
@@ -30,28 +28,57 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { createNewProject } from "@/src/redux/features/projectSlice";
-import { checkEmailExist, logout } from "@/src/redux/features/authSlice";
-import { createNewNotification } from "@/src/redux/features/notificationSlice";
-import { NOTIFICATION_TYPE } from "@/src/constants/notification";
+import { useRouter } from "next/navigation";
 
-interface RegisterBusinessFormProps {
-  selectedRole: any;
-  setSelectedRole: any;
+import "../../../app/(home)/(others)/(routes)/register/style.scss";
+import CustomModal from "./CustomModal";
+import SpinnerLoading from "../loading/SpinnerLoading";
+import { useUserLogin } from "@/src/hook/useUserLogin";
+import { checkEmailExist } from "@/src/redux/features/authSlice";
+
+interface ModalProps {
+  open: boolean;
+  actionClose?: () => void;
+  actionConfirm?: () => void;
+  buttonClose?: string;
+  buttonConfirm?: string;
 }
 
-const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
-  selectedRole,
-  setSelectedRole,
-}) => {
+export default function ModalCreateProject({
+  open,
+  actionClose,
+  buttonClose,
+  actionConfirm,
+  buttonConfirm,
+}: ModalProps) {
+  const closeByClickBackground = () => {
+    if (actionClose) {
+      actionClose();
+    }
+  };
+
+  const styleOverlay: CSSProperties = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  };
+
+  const [userLogin, setUserLogin] = useUserLogin();
+  // XỬ LÝ STATE CREATE
   // business
+
   const [businessData, setBusinessData] = useState({
-    fullname: "",
+    fullname: userLogin?.fullname,
     business_sector: "",
     other_business_sector: "",
     business_description: "",
     address: "",
     address_detail: "",
     link_web: "",
+    businessEmail: "",
   });
 
   const [errorBusinessData, setErrorBusinessData] = useState({
@@ -62,6 +89,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     address: "",
     address_detail: "",
     link_web: "",
+    businessEmail: "",
   });
 
   const [responsiblePerson, setResponsiblePerson] = useState({
@@ -81,6 +109,53 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     other_contact: "",
     businessEmail: "",
   });
+
+  //   Cập nhập giá trị nếu đã login sẵn và có thông tin
+  useEffect(() => {
+    if (userLogin && userLogin.role_name === "Business") {
+      setBusinessData((prevData) => ({
+        ...prevData,
+        fullname: userLogin.fullname || "",
+        businessEmail: userLogin.email || "",
+        business_sector: userLogin.business_sector || "",
+        other_business_sector: "",
+        business_description: userLogin.business_description || "",
+        address: userLogin.address || "",
+        address_detail: userLogin.address_detail || "",
+        link_web: userLogin.link_web || "",
+      }));
+
+      setResponsiblePerson((prevData) => ({
+        ...prevData,
+        fullname: userLogin.responsiblePerson.fullname || "",
+        position: userLogin.responsiblePerson.position || "",
+        email: userLogin.responsiblePerson.email || "",
+        phone_number: userLogin.responsiblePerson.phone_number || "",
+        other_contact: userLogin.responsiblePerson.other_contact || "",
+        businessEmail: userLogin.responsiblePerson.businessEmail || "",
+      }));
+    } else {
+      setBusinessData({
+        fullname: "",
+        business_sector: "",
+        other_business_sector: "",
+        business_description: "",
+        address: "",
+        address_detail: "",
+        link_web: "",
+        businessEmail: "",
+      });
+
+      setResponsiblePerson({
+        fullname: "",
+        position: "",
+        email: "",
+        phone_number: "",
+        other_contact: "",
+        businessEmail: "",
+      });
+    }
+  }, [userLogin]);
 
   const [firstProject, setFirstProject] = useState({
     name_project: "",
@@ -161,6 +236,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
             setBusinessData={setBusinessData}
             errorBusinessData={errorBusinessData}
             setErrorBusinessData={setErrorBusinessData}
+            userLogin={userLogin}
           />
         );
       case 2:
@@ -348,7 +424,6 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     try {
       // XỬ LÝ UPDATE PROFILE
       const dataUpdateProfile = {
-        role_name: selectedRole,
         ...businessData,
       };
 
@@ -433,6 +508,27 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
       }
 
+      // FE thì sẽ gọi api check exist email
+      //(kiểm tra cái isAdminConfirm nữa để xem tk đó như thế nào rồi
+      //thay đổi is_first_project cho phù hợp)
+
+      const resCheckBusinessEmailExist = await dispatch(
+        checkEmailExist(businessData?.businessEmail)
+      );
+      // nếu isConfirmByAdmin mà là true thì tức là đã đăng dự án đầu rồi và đã được duyệt
+      // nếu là false thì tức là mới
+      console.log(
+        "resCheckBusinessEmailExist",
+        resCheckBusinessEmailExist.payload
+      );
+
+      // if (resCheckBusinessEmailExist.payload.isConfirmByAdmin) {
+      //   setFirstProject((prevData) => {
+      //       ...prevData,
+      //       is_first_project
+      //   })
+      // }
+
       const projectTimeline = extractProjectDates(
         firstProject.project_implement_time
       );
@@ -459,23 +555,13 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         toast.error(`${resCreateProject.payload}`);
         return;
       } else {
-        const dataBodyNoti = {
-          notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
-          information: "Có một dự án mới cần được duyệt",
-          sender_email: resUpdate.payload.email,
-          receiver_email: "admin@gmail.com",
-        };
-
-        dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-          console.log(resNoti);
-        });
-
-
         toast.success(
           `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
         );
-        await dispatch(logout());
-        setLoginInfo("");
+
+        if (actionClose) {
+          actionClose();
+        }
         router.push("/");
       }
     } catch (error) {
@@ -487,73 +573,150 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
   };
 
   return (
-    <div className="container py-10">
-      <ButtonBack functionBack={() => setSelectedRole("")} />
-
-      <div className="stage-header">
-        {[1, 2, 3].map((stageNum) => (
-          <button
-            key={stageNum}
-            className={`stage btn ${stageEnabled[stageNum] ? "" : "disabled"} ${
-              currentStage === stageNum ? "active" : ""
-            }`}
-            onClick={() => handleStageClick(stageNum)}
+    <>
+      <Transition appear show={open} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={closeByClickBackground}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            {stageNum}. {getStageName(stageNum)}
-          </button>
-        ))}
-      </div>
+            <div className="fixed inset-0 bg-black/25 blur-sm opacity-20" />
+          </Transition.Child>
 
-      <div className="container py-4">{getStageContent(currentStage)}</div>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center text-center relative z-50">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel
+                  className={`relative z-40 w-full 
+                   max-w-full
+                   transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all`}
+                >
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 flex justify-end"
+                  >
+                    <X className="cursor-pointer" onClick={actionClose} />
+                  </Dialog.Title>
 
-      <div className="flex justify-end gap-5" style={{ marginRight: "50px" }}>
-        {currentStage > 1 && (
-          <button
-            className="font-semibold btn-cancel px-4 py-2"
-            onClick={handleBackStage}
-          >
-            Quay lại
-          </button>
-        )}
+                  <div className="mt-2">
+                    <div className="container">
+                      <div className="stage-header">
+                        {[1, 2, 3].map((stageNum) => (
+                          <button
+                            key={stageNum}
+                            className={`stage btn ${
+                              stageEnabled[stageNum] ? "" : "disabled"
+                            } ${currentStage === stageNum ? "active" : ""}`}
+                            onClick={() => handleStageClick(stageNum)}
+                          >
+                            {stageNum}. {getStageName(stageNum)}
+                          </button>
+                        ))}
+                      </div>
 
-        {currentStage < 3 && (
-          <button
-            className="font-semibold btn-continue px-4 py-2"
-            onClick={handleContinueStage}
-          >
-            Tiếp tục
-          </button>
-        )}
+                      <div className="container py-4">
+                        {getStageContent(currentStage)}
+                      </div>
 
-        {currentStage === 3 && (
-          <button
-            className="font-semibold btn-continue px-4 py-2"
-            onClick={handleOpenModalConfirm}
-          >
-            Xác nhận
-          </button>
-        )}
-      </div>
+                      <div
+                        className="flex justify-end gap-5"
+                        style={{ marginRight: "50px" }}
+                      >
+                        {currentStage > 1 && (
+                          <button
+                            className="font-semibold btn-cancel px-4 py-2"
+                            onClick={handleBackStage}
+                          >
+                            Quay lại
+                          </button>
+                        )}
 
-      {openModalConfirmAction && (
-        <CustomModal
-          open={openModalConfirmAction}
-          title={<h2 className="text-2xl font-semibold">Xác nhận tạo</h2>}
-          body={
-            "Bạn có chắc muốn đăng ký tạo tài khoản với những thông tin mà bạn đã điền hay không?"
-          }
-          actionClose={() => setOpenModalConfirmAction(false)}
-          buttonClose={"Hủy"}
-          actionConfirm={handleCallAPIUpdateProfile}
-          buttonConfirm={"Xác nhận"}
-          styleWidth={"max-w-xl"}
-          status={"Pending"} //truyền pending để hiện button action
-        />
-      )}
+                        {currentStage < 3 && (
+                          <button
+                            className="font-semibold btn-continue px-4 py-2"
+                            onClick={handleContinueStage}
+                          >
+                            Tiếp tục
+                          </button>
+                        )}
 
-      {isLoading && <SpinnerLoading />}
-    </div>
+                        {currentStage === 3 && (
+                          <button
+                            className="font-semibold btn-continue px-4 py-2"
+                            onClick={handleOpenModalConfirm}
+                          >
+                            Xác nhận
+                          </button>
+                        )}
+                      </div>
+
+                      {openModalConfirmAction && (
+                        <CustomModal
+                          open={openModalConfirmAction}
+                          title={
+                            <h2 className="text-2xl font-semibold">
+                              Xác nhận tạo
+                            </h2>
+                          }
+                          body={
+                            "Bạn có chắc muốn đăng ký tạo tài khoản với những thông tin mà bạn đã điền hay không?"
+                          }
+                          actionClose={() => setOpenModalConfirmAction(false)}
+                          buttonClose={"Hủy"}
+                          actionConfirm={handleCallAPIUpdateProfile}
+                          buttonConfirm={"Xác nhận"}
+                          styleWidth={"max-w-xl"}
+                          status={"Pending"} //truyền pending để hiện button action
+                        />
+                      )}
+
+                      {isLoading && <SpinnerLoading />}
+                    </div>
+                  </div>
+
+                  {/* <div className="mt-4 flex gap-4 justify-end">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={actionClose}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      {buttonClose}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={actionConfirm}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      {buttonConfirm}
+                    </button>
+                  </div> */}
+                </Dialog.Panel>
+              </Transition.Child>
+              <div className="overlay" style={styleOverlay}></div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
   );
-};
-
-export default RegisterBusinessForm;
+}
