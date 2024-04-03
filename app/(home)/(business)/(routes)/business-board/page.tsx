@@ -23,7 +23,6 @@ const BusinessBoard = () => {
   React.useEffect(() => {
     dispatch(getAllProjectByBusiness()).then((result: any) => {
       if (getAllProjectByBusiness.fulfilled.match(result)) {
-        socketInstance.off(`getProjectsOfBusiness-${userLogin?.email}`);
 
         socketInstance.on(
           `getProjectsOfBusiness-${userLogin?.email}`,

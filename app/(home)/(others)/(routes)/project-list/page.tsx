@@ -49,29 +49,60 @@ const ProjectList = () => {
     }
   }, []);
 
+  // React.useEffect(() => {
+  //   dispatch(getAllProjectByEveryOne()).then((result) => {
+  //     if (getAllProjectByEveryOne.fulfilled.match(result)) {
+  //       console.log("result", result.payload);
+  //       // getProjects
+  //       const newListProjects = result.payload[1]?.sort((a: any, b: any) => {
+  //         const dateA = new Date(a.createdAt);
+  //         const dateB = new Date(b.createdAt);
+  //         return dateA.getTime() - dateB.getTime();
+  //       });
+  //       setDataProjectList(newListProjects);
+
+  //       socketInstance.on("getProjects", (data: any) => {
+  //         console.log("data socket", data);
+  //         const newListProjects = data?.projects?.sort((a: any, b: any) => {
+  //           const dateA = new Date(a.createdAt);
+  //           const dateB = new Date(b.createdAt);
+  //           return dateA.getTime() - dateB.getTime();
+  //         });
+  //         setDataProjectList(newListProjects);
+  //       });
+  //     } else {
+  //       toast.error("Có lỗi xảy ra khi tải danh sách dự án!");
+  //     }
+  //   });
+  // }, []);
+
   React.useEffect(() => {
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        // console.log("result", result.payload);
-        // // getProjects
-        // const newListProjects = result.payload[1]?.sort(
-        //   (a: any, b: any) => {
-        //     const dateA = new Date(a.createdAt);
-        //     const dateB = new Date(b.createdAt);
-        //     return dateA.getTime() - dateB.getTime();
-        //   }
-        // );
-        // setDataProjectList(newListProjects);
-        socketInstance.off(`getProjects`);
+        console.log("result", result.payload);
+        // getProjects
+        const newListProjects = result.payload[1]?.sort((a: any, b: any) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateA.getTime() - dateB.getTime();
+        });
+        setDataProjectList(newListProjects);
 
         socketInstance.on("getProjects", (data: any) => {
           console.log("data socket", data);
-          const newListProjects = data?.projects?.sort((a: any, b: any) => {
-            const dateA = new Date(a.createdAt);
-            const dateB = new Date(b.createdAt);
-            return dateA.getTime() - dateB.getTime();
-          });
-          setDataProjectList(newListProjects);
+          if (data && data.projects) {
+            const newListProjects = data.projects.sort((a: any, b: any) => {
+              const dateA = new Date(a.createdAt);
+              const dateB = new Date(b.createdAt);
+              return dateA.getTime() - dateB.getTime();
+            });
+            setDataProjectList(newListProjects);
+          } else {
+            console.log("No projects data or error occurred from socket");
+            if (newListProjects) {
+              setDataProjectList(newListProjects);
+            }
+          }
         });
       } else {
         toast.error("Có lỗi xảy ra khi tải danh sách dự án!");
