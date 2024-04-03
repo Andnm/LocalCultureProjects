@@ -63,8 +63,14 @@ const ProjectList = () => {
         // );
         // setDataProjectList(newListProjects);
 
-
         socketInstance.on("getProjects", (data: any) => {
+          console.error("Lỗi từ socket:", data.error);
+          console.log("msg", data.message);
+
+          console.log("description", data.description);
+
+          console.log("context", data.context);
+          console.log("data socket", data);
           const newListProjects = data?.projects?.sort((a: any, b: any) => {
             const dateA = new Date(a.createdAt);
             const dateB = new Date(b.createdAt);
@@ -226,7 +232,7 @@ const ProjectList = () => {
                   href={`/project-list/detail/${project.id}`}
                   className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2"
                   key={index}
-                  style={{ borderRadius: "10px", width: 500}}
+                  style={{ borderRadius: "10px", width: 500 }}
                   target="_blank"
                 >
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">

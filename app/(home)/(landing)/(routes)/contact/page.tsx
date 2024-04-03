@@ -348,7 +348,7 @@ const ContactUs = () => {
           <div className="grid grid-cols-1 gap-12 mt-10 lg:grid-cols-2">
             <div className="grid grid-cols-1 gap-12">
               <img
-                src="https://hcmuni.fpt.edu.vn/Data/Sites/1/media/2020-kim-vi/seo/campus/1-truong-dai-hoc-fpt-tphcm/truong-dai-hoc-fpt-tp-hcm-(1).jpg"
+                src="https://live.staticflickr.com/65535/53628620037_7fddfef48a_b.jpg"
                 alt="Trường Đại học FPT TPHCM"
                 className="w-full h-full rounded-lg object-cover"
               />
