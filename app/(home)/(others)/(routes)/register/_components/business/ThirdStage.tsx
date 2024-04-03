@@ -111,8 +111,8 @@ const SecondStage: React.FC<SecondStageProps> = ({
         Bổ sung thông tin của dự án
       </h4>
       <p className="sub-title text-smmt-2">
-        Đây là các thông tin cần thiết để có thể hoàn thành các bước tạo tài
-        khoản của doanh nghiệp{" "}
+        Đây là các thông tin cần thiết về doanh nghiệp để có thể hoàn thành các
+        bước đăng dự án
       </p>
 
       <div className="stage-3">

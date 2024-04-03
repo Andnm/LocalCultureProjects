@@ -62,14 +62,9 @@ const ProjectList = () => {
         //   }
         // );
         // setDataProjectList(newListProjects);
+        socketInstance.off(`getProjects`);
 
         socketInstance.on("getProjects", (data: any) => {
-          console.error("Lỗi từ socket:", data.error);
-          console.log("msg", data.message);
-
-          console.log("description", data.description);
-
-          console.log("context", data.context);
           console.log("data socket", data);
           const newListProjects = data?.projects?.sort((a: any, b: any) => {
             const dateA = new Date(a.createdAt);

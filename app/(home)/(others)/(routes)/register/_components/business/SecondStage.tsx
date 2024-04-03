@@ -37,8 +37,8 @@ const SecondStage: React.FC<SecondStageProps> = ({
         Bổ sung thông tin của người phụ trách dự án
       </h4>
       <p className="sub-title text-smmt-2">
-        Đây là các thông tin cần thiết để có thể hoàn thành các bước tạo tài
-        khoản của doanh nghiệp{" "}
+        Đây là các thông tin cần thiết về doanh nghiệp để có thể hoàn thành các
+        bước đăng dự án
       </p>
 
       <div className="stage-3">
@@ -128,7 +128,9 @@ const SecondStage: React.FC<SecondStageProps> = ({
           />
           <label>Thông tin liên hệ khác</label>
           {errorResponsiblePerson.other_contact && (
-            <span className="error-message">{errorResponsiblePerson.other_contact}</span>
+            <span className="error-message">
+              {errorResponsiblePerson.other_contact}
+            </span>
           )}
         </div>
       </div>

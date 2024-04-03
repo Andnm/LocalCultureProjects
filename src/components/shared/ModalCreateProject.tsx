@@ -221,7 +221,7 @@ export default function ModalCreateProject({
       case 2:
         return "Thông tin người phụ trách";
       case 3:
-        return "Đăng dự án lần đầu";
+        return "Thông tin chi tiết";
       default:
         return "";
     }

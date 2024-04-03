@@ -18,23 +18,23 @@ const BusinessBoard = () => {
     (state) => state.project
   );
 
-  const [userLogin, setUserLogin] = useUserLogin()
+  const [userLogin, setUserLogin] = useUserLogin();
 
   React.useEffect(() => {
     dispatch(getAllProjectByBusiness()).then((result: any) => {
       if (getAllProjectByBusiness.fulfilled.match(result)) {
-        socketInstance.on(`getProjectsOfBusiness-${userLogin?.email}`, (data: any) => {
-          setDataProjects(data.projects)
-          console.log(data)
-        })
+        socketInstance.off(`getProjectsOfBusiness-${userLogin?.email}`);
 
-        // setDataProjects(result.payload);
-        // console.log("project", result.payload)
-      }else {
-        // console.log(result.payload)
+        socketInstance.on(
+          `getProjectsOfBusiness-${userLogin?.email}`,
+          (data: any) => {
+            setDataProjects(data.projects);
+            console.log(data);
+          }
+        );
+      } else {
       }
     });
-
   }, [userLogin]);
 
   return (
