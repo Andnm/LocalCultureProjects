@@ -135,8 +135,12 @@ const ListForm = ({
   };
 
   const handleMinDate = (name: any): Date => {
-    const projectStartDate = new Date(project.project_start_date);
+    console.log(project);
 
+    const projectStartDateString = `01/${project.project_start_date}`;
+    const projectStartDate = new Date(projectStartDateString);
+
+    console.log(projectStartDate);
     switch (name) {
       case "phase_start_date":
         if (!phaseData || phaseData.length === 0) {

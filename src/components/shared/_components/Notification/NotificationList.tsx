@@ -81,7 +81,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
       </div>
 
       {Array.isArray(dataNotification) && dataNotification.length > 0 ? (
-        <div className="flex flex-col gap-2 h-[480px] pt-1 overflow-y-scroll">
+        <div className="flex flex-col gap-2 h-[480px] pt-1 overflow-y-scroll webkit-scrollbar" >
           {dataNotification?.map((item: any, index: number) => (
             <NotificationItems key={index} data={item} />
           ))}

@@ -40,8 +40,8 @@ import vn from "date-fns/locale/vi";
 import PopoverOption from "@/src/components/shared/PopoverOption";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
-import InfoProject from "./InfoProject";
 import { useUserLogin } from "@/src/hook/useUserLogin";
+import ModalViewProjectDetail from "@/src/components/shared/ModalViewProjectDetail";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -84,16 +84,19 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   const [openModalConfirmActionDelete, setOpenModalConfirmActionDelete] =
     React.useState(false);
 
+  const [openModalConfirmProject, setOpenModalConfirmProject] =
+    React.useState(false);
+
   const handleOpenModalDetails = (business: any) => {
     // console.log(business);
     setSelectedProject(business);
     setIsOpenModalDetail(true);
   };
 
-  const handleConfirmProject = (id: number) => {
+  const handleCallApiConfirmProject = (id: number) => {
     // console.log("confirm nè");
     // console.log(selectedProject?.business?.email)
-
+    setLoadingHandle(true);
     dispatch(confirmProjectByAdmin(id)).then((result) => {
       if (confirmProjectByAdmin.fulfilled.match(result)) {
         // console.log(result.payload);
@@ -124,11 +127,15 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         toast.success("Phê duyệt thành công!");
       } else if (confirmProjectByAdmin.rejected.match(result)) {
         toast.error(`${result.payload}`);
-        // console.log(result.payload);
+        console.log(result);
       }
+      setDataTable((prevDataTable) =>
+        prevDataTable.filter((project) => project.id !== selectedProject.id)
+      );
+      setLoadingHandle(false);
+      setOpenModalConfirmProject(false);
+      setIsOpenModalDetail(false);
     });
-
-    setIsOpenModalDetail(false);
   };
 
   const handleClickRemoveProject = (business: any) => {
@@ -137,7 +144,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   };
 
   const handleCallApiDeleteProject = () => {
-    setLoadingHandle(true)
+    setLoadingHandle(true);
     dispatch(deleteProjectByAdmin(selectedProject.id)).then((resDelete) => {
       if (deleteProjectByAdmin.fulfilled.match(resDelete)) {
         toast.success("Xóa thành công!");
@@ -149,7 +156,6 @@ const AccountTable: React.FC<ProjectTableProps> = ({
       }
       setLoadingHandle(false);
       setOpenModalConfirmActionDelete(false);
-
     });
   };
 
@@ -213,7 +219,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
             return (
               <tbody key={index}>
                 <tr>
-                  <td className={classes}>
+                  <td className={classes} style={{ width: "350px" }}>
                     <div className="flex items-center gap-3 w-9 h-9 object-cover">
                       <Avatar
                         src={
@@ -226,7 +232,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                         }
                         alt={"img"}
                         size="sm"
-                        style={{width: '2.25rem'}}
+                        style={{ width: "2.25rem" }}
                       />
                       <div className="flex flex-col">
                         <InfoText>{project?.business?.fullname}</InfoText>
@@ -237,7 +243,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                       </div>
                     </div>
                   </td>
-                  <td className={classes} style={{width: '220px'}}>
+                  <td className={classes} style={{ width: "220px" }}>
                     <InfoText>{project?.name_project}</InfoText>
                   </td>
 
@@ -267,19 +273,32 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         </table>
 
         {isOpenModalDetail && selectedProject && (
-          <CustomModal
+          <ModalViewProjectDetail
             open={isOpenModalDetail}
             title={"Thông tin dự án"}
-            body={<InfoProject selectedProject={selectedProject} />}
             actionClose={() => setIsOpenModalDetail(false)}
-            buttonClose={"Hủy"}
-            actionConfirm={() => handleConfirmProject(selectedProject.id)}
-            buttonConfirm={"Xác nhận"}
+            buttonClose={"Chỉnh sửa dự án"}
+            actionConfirm={() => setOpenModalConfirmProject(true)}
+            buttonConfirm={"Xác nhận phê duyệt"}
             status={selectedProject.project_status}
-            styleWidth={"max-w-full"}
+            selectedProject={selectedProject}
           />
         )}
       </CardBody>
+
+      {openModalConfirmProject && (
+        <CustomModal
+          open={openModalConfirmProject}
+          title={<h2 className="text-2xl font-semibold">Xác nhận phê duyệt</h2>}
+          body={`Bạn có chắc muốn đăng dự án ${selectedProject.name_project} lên trên home page?`}
+          actionClose={() => setOpenModalConfirmProject(false)}
+          buttonClose={"Hủy"}
+          actionConfirm={() => handleCallApiConfirmProject(selectedProject.id)}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"} //truyền pending để hiện button action
+        />
+      )}
 
       {openModalConfirmActionDelete && (
         <CustomModal

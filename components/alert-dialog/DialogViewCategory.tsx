@@ -22,6 +22,7 @@ import { useUserLogin } from "@/src/hook/useUserLogin";
 import toast from "react-hot-toast";
 import { getEvidenceInCost } from "@/src/redux/features/evidenceSlice";
 import { EvidenceType } from "@/src/types/evidence.type";
+import CustomModal from "@/src/components/shared/CustomModal";
 
 interface DialogViewCategoryProps {
   project: any;
@@ -58,6 +59,8 @@ const DialogViewCategory = ({
   const handleOpenCreateCost = () => {
     setIsCreatingCost(true);
   };
+
+  console.log("cost", cost);
 
   const handleCloseCreateCost = () => {
     setIsCreatingCost(false);
@@ -106,7 +109,11 @@ const DialogViewCategory = ({
     setIsEditing(false);
   };
 
+  const [isOpenModalConfirm, setIsOpenModalConfirm] = React.useState(false);
+  const [isLoadingHandle, setIsLoadingHandle] = React.useState(false);
   const handleChangeStatus = (status: string) => {
+    setIsLoadingHandle(true);
+
     let costStatus = "Not Transferred";
     if (status === "Not Transferred") {
       costStatus = "Transferred";
@@ -124,6 +131,7 @@ const DialogViewCategory = ({
       } else {
         toast.error(`${result.payload}`);
       }
+      setIsLoadingHandle(false);
     });
   };
 
@@ -183,7 +191,7 @@ const DialogViewCategory = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
+                <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
                   {isLoading ? (
                     <div className="h-56">
                       <SpinnerLoading />
@@ -371,19 +379,20 @@ const DialogViewCategory = ({
                                 </span>
                                 <span className="font-semibold flex items-center gap-2">
                                   {changeStatusFromEnToVn(cost.cost_status)}
-                                  {cost.cost_status !== "Received" &&
-                                    userLogin?.role_name === "Student" && (
+                                  {cost.cost_status === "Not Transferred" &&
+                                    userLogin?.role_name === "Business" && (
                                       <Edit
                                         className="cursor-pointer w-4 h-4"
                                         onClick={() =>
-                                          handleChangeStatus(cost.cost_status)
+                                          setIsOpenModalConfirm(true)
                                         }
                                       />
                                     )}
                                 </span>
                               </div>
 
-                              <div className="flex items-center">
+                              {/* tạm thời ẩn */}
+                              {/* <div className="flex items-center">
                                 <span className="text-gray-500 mr-2">
                                   Chi phí thực tế:
                                 </span>
@@ -393,7 +402,7 @@ const DialogViewCategory = ({
                                     <Edit className="cursor-pointer w-4 h-4" />
                                   )}
                                 </span>
-                              </div>
+                              </div> */}
                             </div>
                           ) : userLogin?.role_name === "Student" ? (
                             <button
@@ -464,6 +473,24 @@ const DialogViewCategory = ({
           </div>
         </Dialog>
       </Transition>
+
+      {isOpenModalConfirm && (
+        <CustomModal
+          open={isOpenModalConfirm}
+          title={
+            <h2 className="text-2xl font-semibold">Xác nhận thanh toán</h2>
+          }
+          body={`Bạn có chắc muốn chuyển trạng thái thanh toán của giai đoạn này?`}
+          actionClose={() => setIsOpenModalConfirm(false)}
+          buttonClose={"Hủy"}
+          actionConfirm={() => handleChangeStatus(cost.cost_status)}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"}
+        />
+      )}
+
+      {isLoadingHandle && <SpinnerLoading />}
     </>
   );
 };

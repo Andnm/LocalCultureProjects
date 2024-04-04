@@ -11,6 +11,7 @@ import ProgressLoading from "@/src/components/loading/ProgressLoading";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 import { getProjectById } from "@/src/redux/features/projectSlice";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
+import PostIdea from "./_components/post_idea/PostIdea";
 
 const ProjectIdPage = () => {
   const params = useParams<{ projectId: string }>();
@@ -43,7 +44,7 @@ const ProjectIdPage = () => {
 
     dispatch(getAllRegisterPitchingByBusiness(projectId)).then((result) => {
       if (getAllRegisterPitchingByBusiness.fulfilled.match(result)) {
-        console.log('group', result.payload);
+        console.log("group", result.payload);
         const selectedGroup = result.payload.find(
           (item: any) => item.register_pitching_status === "Selected"
         );
@@ -62,9 +63,8 @@ const ProjectIdPage = () => {
       {/* <ProgressLoading phaseData={phaseData} /> */}
       {project?.project_status === "Public" ||
       project?.project_status === "Pending" ? (
-       
         <p className="text-white">Dự án chưa bắt đầu</p>
-      ) : (
+      ) : project?.business_type === "Triển khai thực tế" ? (
         <ListPhaseContainer
           projectId={parseInt(params.projectId, 10)}
           groupId={groupId}
@@ -72,6 +72,8 @@ const ProjectIdPage = () => {
           setPhaseData={setPhaseData}
           project={project}
         />
+      ) : (
+        <PostIdea />
       )}
     </div>
   );

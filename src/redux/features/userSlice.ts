@@ -172,6 +172,25 @@ export const unBanAccount = createAsyncThunk(
   }
 );
 
+export const updateProfileNotAuth = createAsyncThunk(
+  "user/updateProfileNotAuth",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `users/update-profile-not-auth`,
+        data,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -278,6 +297,21 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(unBanAccount.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //updateProfileNotAuth
+    builder.addCase(updateProfileNotAuth.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(updateProfileNotAuth.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(updateProfileNotAuth.rejected, (state, action) => {
       // state.loadingUser = false;
       state.error = action.payload as string;
     });

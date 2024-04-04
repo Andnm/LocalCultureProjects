@@ -6,8 +6,8 @@ interface ModalProps {
   open: boolean;
   title: React.ReactNode;
   body: React.ReactNode;
-  actionClose?: () => void;
-  actionConfirm?: () => void;
+  actionClose?: any;
+  actionConfirm?: any;
   buttonClose?: string;
   buttonConfirm?: string;
   status?: any;
@@ -25,11 +25,11 @@ export default function CustomModal({
   status,
   styleWidth,
 }: ModalProps) {
-  const closeByClickBackground = () => {
-    if (actionClose) {
-      actionClose();
-    }
-  };
+  // const closeByClickBackground = () => {
+  //   if (actionClose) {
+  //     actionClose();
+  //   }
+  // };
 
   const styleOverlay: CSSProperties = {
     position: "absolute",
@@ -46,7 +46,7 @@ export default function CustomModal({
         <Dialog
           as="div"
           className="relative z-10"
-          onClose={closeByClickBackground}
+          onClose={() => {}}
         >
           <Transition.Child
             as={Fragment}

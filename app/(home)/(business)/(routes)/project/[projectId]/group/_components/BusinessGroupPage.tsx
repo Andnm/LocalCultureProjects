@@ -17,7 +17,7 @@ import TableMemberInGroup from "./table";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import "./styles.css"
+import "./styles.css";
 
 interface BusinessGroupPageProps {
   projectId: number;
@@ -68,6 +68,8 @@ const BusinessGroupPage: React.FC<BusinessGroupPageProps> = ({ projectId }) => {
             </div>
 
             <TableMemberInGroup
+              setDataGroupPitching={setDataGroupPitching}
+              dataGroupPitching={dataGroupPitching}
               register_pitching_status={group.register_pitching_status}
               group={group}
               projectId={projectId}
@@ -96,7 +98,6 @@ const BusinessGroupPage: React.FC<BusinessGroupPageProps> = ({ projectId }) => {
                 <Button className="mt-3">(Nhóm chưa có file giới thiệu)</Button>
               )}
             </div>
-
           </div>
         ))
       ) : (

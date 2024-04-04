@@ -12,7 +12,11 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { BiDetail } from "react-icons/bi";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
-import { changeStatusFromEnToVn, formatDate } from "@/src/utils/handleFunction";
+import {
+  changeStatusFromEnToVn,
+  formatDate,
+  generateFallbackAvatar,
+} from "@/src/utils/handleFunction";
 import StatusCell from "./StatusCell";
 import InfoText from "./InfoText";
 import { useAppDispatch } from "@/src/redux/store";
@@ -25,20 +29,23 @@ interface TableProps {
   register_pitching_status: string;
   group: any;
   projectId: number;
+  setDataGroupPitching: any;
+  dataGroupPitching: any;
 }
 
 const TABLE_HEAD = ["Thành viên", "Chức vụ"];
 
-const DefaultAvatarURL =
-  "https://cdn.popsww.com/blog/sites/2/2021/03/doraemon-tap-97.jpg";
-
 const TableMemberInGroup: React.FC<TableProps> = ({
+  setDataGroupPitching,
+  dataGroupPitching,
   register_pitching_status,
   group,
   projectId,
 }) => {
   const [memberInGroup, setMemberInGroup] = React.useState<any>([]);
   const dispatch = useAppDispatch();
+
+  console.log("dataGroupPitching", dataGroupPitching);
 
   React.useEffect(() => {
     dispatch(getAllMemberByGroupId(group?.group?.id)).then((result: any) => {
@@ -84,12 +91,16 @@ const TableMemberInGroup: React.FC<TableProps> = ({
                   <td className={classes}>
                     <StudentCardInfo
                       sideOffset={10}
-                      side={"top"}
+                      side={"right"}
                       dataStudent={member}
                     >
                       <div className="flex items-center gap-3">
                         <Avatar
-                          src={member?.user?.avatar_url || DefaultAvatarURL}
+                          src={
+                            member?.user?.avatar_url
+                              ? member?.user?.avatar_url
+                              : generateFallbackAvatar(member?.user?.fullname)
+                          }
                           alt={member?.user?.fullname}
                           size="sm"
                           className="w-10 h-10 object-cover rounded-full"
@@ -121,6 +132,8 @@ const TableMemberInGroup: React.FC<TableProps> = ({
       <div className="absolute bottom-3 right-3 z-10">
         {register_pitching_status === "Pending" && (
           <AlertDialogConfirmChoose
+            setDataGroupPitching={setDataGroupPitching}
+            dataGroupPitching={dataGroupPitching}
             groupId={group?.group?.id}
             projectId={projectId}
           >

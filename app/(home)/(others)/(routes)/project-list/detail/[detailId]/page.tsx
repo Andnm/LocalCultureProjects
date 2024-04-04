@@ -15,6 +15,8 @@ import {
 import { useParams } from "next/navigation";
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { checkUserAccessToViewWorkingProcess } from "@/src/redux/features/pitchingSlice";
+import Link from "next/link";
 
 const ProjectDetail = () => {
   const params = useParams<{ detailId: string }>();
@@ -23,6 +25,9 @@ const ProjectDetail = () => {
     undefined
   );
   const [groupList, setGroupList] = React.useState<UserGroupType[]>([]);
+
+  const [isAccessToViewWorkingProcess, setIsAccessToViewWorkingProcess] =
+    React.useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -40,6 +45,7 @@ const ProjectDetail = () => {
     const projectId = parseInt(params.detailId, 10);
     dispatch(getProjectById(projectId)).then((result) => {
       if (getProjectById.fulfilled.match(result)) {
+        console.log("project", result.payload);
         setDataProject(result.payload);
       }
     });
@@ -48,13 +54,25 @@ const ProjectDetail = () => {
       if (getAllGroupAreMembers.fulfilled.match(result)) {
         setGroupList(result.payload);
         console.log("group", result.payload);
+
+        dispatch(
+          checkUserAccessToViewWorkingProcess({
+            // tạm thời fix cứng
+            groupId: result?.payload[0]?.group.id,
+            projectId: projectId,
+          })
+        ).then((resCheck) => {
+          if (checkUserAccessToViewWorkingProcess.fulfilled.match(resCheck)) {
+            setIsAccessToViewWorkingProcess(resCheck.payload);
+          }
+        });
       }
     });
   }, [params.detailId]);
 
   return (
     <div className="bg-gray-100">
-      <div className="container mx-auto py-8">
+      <div className="container">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
           <div className="col-span-4 sm:col-span-3">
             <div className="bg-white shadow rounded-lg p-6">
@@ -65,7 +83,7 @@ const ProjectDetail = () => {
                       ? dataProject?.business?.avatar_url
                       : generateFallbackAvatar(dataProject?.business?.fullname)
                   }
-                  className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0"
+                  className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0 object-cover"
                 ></img>
                 <h1 className="text-xl font-bold">
                   {dataProject?.business?.fullname}
@@ -74,13 +92,13 @@ const ProjectDetail = () => {
                 <p className="text-gray-700">{dataProject?.business?.email}</p>
                 {dataProject?.business?.link_web && (
                   <div className="mt-6 flex flex-wrap gap-4 justify-center">
-                    <a
+                    <Link
                       href={`${dataProject?.business?.link_web}`}
                       className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
                       target="_blank"
                     >
                       Web
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -177,40 +195,56 @@ const ProjectDetail = () => {
                   </h2>
                   <p className="text-gray-700">
                     {dataProject?.document_related_link ? (
-                      <Button
-                        className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                        onClick={() =>
-                          handleDownloadFile(dataProject?.document_related_link)
-                        }
-                      >
-                        Tải xuống tài liệu
-                      </Button>
+                      dataProject.document_related_link.length > 0 ? (
+                        <Button
+                          className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                          onClick={() =>
+                            handleDownloadFile(
+                              dataProject.document_related_link
+                            )
+                          }
+                        >
+                          Tải xuống tài liệu
+                        </Button>
+                      ) : (
+                        <span className="italic"> (Chưa được cập nhập)</span>
+                      )
                     ) : (
-                      "(Không được cập nhập)"
+                      <span className="italic"> (Chưa được cập nhập)</span>
                     )}
                   </p>
                 </div>
               </div>
-
               <h2 className="text-xl font-bold mt-6 mb-4">Mục đích Dự án</h2>
               <p className="text-gray-700">- {dataProject?.purpose}</p>
+              {isAccessToViewWorkingProcess && (
+                <>
+                  <h2 className="text-xl font-bold mt-6 mb-4">
+                    Đối tượng mục tiêu
+                  </h2>
+                  <p className="text-gray-700">
+                    - {dataProject?.target_object}
+                  </p>
 
-              <h2 className="text-xl font-bold mt-6 mb-4">
-                Đối tượng mục tiêu
-              </h2>
-              <p className="text-gray-700">- {dataProject?.target_object}</p>
+                  <h2 className="text-xl font-bold mt-6 mb-4">
+                    Yêu cầu cụ thể
+                  </h2>
+                  <p className="text-gray-700">
+                    {dataProject?.request ? (
+                      "- " + dataProject?.request
+                    ) : (
+                      <span className="italic">(Chưa được cập nhập)</span>
+                    )}
+                  </p>
 
-              <h2 className="text-xl font-bold mt-6 mb-4">Yêu cầu cụ thể</h2>
-              <p className="text-gray-700">
-                {dataProject?.request
-                  ? "- " + dataProject?.request
-                  : "(Không được cập nhập)"}
-              </p>
-
-              <h2 className="text-xl font-bold mt-6 mb-4">Ngân sách dự kiến</h2>
-              <p className="text-gray-700">
-                {convertToNumberFormat(dataProject?.expected_budget)} VNĐ
-              </p>
+                  <h2 className="text-xl font-bold mt-6 mb-4">
+                    Ngân sách dự kiến
+                  </h2>
+                  <p className="text-gray-700">
+                    {convertToNumberFormat(dataProject?.expected_budget)} VNĐ
+                  </p>
+                </>
+              )}
 
               {dataProject?.note && (
                 <>
@@ -248,7 +282,9 @@ const ProjectDetail = () => {
                     {dataProject?.responsible_person?.other_contact ? (
                       dataProject?.responsible_person?.other_contact
                     ) : (
-                      <span className="italic text-gray-500">Chưa cập nhập</span>
+                      <span className="italic text-gray-500">
+                        Chưa cập nhập
+                      </span>
                     )}
                   </p>
                 </div>

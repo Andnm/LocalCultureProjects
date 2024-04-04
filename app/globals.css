@@ -48,3 +48,7 @@
   }
 }
 
+.webkit-scrollbar {
+  scrollbar-color: #ccc #f3f4f7;
+  scrollbar-width: thin;
+}

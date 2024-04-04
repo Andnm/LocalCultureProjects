@@ -29,11 +29,19 @@ interface AlertDialogConfirmChooseProps {
   children: React.ReactNode;
   groupId: number;
   projectId: number;
+  setDataGroupPitching: any;
+  dataGroupPitching: any;
 }
 
 export const AlertDialogConfirmChoose: React.FC<
   AlertDialogConfirmChooseProps
-> = ({ children, groupId, projectId }) => {
+> = ({
+  children,
+  groupId,
+  projectId,
+  setDataGroupPitching,
+  dataGroupPitching,
+}) => {
   const [open, setOpen] = React.useState(false);
 
   const dispatch = useAppDispatch();
@@ -41,7 +49,7 @@ export const AlertDialogConfirmChoose: React.FC<
   const { loadingPitching } = useAppSelector((state) => state.pitching);
 
   const handleChooseGroup = () => {
-    dispatch(chooseGroupByBusiness({ groupId, projectId })).then((result) => {
+    dispatch(chooseGroupByBusiness({ groupId, projectId })).then((result: any) => {
       const projectStatus = "Processing";
 
       // dispatch(changeStatusProjectByAdmin({ projectId, projectStatus })).then(
@@ -49,12 +57,24 @@ export const AlertDialogConfirmChoose: React.FC<
       //     console.log(result.payload);
       //   }
       // );
+      console.log("dataGroupPitching", dataGroupPitching);
+      console.log("groupId", groupId);
 
+      // TẠM THỜI ẨN
       if (chooseGroupByBusiness.fulfilled.match(result)) {
-        console.log('suc', result.payload)
+        console.log("suc", result.payload);
+        const updatedDataGroupPitching = dataGroupPitching.map((item: any) => {
+          if (item.group.id === groupId) {
+            return { ...item, register_pitching_status: "Selected" };
+          } else {
+            return { ...item, register_pitching_status: "Rejected" };
+          }
+        });
+        setDataGroupPitching(updatedDataGroupPitching);
         toast.success("Chọn nhóm thành công!");
       } else {
-        console.log(result.payload);
+        console.log('res', result);
+        toast.error(`${result.payload}`);
         toast.error("Đã có lỗi xảy ra vui lòng thử lại sau!");
       }
     });

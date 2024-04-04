@@ -16,7 +16,7 @@ import {
   removeCommas,
   validateEmail,
 } from "@/src/utils/handleFunction";
-import { updateUserProfile } from "@/src/redux/features/userSlice";
+import { updateProfileNotAuth, updateUserProfile } from "@/src/redux/features/userSlice";
 import {
   getUserFromSessionStorage,
   saveUserToSessionStorage,
@@ -35,7 +35,7 @@ import "../../../app/(home)/(others)/(routes)/register/style.scss";
 import CustomModal from "./CustomModal";
 import SpinnerLoading from "../loading/SpinnerLoading";
 import { useUserLogin } from "@/src/hook/useUserLogin";
-import { checkEmailExist, getAllAdmin } from "@/src/redux/features/authSlice";
+import { checkEmailExist, createNewBusinessByBusinessName, getAllAdmin } from "@/src/redux/features/authSlice";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 
@@ -411,6 +411,8 @@ export default function ModalCreateProject({
   };
 
   // xử lý api
+  // luồng đi
+  // create new account for business (new api) /create responsible / create new project/update business
   const handleCallAPIUpdateProfile = async () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setOpenModalConfirmAction(false);
@@ -450,6 +452,26 @@ export default function ModalCreateProject({
       //   return;
       // }
 
+      // Tạo sơ business trước
+      // kiểm tra đã tồn tại hay chưa, chưa thì tạo nhanh, còn rồi thì bỏ qua
+      const resCheckBusinessEmailExist = await dispatch(
+        checkEmailExist(businessData?.businessEmail)
+      );
+
+      if (checkEmailExist.fulfilled.match(resCheckBusinessEmailExist)) {
+        if (!resCheckBusinessEmailExist.payload) {
+          const data = {
+            businessName: businessData.fullname,
+            businessEmail: businessData.businessEmail,
+          };
+          const createNewBusiness = await dispatch(
+            createNewBusinessByBusinessName(data)
+          );
+
+          console.log("createNewBusiness", createNewBusiness.payload)
+        }
+      }
+
       // XỬ LÝ TẠO NGƯỜI PHỤ TRÁCH
       const resCheckResEmailExist = await dispatch(
         checkExistResponsiblePersonByEmail(responsiblePerson.email)
@@ -485,18 +507,14 @@ export default function ModalCreateProject({
             );
 
             if (
-              createResponsiblePerson.rejected.match(
-                resCreateResponsiblePerson
-              )
+              createResponsiblePerson.rejected.match(resCreateResponsiblePerson)
             ) {
               toast.error(`Có lỗi xảy ra ở bước 2!`);
               toast.error(`${resCreateResponsiblePerson.payload}`);
               return;
             }
           } else {
-            toast.error(
-              `Người phụ trách này đã tồn tại ở doanh nghiệp khác!`
-            );
+            toast.error(`Người phụ trách này đã tồn tại ở doanh nghiệp khác!`);
             return;
           }
         } else {
@@ -531,9 +549,6 @@ export default function ModalCreateProject({
       //(kiểm tra cái isAdminConfirm nữa để xem tk đó như thế nào rồi
       //thay đổi is_first_project cho phù hợp)
 
-      const resCheckBusinessEmailExist = await dispatch(
-        checkEmailExist(businessData?.businessEmail)
-      );
       // nếu isConfirmByAdmin mà là true thì tức là đã đăng dự án đầu rồi và đã được duyệt
       // nếu là false thì tức là mới
       console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
@@ -611,11 +626,11 @@ export default function ModalCreateProject({
             };
 
             const resUpdate = await dispatch(
-              updateUserProfile(dataUpdateProfile)
+              updateProfileNotAuth(dataUpdateProfile)
             );
-            console.log("resUpdate", resUpdate);
+            console.log("updateProfileNotAuth", resUpdate);
           }
-      
+
           toast.success(
             `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
           );

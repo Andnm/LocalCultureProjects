@@ -53,6 +53,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/src/utils/configFirebase";
 import { createUserChat } from "@/src/redux/features/userChatSlice";
+import { FiTrash2 } from "react-icons/fi";
 
 interface AlertDialogConfirmPitchingProps {
   dataProject: any;
@@ -72,6 +73,7 @@ export const AlertDialogConfirmPitching: React.FC<
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { loadingPitching }: any = useAppSelector((state) => state.pitching);
+  const [userLogin, setUserLogin] = useUserLogin();
 
   const [selected, setSelected] = React.useState(
     groupList[0]?.group?.group_name
@@ -103,8 +105,6 @@ export const AlertDialogConfirmPitching: React.FC<
   const [memberResultSearch, setMemberResultSearch] = React.useState<any[]>([]);
   const [memberList, setMemberList] = React.useState<any[]>([]);
   //
-
-  const [userLogin, setUserLogin] = useUserLogin();
 
   const handleNewMemberChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -150,8 +150,13 @@ export const AlertDialogConfirmPitching: React.FC<
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const selectedFile = event.target.files[0];
+      console.log("selectedFile", selectedFile);
       setFile(selectedFile);
     }
+  };
+
+  const handleRemoveFile = () => {
+    setFile(null);
   };
   // console.log(dataProject)
   const handleUpload = async () => {
@@ -354,6 +359,35 @@ export const AlertDialogConfirmPitching: React.FC<
     setOpen(false);
   };
 
+  if (!userLogin) {
+    return (
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger>{children}</AlertDialogTrigger>
+
+        <AlertDialogContent className="opacity-100 max-w-lg bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center">
+              Vui lòng đăng nhập trước khi có thể tiếp tục ứng tuyển!
+            </AlertDialogTitle>
+            <X
+              onClick={() => setOpen(false)}
+              className="absolute top-0 right-2 w-5 h-5 cursor-pointer text-gray-400"
+            />
+          </AlertDialogHeader>
+
+          <div className="flex gap-4 justify-end">
+            <Button
+              className="rounded-sm bg-blue-200 border-blue-200 border-2"
+              onClick={() => setOpen(false)}
+            >
+              Xác nhận
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
   if (Array.isArray(groupList) && groupList?.length === 0) {
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
@@ -405,7 +439,7 @@ export const AlertDialogConfirmPitching: React.FC<
 
         <div className="top-16">
           <div>
-            <p>Chọn mã môn: </p>
+            <p className="block font-semibold text-[#07074D]">Chọn mã môn: </p>
             <Select
               className="basic-single"
               classNamePrefix="select"
@@ -426,7 +460,10 @@ export const AlertDialogConfirmPitching: React.FC<
             <div className="mt-4 relative">
               {memberList.length === 0 && (
                 <>
-                  <label className="block mb-2" htmlFor="invited_member">
+                  <label
+                    className="block font-semibold text-[#07074D]"
+                    htmlFor="invited_member"
+                  >
                     Chọn giảng viên:
                   </label>
                   <input
@@ -488,7 +525,7 @@ export const AlertDialogConfirmPitching: React.FC<
 
             <div className="mt-4">
               {memberList.length !== 0 && (
-                <label className="block text-gray-700 font-bold mb-2">
+                <label className="block font-semibold text-[#07074D]">
                   Giảng viên đã mời
                 </label>
               )}
@@ -529,13 +566,55 @@ export const AlertDialogConfirmPitching: React.FC<
             </div>
           </div>
 
-          <div className="my-4">
+          {/* <div className="my-4">
             <p>Tài liệu của nhóm: </p>
             <input type="file" onChange={handleFileChange} />
+          </div> */}
+
+          <div className="mb-6 pt-4">
+            <label className=" block font-semibold text-[#07074D]">
+              File giới thiệu nhóm
+            </label>
+
+            <div className="mb-4 cursor-pointer">
+              {!file ? (
+                <>
+                  <input
+                    type="file"
+                    name="file"
+                    id="file"
+                    className="sr-only cursor-pointer"
+                    onChange={handleFileChange}
+                  />
+
+                  <label
+                    htmlFor="file"
+                    className="cursor-pointer relative flex items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-3 text-center"
+                  >
+                    <span className="block font-semibold text-[#07074D]">
+                      Bấm vào để tải file lên
+                    </span>
+                  </label>
+                </>
+              ) : (
+                <div className="flex items-center">
+                  <span className="block font-semibold text-[#07074D]">
+                    {file.name}
+                  </span>
+                  <button
+                    onClick={handleRemoveFile}
+                    className="ml-2 text-red-600"
+                    title="Xóa file"
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="">
-            <p>Chọn nhóm: </p>
+            <p className="block font-semibold text-[#07074D]">Chọn nhóm: </p>
             <Listbox value={selected} onChange={setSelected}>
               <div className="relative mt-1 ">
                 <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left ring-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">

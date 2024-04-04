@@ -203,6 +203,26 @@ export const getAllAdmin = createAsyncThunk(
   }
 );
 
+export const createNewBusinessByBusinessName = createAsyncThunk(
+  "auth/createNewBusinessByBusinessName",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `auth/createNewBusiness`,
+        data,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -310,6 +330,26 @@ export const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload as string;
     });
+
+    //createNewBusinessByBusinessName
+    builder.addCase(createNewBusinessByBusinessName.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(
+      createNewBusinessByBusinessName.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        state.error = "";
+      }
+    );
+    builder.addCase(
+      createNewBusinessByBusinessName.rejected,
+      (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      }
+    );
   },
 });
 

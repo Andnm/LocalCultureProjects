@@ -41,6 +41,8 @@ import { socketInstance } from "@/src/utils/socket/socket-provider";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 
+import "./style.scss";
+
 interface ViewNavbarProps {
   dataProject: any;
   setDataProject: any;
@@ -59,7 +61,7 @@ export const ViewNavbar = ({
   const [userLogin, setUserLogin] = useUserLogin();
   const [open, setOpen] = React.useState(false);
   const [summaryReport, setSummaryReport] = React.useState<any>([]);
-
+  console.log("summaryReport", summaryReport);
   const pathName = usePathname();
   const dispatch = useAppDispatch();
 
@@ -266,37 +268,52 @@ export const ViewNavbar = ({
     return () => clearInterval(intervalId);
   }, []);
 
+  // React.useEffect(() => {
+  //   dispatch(getSummaryReportByProjectId(extractNumberFromPath(pathName))).then(
+  //     (result) => {
+  //       if (getSummaryReportByProjectId.fulfilled.match(result)) {
+  //         // socketInstance.on(
+  //         //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
+  //         //   (data: any) => {
+  //         //     // console.log("ok socket");
+  //         //     setSummaryReport(data.summaryReport);
+  //         //     // console.log('data report', data.summaryReport)
+  //         //   }
+  //         // );
+
+  //         // socketInstance.disconnect();
+
+  //         setSummaryReport(result.payload);
+  //         console.log("result.payload", result.payload);
+  //       } else {
+  //         // toast.error("Lỗi khi lấy dữ liệu");
+  //         // socketInstance.on(
+  //         //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
+  //         //   (data: any) => {
+  //         //     // console.log("ok socket fail");
+  //         //     setSummaryReport(data.summaryReport);
+  //         //     console.log("fail", data.summaryReport);
+  //         //   }
+  //         // );
+  //       }
+  //     }
+  //   );
+  // }, []);
+
   React.useEffect(() => {
-    dispatch(getSummaryReportByProjectId(extractNumberFromPath(pathName))).then(
-      (result) => {
+    const intervalId = setInterval(() => {
+      dispatch(
+        getSummaryReportByProjectId(extractNumberFromPath(pathName))
+      ).then((result) => {
         if (getSummaryReportByProjectId.fulfilled.match(result)) {
-          // socketInstance.on(
-          //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
-          //   (data: any) => {
-          //     // console.log("ok socket");
-          //     setSummaryReport(data.summaryReport);
-          //     // console.log('data report', data.summaryReport)
-          //   }
-          // );
-
-          // socketInstance.disconnect();
-
           setSummaryReport(result.payload);
           console.log("result.payload", result.payload);
         } else {
-          // toast.error("Lỗi khi lấy dữ liệu");
-          
-          // socketInstance.on(
-          //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
-          //   (data: any) => {
-          //     // console.log("ok socket fail");
-          //     setSummaryReport(data.summaryReport);
-          //     console.log("fail", data.summaryReport);
-          //   }
-          // );
         }
-      }
-    );
+      });
+    }, 3000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -308,10 +325,7 @@ export const ViewNavbar = ({
         ></div>
       )}
 
-      <div
-        className="h-14 z-10 bg-black/50 fixed top-17 flex
-  items-center px-6 gap-x-4 text-white justify-between bg-black-header-board"
-      >
+      <div className="h-14 z-10 bg-black/50 fixed top-17 flex items-center px-6 gap-x-4 text-white justify-between bg-black-header-board">
         {pathName === `/project/${projectId}/view` && (
           <>
             <div className="flex gap-2 items-center">
@@ -380,7 +394,8 @@ export const ViewNavbar = ({
         placement="right"
         open={open}
         onClose={closeDrawer}
-        className="p-4"
+        className="p-4 drawer-summary"
+        style={{ zIndex: "9999" }}
         size={700}
       >
         <div className="mb-6 flex items-center justify-between">
@@ -427,11 +442,10 @@ export const ViewNavbar = ({
               <tbody>
                 <tr>
                   <td className="pl-5">
-                    {summaryReport &&
-                    summaryReport.summary_report_url &&
-                    summaryReport?.isBusinessConfirmed !== undefined ? (
+                    {userLogin?.role_name === "Business" ? (
                       <>
-                        {summaryReport?.isBusinessConfirmed ? (
+                        {summaryReport.summary_report_url &&
+                        summaryReport?.isBusinessConfirmed ? (
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -440,33 +454,55 @@ export const ViewNavbar = ({
                             Đã xác nhận
                           </Typography>
                         ) : (
-                          userLogin?.role_name === "Business" && (
-                            <Button
-                              onClick={handleClickConfirmSummaryReport}
-                              className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                            >
-                              Xác nhận
-                            </Button>
-                          )
+                          <Button
+                            onClick={handleClickConfirmSummaryReport}
+                            className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                          >
+                            Xác nhận
+                          </Button>
                         )}
                       </>
                     ) : (
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        Chưa xác nhận
-                      </Typography>
+                      <>
+                        {summaryReport.summary_report_url &&
+                        summaryReport?.isBusinessConfirmed !== null ? (
+                          <>
+                            {summaryReport?.isBusinessConfirmed ? (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                Đã xác nhận
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                Chưa xác nhận
+                              </Typography>
+                            )}
+                          </>
+                        ) : (
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            Chưa xác nhận
+                          </Typography>
+                        )}
+                      </>
                     )}
                   </td>
 
                   <td className={` pl-5 bg-blue-gray-50/50`}>
-                    {summaryReport &&
-                    summaryReport.summary_report_url &&
-                    summaryReport?.isLecturerConfirmed !== undefined ? (
+                    {userLogin?.role_name === "Lecturer" ? (
                       <>
-                        {summaryReport?.isLecturerConfirmed ? (
+                        {summaryReport.summary_report_url &&
+                        summaryReport?.isLecturerConfirmed ? (
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -475,24 +511,48 @@ export const ViewNavbar = ({
                             Đã xác nhận
                           </Typography>
                         ) : (
-                          userLogin?.role_name === "Lecturer" && (
-                            <Button
-                              onClick={handleClickConfirmSummaryReport}
-                              className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                            >
-                              Xác nhận
-                            </Button>
-                          )
+                          <Button
+                            onClick={handleClickConfirmSummaryReport}
+                            className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                          >
+                            Xác nhận
+                          </Button>
                         )}
                       </>
                     ) : (
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        Chưa xác nhận
-                      </Typography>
+                      <>
+                        {summaryReport &&
+                        summaryReport.summary_report_url &&
+                        summaryReport?.isLecturerConfirmed !== null ? (
+                          <>
+                            {summaryReport?.isLecturerConfirmed ? (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                Đã xác nhận
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal"
+                              >
+                                Chưa xác nhận
+                              </Typography>
+                            )}
+                          </>
+                        ) : (
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            Chưa xác nhận
+                          </Typography>
+                        )}
+                      </>
                     )}
                   </td>
                   <td className="p-4">
@@ -581,7 +641,6 @@ export const ViewNavbar = ({
 
         {loadingUploadFile && <SpinnerLoading />}
       </Drawer>
-
     </>
   );
 };

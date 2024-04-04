@@ -33,11 +33,11 @@ const ViewIdLayout = ({
   const dispatch = useAppDispatch();
 
   const fetchData = () => {
-    dispatch(getProjectById(params.projectId)).then((result) => {
-      if (getProjectById.fulfilled.match(result)) {
-        setDataProject(result.payload);
-      }
-    });
+    // dispatch(getProjectById(params.projectId)).then((result) => {
+    //   if (getProjectById.fulfilled.match(result)) {
+    //     setDataProject(result.payload);
+    //   }
+    // });
 
     dispatch(getAllRegisterPitchingByBusiness(params.projectId)).then(
       (result) => {
@@ -55,13 +55,22 @@ const ViewIdLayout = ({
   };
 
   React.useEffect(() => {
-    fetchData();
+    const fetchProjectData = async () => {
+      const projectResult = await dispatch(getProjectById(params.projectId));
+      if (getProjectById.fulfilled.match(projectResult)) {
+        setDataProject(projectResult.payload);
+      }
+    };
+  
+    fetchProjectData();
+  
+    const fetchDataInterval = setInterval(fetchProjectData, 3000);
+  
+    return () => clearInterval(fetchDataInterval);
+  }, []);
 
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, 3000);
-
-    return () => clearInterval(intervalId);
+  React.useEffect(() => {
+    fetchData();   
   }, []);
 
   return (

@@ -257,8 +257,7 @@ const ProjectList = () => {
                   href={`/project-list/detail/${project.id}`}
                   className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2"
                   key={index}
-                  style={{ borderRadius: "10px", width: 500, height: 148}}
-                  target="_blank"
+                  style={{ borderRadius: "10px", width: 500, height: 148 }}
                 >
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
                     <img
@@ -272,23 +271,14 @@ const ProjectList = () => {
                     />
                   </div>
 
-                  <div className="ml-4 flex flex-1 flex-col">
-                    <div>
-                      <div className="flex flex-col overflow-hidden justify-between text-base font-medium text-gray-900">
-                        <h3 className="overflow-hidden">
-                          {project?.name_project}
-                        </h3>
-                        <p className="overflow-hidden text-sm text-gray-400 ">
-                          Doanh nghiệp: {project?.business?.fullname}
-                        </p>
-                      </div>
-                      <p className="mt-1 text-sm text-gray-500">{""}</p>
-                    </div>
-                    <div className="flex flex-1 items-end justify-between text-sm">
-                      <p className="text-gray-500">
-                        Thời gian diễn ra: {project?.project_implement_time}
-                      </p>
-                    </div>
+                  <div className="ml-4 flex flex-1 flex-col justify-between">
+                    <h3 className="overflow-hidden font-semibold">{project?.name_project}</h3>
+                    <p className="overflow-hidden text-sm text-gray-400 ">
+                      Doanh nghiệp: {project?.business?.fullname}
+                    </p>
+                    <p className="text-gray-500">
+                      Thời gian diễn ra: {project?.project_implement_time}
+                    </p>
                   </div>
                 </Link>
               ))

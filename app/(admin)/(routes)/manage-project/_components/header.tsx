@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { IoIosSearch } from "react-icons/io";
@@ -13,6 +15,7 @@ import {
 } from "@material-tailwind/react";
 import { GrPowerReset } from "react-icons/gr";
 import { cn } from "@/lib/utils";
+import ModalCreateProject from "@/src/components/shared/ModalCreateProject";
 
 const TABS = [
   {
@@ -56,8 +59,11 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
   resetToOriginDataTable,
   searchValue,
   setSearchValue,
-  onSearchChange
+  onSearchChange,
 }) => {
+  const [openModalCreateProject, setOpenModalCreateProject] =
+    React.useState(false);
+
   return (
     <CardHeader floated={false} shadow={false} className="rounded-none">
       <div className="mb-8 flex items-center justify-between gap-8">
@@ -70,6 +76,7 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
           <div
             className="flex items-center justify-center gap-2 cursor-pointer px-4 py-2"
             style={{ borderRadius: "7px", borderWidth: "1px" }}
+            onClick={() => setOpenModalCreateProject(true)}
           >
             <MdPlaylistAdd />
             <p className="text-sm">Thêm dự án</p>
@@ -134,6 +141,16 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
           <p>Reset</p>
         </Button>
       </div>
+
+      {openModalCreateProject && (
+        <ModalCreateProject
+          open={openModalCreateProject}
+          actionClose={() => setOpenModalCreateProject(false)}
+          buttonClose="Hủy"
+          actionConfirm={() => setOpenModalCreateProject(false)}
+          buttonConfirm="Xác nhận"
+        />
+      )}
     </CardHeader>
   );
 };
