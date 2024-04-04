@@ -25,9 +25,8 @@ const ProjectList = () => {
 
   const { loadingProjectList } = useAppSelector((state) => state.project);
   const [filterOption, setFilterOption] = React.useState<any>({
-    business_model: [],
     business_type: [],
-    specialized_field: [],
+    business_sector: [],
     searchValue: "",
   });
 

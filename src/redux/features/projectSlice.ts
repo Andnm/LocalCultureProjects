@@ -1,8 +1,16 @@
-import { createSlice, createAsyncThunk, createAction, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createAction,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { ProjectType } from "@/src/types/project.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
+import {
+  getConfigHeader,
+  getTokenFromSessionStorage,
+} from "../utils/handleToken";
 
 export interface ListProjectState {
   data: ProjectType[];
@@ -21,7 +29,6 @@ const initialState: ListProjectState = {
 export const createNewProject = createAsyncThunk(
   "listProject/createNewProject",
   async (dataBody: any, thunkAPI) => {
-
     try {
       const response = await http.post<any>(
         "/projects",
@@ -57,9 +64,11 @@ export const getProjectById = createAsyncThunk(
 export const getAllFirstProjectByAdmin = createAsyncThunk(
   "listProject/getAllFirstProjectByAdmin",
   async (_, thunkAPI) => {
-
     try {
-      const response = await http.get<any>("projects/firstProject", getConfigHeader());
+      const response = await http.get<any>(
+        "projects/firstProject",
+        getConfigHeader()
+      );
 
       return response.data;
     } catch (error) {
@@ -187,6 +196,23 @@ export const updateProjectByAdmin = createAsyncThunk(
         configHeader
       );
       // console.log("response");
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const deleteProjectByAdmin = createAsyncThunk(
+  "listProject/deleteProjectByAdmin",
+  async (project_id: any, thunkAPI) => {
+    try {
+      const response = await http.delete<any>(
+        `/projects/${project_id}`,
+        getConfigHeader()
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -377,6 +403,21 @@ export const projectSlice = createSlice({
       state.error = action.payload as string;
     });
 
+    //getAllFirstProjectByAdmin
+    builder.addCase(getAllFirstProjectByAdmin.pending, (state) => {
+      state.loadingProjectList = true;
+      state.error = "";
+    });
+    builder.addCase(getAllFirstProjectByAdmin.fulfilled, (state, action) => {
+      state.loadingProjectList = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getAllFirstProjectByAdmin.rejected, (state, action) => {
+      state.loadingProjectList = false;
+      state.error = action.payload as string;
+    });
+
     //confirm project by admin
     builder.addCase(confirmProjectByAdmin.pending, (state) => {
       state.loadingProject = true;
@@ -450,6 +491,21 @@ export const projectSlice = createSlice({
       }
     );
     builder.addCase(changeStatusProjectByLecturer.rejected, (state, action) => {
+      state.loadingProject = false;
+      state.error = action.payload as string;
+    });
+
+    //deleteProjectByAdmin
+    builder.addCase(deleteProjectByAdmin.pending, (state) => {
+      state.loadingProject = true;
+      state.error = "";
+    });
+    builder.addCase(deleteProjectByAdmin.fulfilled, (state, action) => {
+      state.loadingProject = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(deleteProjectByAdmin.rejected, (state, action) => {
       state.loadingProject = false;
       state.error = action.payload as string;
     });

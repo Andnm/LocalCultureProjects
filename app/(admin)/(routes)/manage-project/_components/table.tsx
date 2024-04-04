@@ -29,6 +29,7 @@ import "@/src/styles/admin/manage-project.scss";
 import { useAppDispatch } from "@/src/redux/store";
 import {
   confirmProjectByAdmin,
+  deleteProjectByAdmin,
   updateProjectByAdmin,
 } from "@/src/redux/features/projectSlice";
 import toast from "react-hot-toast";
@@ -40,6 +41,7 @@ import { Download } from "lucide-react";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import vn from "date-fns/locale/vi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useUserLogin } from "@/src/hook/useUserLogin";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -71,6 +73,10 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const [isOpenModalDetail, setIsOpenModalDetail] = React.useState(false);
+  const [userLogin, setUserLogin] = useUserLogin();
+  const [openModalConfirmActionDelete, setOpenModalConfirmActionDelete] =
+    React.useState(false);
+  const [loadingHandle, setLoadingHandle] = React.useState(false);
 
   //quản lý thông tin hiện ra
   const [selectedProject, setSelectedProject] = React.useState<any | null>(
@@ -501,7 +507,26 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 
   const handleClickRemoveProject = (business: any) => {
     // console.log("Remove project", business);
-    alert("Tính năng chưa hỗ trợ");
+    setSelectedProject(business);
+    setOpenModalConfirmActionDelete(true);
+  };
+
+  const handleCallApiDeleteProject = () => {
+    setLoadingHandle(true);
+
+    dispatch(deleteProjectByAdmin(selectedProject.id)).then((resDelete) => {
+      if (deleteProjectByAdmin.fulfilled.match(resDelete)) {
+        toast.success("Xóa thành công!");
+        setDataTable((prevDataTable) =>
+          prevDataTable.filter((project) => project.id !== selectedProject.id)
+        );
+      } else {
+        toast.error(`${resDelete.payload}`);
+      }
+      setOpenModalConfirmActionDelete(false);
+
+      setLoadingHandle(false);
+    });
   };
 
   //handle function when open detail project
@@ -538,7 +563,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
         const dataBodyNoti = {
           notification_type: NOTIFICATION_TYPE.UPDATE_PROJECT,
           information: `Dự án ${selectedProject?.name_project} đã được sửa đổi và phê duyệt`,
-          sender_email: "admin@gmail.com",
+          sender_email: `${userLogin?.email}`,
           receiver_email: `${selectedProject?.business?.email}`,
         };
 
@@ -582,7 +607,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
         const dataBodyNoti = {
           notification_type: NOTIFICATION_TYPE.CONFIRM_PROJECT,
           information: `Dự án ${selectedProject?.name_project} đã được phê duyệt`,
-          sender_email: "admin@gmail.com",
+          sender_email: `${userLogin?.email}`,
           receiver_email: `${selectedProject?.business?.email}`,
         };
 
@@ -843,7 +868,22 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
         onPageChange={onPageChange}
       />
 
+      {openModalConfirmActionDelete && (
+        <CustomModal
+          open={openModalConfirmActionDelete}
+          title={<h2 className="text-2xl font-semibold">Xác nhận xóa</h2>}
+          body={`Bạn có chắc muốn xóa dự án ${selectedProject.name_project} ra khỏi kho hay không?`}
+          actionClose={() => setOpenModalConfirmActionDelete(false)}
+          buttonClose={"Hủy"}
+          actionConfirm={handleCallApiDeleteProject}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"} //truyền pending để hiện button action
+        />
+      )}
+
       {loadingProject && <SpinnerLoading />}
+      {loadingHandle && <SpinnerLoading />}
     </>
   );
 };

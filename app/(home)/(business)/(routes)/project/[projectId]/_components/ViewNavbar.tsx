@@ -308,8 +308,8 @@ export const ViewNavbar = ({
       )}
 
       <div
-        className="w-full h-14 z-20 bg-black/50 fixed top-17 flex
-  items-center px-6 gap-x-4 text-white justify-between"
+        className="h-14 z-20 bg-black/50 fixed top-17 flex
+  items-center px-6 gap-x-4 text-white justify-between bg-black-header-board"
       >
         {pathName === `/project/${projectId}/view` && (
           <>
@@ -372,216 +372,215 @@ export const ViewNavbar = ({
             </div>
           </>
         )}
+      </div>
 
-        <Drawer
-          overlay={false}
-          placement="right"
-          open={open}
-          onClose={closeDrawer}
-          className="p-4"
-          size={700}
-        >
-          <div className="mb-6 flex items-center justify-between">
-            <h5 className="text-black font-bold text-lg">TỔNG KẾT</h5>
-            <IconButton variant="text" onClick={closeDrawer}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="h-5 w-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </IconButton>
-          </div>
+      <Drawer
+        overlay={false}
+        placement="right"
+        open={open}
+        onClose={closeDrawer}
+        className="p-4"
+        size={700}
+      >
+        <div className="mb-6 flex items-center justify-between">
+          <h5 className="text-black font-bold text-lg">TỔNG KẾT</h5>
+          <IconButton variant="text" onClick={closeDrawer}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="h-5 w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </IconButton>
+        </div>
 
-          <div className="flex gap-2 text-black border-black">
-            <Card className="h-full w-full overflow-hidden mt-32">
-              <table className="w-full min-w-max table-auto text-left">
-                <thead>
-                  <tr>
-                    {TABLE_HEAD.map((head) => (
-                      <th
-                        key={head}
-                        className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+        <div className="flex gap-2 text-black border-black">
+          <Card className="h-full w-full overflow-hidden mt-32">
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                    >
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
                       >
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal leading-none opacity-70"
-                        >
-                          {head}
-                        </Typography>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="pl-5">
-                      {summaryReport &&
-                      summaryReport.summary_report_url &&
-                      summaryReport?.isBusinessConfirmed !== undefined ? (
-                        <>
-                          {summaryReport?.isBusinessConfirmed ? (
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal"
-                            >
-                              Đã xác nhận
-                            </Typography>
-                          ) : (
-                            userLogin?.role_name === "Business" && (
-                              <Button
-                                onClick={handleClickConfirmSummaryReport}
-                                className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                              >
-                                Xác nhận
-                              </Button>
-                            )
-                          )}
-                        </>
-                      ) : (
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          Chưa xác nhận
-                        </Typography>
-                      )}
-                    </td>
-
-                    <td className={` pl-5 bg-blue-gray-50/50`}>
-                      {summaryReport &&
-                      summaryReport.summary_report_url &&
-                      summaryReport?.isLecturerConfirmed !== undefined ? (
-                        <>
-                          {summaryReport?.isLecturerConfirmed ? (
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal"
-                            >
-                              Đã xác nhận
-                            </Typography>
-                          ) : (
-                            userLogin?.role_name === "Lecturer" && (
-                              <Button
-                                onClick={handleClickConfirmSummaryReport}
-                                className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                              >
-                                Xác nhận
-                              </Button>
-                            )
-                          )}
-                        </>
-                      ) : (
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          Chưa xác nhận
-                        </Typography>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      {summaryReport?.summary_report_url &&
-                      (summaryReport?.isBusinessConfirmed ||
-                        summaryReport?.isStudentConfirmed) ? (
-                        <Button
-                          className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                          onClick={handleDownloadFile}
-                        >
-                          Tải xuống báo cáo
-                        </Button>
-                      ) : summaryReport?.summary_report_url ? (
-                        <div className="flex gap-2 items-center">
-                          <input
-                            type="file"
-                            onChange={handleFileChange}
-                            className="text-sm"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                          />
-
-                          {file ? (
-                            <p className="text-sm">
-                              {truncateString(file.name, 15)}
-                            </p>
-                          ) : (
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="pl-5">
+                    {summaryReport &&
+                    summaryReport.summary_report_url &&
+                    summaryReport?.isBusinessConfirmed !== undefined ? (
+                      <>
+                        {summaryReport?.isBusinessConfirmed ? (
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            Đã xác nhận
+                          </Typography>
+                        ) : (
+                          userLogin?.role_name === "Business" && (
                             <Button
+                              onClick={handleClickConfirmSummaryReport}
                               className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                              onClick={handleDownloadFile}
                             >
-                              Tải xuống báo cáo
+                              Xác nhận
                             </Button>
-                          )}
+                          )
+                        )}
+                      </>
+                    ) : (
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        Chưa xác nhận
+                      </Typography>
+                    )}
+                  </td>
 
-                          {userLogin?.role_name === "Student" && (
-                            <Hint
-                              sideOffset={10}
-                              description={`Thay đổi báo cáo`}
-                              side={"top"}
+                  <td className={` pl-5 bg-blue-gray-50/50`}>
+                    {summaryReport &&
+                    summaryReport.summary_report_url &&
+                    summaryReport?.isLecturerConfirmed !== undefined ? (
+                      <>
+                        {summaryReport?.isLecturerConfirmed ? (
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            Đã xác nhận
+                          </Typography>
+                        ) : (
+                          userLogin?.role_name === "Lecturer" && (
+                            <Button
+                              onClick={handleClickConfirmSummaryReport}
+                              className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
                             >
-                              <Edit
-                                className="cursor-pointer w-5 h-5"
-                                onClick={handleClickEditSummaryReport}
-                              />
-                            </Hint>
-                          )}
-                        </div>
-                      ) : userLogin?.role_name === "Student" ? (
+                              Xác nhận
+                            </Button>
+                          )
+                        )}
+                      </>
+                    ) : (
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        Chưa xác nhận
+                      </Typography>
+                    )}
+                  </td>
+                  <td className="p-4">
+                    {summaryReport?.summary_report_url &&
+                    (summaryReport?.isBusinessConfirmed ||
+                      summaryReport?.isStudentConfirmed) ? (
+                      <Button
+                        className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                        onClick={handleDownloadFile}
+                      >
+                        Tải xuống báo cáo
+                      </Button>
+                    ) : summaryReport?.summary_report_url ? (
+                      <div className="flex gap-2 items-center">
                         <input
                           type="file"
                           onChange={handleFileChange}
                           className="text-sm"
+                          ref={fileInputRef}
+                          style={{ display: "none" }}
                         />
-                      ) : (
-                        <p className="text-sm">
-                          Sinh viên chưa nộp báo cáo tổng kết
-                        </p>
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Card>
-          </div>
 
-          <div className="relative left-1/3 mt-5">
-            {file && (
-              <div className="flex gap-3">
-                <Button
-                  className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                  onClick={handleUploadSummaryReport}
-                >
-                  Tải lên báo cáo
-                </Button>
+                        {file ? (
+                          <p className="text-sm">
+                            {truncateString(file.name, 15)}
+                          </p>
+                        ) : (
+                          <Button
+                            className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                            onClick={handleDownloadFile}
+                          >
+                            Tải xuống báo cáo
+                          </Button>
+                        )}
 
-                <Button
-                  className="font-normal transition text-white hover:text-red-600 border border-orange-600 bg-orange-600"
-                  onClick={handleCancelUploadSummaryReport}
-                >
-                  Hủy
-                </Button>
-              </div>
-            )}
-          </div>
+                        {userLogin?.role_name === "Student" && (
+                          <Hint
+                            sideOffset={10}
+                            description={`Thay đổi báo cáo`}
+                            side={"top"}
+                          >
+                            <Edit
+                              className="cursor-pointer w-5 h-5"
+                              onClick={handleClickEditSummaryReport}
+                            />
+                          </Hint>
+                        )}
+                      </div>
+                    ) : userLogin?.role_name === "Student" ? (
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="text-sm"
+                      />
+                    ) : (
+                      <p className="text-sm">
+                        Sinh viên chưa nộp báo cáo tổng kết
+                      </p>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Card>
+        </div>
 
-          {loadingUploadFile && <SpinnerLoading />}
-        </Drawer>
+        <div className="relative left-1/3 mt-5">
+          {file && (
+            <div className="flex gap-3">
+              <Button
+                className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                onClick={handleUploadSummaryReport}
+              >
+                Tải lên báo cáo
+              </Button>
 
-        <ViewTitleForm />
-      </div>
+              <Button
+                className="font-normal transition text-white hover:text-red-600 border border-orange-600 bg-orange-600"
+                onClick={handleCancelUploadSummaryReport}
+              >
+                Hủy
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {loadingUploadFile && <SpinnerLoading />}
+      </Drawer>
+
     </>
   );
 };

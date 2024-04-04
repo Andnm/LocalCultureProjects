@@ -89,7 +89,7 @@ const DrawerFilterAdmin = ({
                                 ...prevFilterOption[filterItem.value],
                                 option.value,
                               ]
-                            : prevFilterOption[filterItem.value].filter(
+                            : prevFilterOption[filterItem.value]?.filter(
                                 (value: string) => value !== option.value
                               ),
                         }));
@@ -104,7 +104,7 @@ const DrawerFilterAdmin = ({
           </Accordion>
         ))}
 
-        <Button
+        {/* <Button
           className={cn(
             "font-normal justify-start ph-10 mb-1 text-blue-900 bg-blue-300 hover:bg-blue-400 gap-2 rounded absolute bottom-10"
           )}
@@ -118,7 +118,7 @@ const DrawerFilterAdmin = ({
           }
         >
           Xoá lựa chọn
-        </Button>
+        </Button> */}
       </div>
     </Drawer>
   );

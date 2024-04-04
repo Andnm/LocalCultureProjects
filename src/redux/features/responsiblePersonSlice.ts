@@ -59,6 +59,25 @@ export const checkExistResponsiblePersonByEmail = createAsyncThunk(
   }
 );
 
+export const checkResponsiblePersonBelongsToBusiness = createAsyncThunk(
+  "responsiblePerson/checkResponsiblePersonBelongsToBusiness",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/responsible-person/checkResponsiblePersonBelongsToBusiness?responsiblePersonEmail=${data.responsiblePersonEmail}&businessEmail=${data.businessEmail}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const responsiblePersonSlice = createSlice({
   name: "responsiblePerson",
   initialState,

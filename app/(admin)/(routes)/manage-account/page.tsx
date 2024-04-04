@@ -25,6 +25,7 @@ const ManageAccount = () => {
   // filter
   const [filterOption, setFilterOption] = React.useState<any>({
     role_name: [],
+    is_ban: [],
     status: [],
     searchValue: "",
   });
@@ -63,6 +64,12 @@ const ManageAccount = () => {
         return false;
       }
       if (
+        filterOption?.is_ban?.length > 0 &&
+        !filterOption?.is_ban?.includes(item.is_ban ? "True" : "False")
+      ) {
+        return false;
+      }
+      if (
         filterOption.status.length > 0 &&
         !filterOption.status.includes(item.status ? "Active" : "Inactive")
       ) {
@@ -75,7 +82,10 @@ const ManageAccount = () => {
           item.role?.role_name
             .toLowerCase()
             .includes(filterOption.searchValue) ||
-          (item.status ? "active" : "inactive").includes(
+          (item.status ? "Active" : "Inactive").includes(
+            filterOption.searchValue
+          ) ||
+          (item.is_ban ? "True" : "False").includes(
             filterOption.searchValue
           )
         )
@@ -93,7 +103,6 @@ const ManageAccount = () => {
         console.log(result.payload);
         toast.error(`${result.payload}`);
       } else if (getAllUser.fulfilled.match(result)) {
-        
         setTotalObject(result.payload[0]?.totalUsers);
         setDataTable(result.payload[1]);
         setOriginalDataTable(result.payload[1]);
@@ -120,6 +129,7 @@ const ManageAccount = () => {
             dataTable={dataTable}
             setDataTable={setDataTable}
             loadingUser={loadingUser}
+            setOriginalDataTable={setOriginalDataTable}
           />
         </>
       )}

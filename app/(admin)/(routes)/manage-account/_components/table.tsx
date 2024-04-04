@@ -40,6 +40,13 @@ import vn from "date-fns/locale/vi";
 import PopoverOption from "@/src/components/shared/PopoverOption";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
+import {
+  banAccount,
+  deleteUser,
+  unBanAccount,
+} from "@/src/redux/features/userSlice";
+import { FaBan } from "react-icons/fa";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -48,6 +55,7 @@ interface ProjectTableProps {
   totalObject: any;
   dataTable: any[];
   setDataTable: React.Dispatch<React.SetStateAction<any[]>>;
+  setOriginalDataTable: React.Dispatch<React.SetStateAction<any[]>>;
   loadingUser: boolean;
   currentPage: number;
   onPageChange: (page: number) => void;
@@ -58,28 +66,16 @@ const TABLE_HEAD = [
   { name: "Số điện thoại", key: "phone_number" },
   { name: "Vai trò", key: "role_name" },
   { name: "Trạng thái", key: "status" },
+  { name: "Trạng thái", key: "is_ban" },
   { name: "Ngày tạo", key: "createdAt" },
   { name: "", key: "" },
-];
-
-const POPOVER_OPTION = [
-  {
-    name: "Chi tiết",
-    icon: <BiDetail />,
-    onClick: () => {},
-  },
-
-  {
-    name: "Xóa tài khoản",
-    icon: <MdOutlinePersonRemove  />,
-    onClick: () => {},
-  },
 ];
 
 const AccountTable: React.FC<ProjectTableProps> = ({
   totalObject,
   dataTable,
   setDataTable,
+  setOriginalDataTable,
   loadingUser,
   currentPage,
   onPageChange,
@@ -87,9 +83,120 @@ const AccountTable: React.FC<ProjectTableProps> = ({
   const dispatch = useAppDispatch();
 
   //quản lý thông tin hiện ra
-  const [selectedProject, setSelectedProject] = React.useState<any | null>(
+  const [selectedAccount, setSelectedAccount] = React.useState<any | null>(
     null
   );
+
+  const [loadingHandle, setLoadingHandle] = React.useState(false);
+
+  // state cho modal
+  const [openModalConfirmActionDelete, setOpenModalConfirmActionDelete] =
+    React.useState(false);
+  const [
+    openModalConfirmActionBanOrUnBan,
+    setOpenModalConfirmActionBanOrUnBan,
+  ] = React.useState(false);
+
+  // delete flow
+  const handleClickDeleteAccount = (account: any) => {
+    setSelectedAccount(account);
+    setOpenModalConfirmActionDelete(true);
+  };
+
+  const handleCallApiDeleteAccount = () => {
+    setLoadingHandle(true);
+    dispatch(deleteUser(selectedAccount.email)).then((resDelete) => {
+      if (deleteUser.fulfilled.match(resDelete)) {
+        toast.success("Xóa thành công!");
+        console.log("selectedAccount.email", selectedAccount.email);
+        console.log("datatable", dataTable);
+        setDataTable((prevDataTable) =>
+          prevDataTable.filter(
+            (account) => account.email !== selectedAccount.email
+          )
+        );
+
+        setOriginalDataTable((prevDataTable) =>
+          prevDataTable.filter(
+            (account) => account.email !== selectedAccount.email
+          )
+        );
+      } else {
+        toast.error(`${resDelete.payload}`);
+      }
+      setOpenModalConfirmActionDelete(false);
+      setLoadingHandle(false);
+    });
+  };
+
+  // ban or un ban flow
+  const handleClickToBanOrUnBanAccount = (account: any) => {
+    setSelectedAccount(account);
+    setOpenModalConfirmActionBanOrUnBan(true);
+  };
+
+  const handleApiBanOrUnBan = () => {
+    setLoadingHandle(true);
+
+    if (selectedAccount.is_ban) {
+      dispatch(unBanAccount(selectedAccount.email)).then((resUnBan) => {
+        console.log("resUnBan", resUnBan);
+        if (unBanAccount.fulfilled.match(resUnBan)) {
+          toast.success("Mở lại tài khoản thành công!");
+
+          setDataTable((prevDataTable) =>
+            prevDataTable.map((account) => {
+              if (account.email === selectedAccount.email) {
+                return { ...account, is_ban: false };
+              }
+              return account;
+            })
+          );
+
+          setOriginalDataTable((prevDataTable) =>
+            prevDataTable.map((account) => {
+              if (account.email === selectedAccount.email) {
+                return { ...account, is_ban: false };
+              }
+              return account;
+            })
+          );
+        } else {
+          toast.error(`${resUnBan.payload}`);
+        }
+        setOpenModalConfirmActionBanOrUnBan(false);
+        setLoadingHandle(false);
+      });
+    } else {
+      dispatch(banAccount(selectedAccount.email)).then((resBan) => {
+        console.log("resBan", resBan);
+        if (banAccount.fulfilled.match(resBan)) {
+          toast.success("Ban thành công!");
+          setDataTable((prevDataTable) =>
+            prevDataTable.map((account) => {
+              if (account.email === selectedAccount.email) {
+                return { ...account, is_ban: true };
+              }
+              return account;
+            })
+          );
+
+          setOriginalDataTable((prevDataTable) =>
+            prevDataTable.map((account) => {
+              if (account.email === selectedAccount.email) {
+                return { ...account, is_ban: true };
+              }
+              return account;
+            })
+          );
+        } else {
+          toast.error(`${resBan.payload}`);
+        }
+        setOpenModalConfirmActionBanOrUnBan(false);
+        setLoadingHandle(false);
+      });
+    }
+  };
 
   return (
     <>
@@ -134,6 +241,24 @@ const AccountTable: React.FC<ProjectTableProps> = ({
 
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
+            const POPOVER_OPTION = [
+              {
+                name: "Chi tiết",
+                icon: <BiDetail />,
+                onClick: () => {},
+              },
+              {
+                name: "Xóa tài khoản",
+                icon: <MdOutlinePersonRemove />,
+                onClick: () => handleClickDeleteAccount(user),
+              },
+              {
+                name: user.is_ban ? "Mở lại tài khoản" : "Ban tài khoản",
+                icon: user.is_ban ? <MdOutlineRemoveRedEye /> : <FaBan />,
+                onClick: () => handleClickToBanOrUnBanAccount(user),
+              },
+            ];
+
             return (
               <tbody key={index}>
                 <tr>
@@ -169,7 +294,12 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                   </td>
 
                   <StatusCell
-                    status={user.status ? "Active" : "Inactive"}
+                    status={user.status ? "Đã xác thực" : "Chưa xác thực"}
+                    classes={classes}
+                  />
+
+                  <StatusCell
+                    status={user.is_ban ? "Đã bị ban" : "Đang hoạt động"}
                     classes={classes}
                   />
 
@@ -187,6 +317,36 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         </table>
       </CardBody>
 
+      {openModalConfirmActionDelete && (
+        <CustomModal
+          open={openModalConfirmActionDelete}
+          title={<h2 className="text-2xl font-semibold">Xác nhận xóa</h2>}
+          body={`Bạn có chắc muốn xóa tài khoản ${selectedAccount.fullname} hay không?`}
+          actionClose={() => setOpenModalConfirmActionDelete(false)}
+          buttonClose={"Hủy"}
+          actionConfirm={handleCallApiDeleteAccount}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"}
+        />
+      )}
+
+      {openModalConfirmActionBanOrUnBan && (
+        <CustomModal
+          open={openModalConfirmActionBanOrUnBan}
+          title={<h2 className="text-2xl font-semibold">Xác nhận hành động</h2>}
+          body={`Bạn có chắc muốn ${
+            selectedAccount.is_ban ? "mở lại" : "ban"
+          } tài khoản ${selectedAccount.email} hay không?`}
+          actionClose={() => setOpenModalConfirmActionBanOrUnBan(false)}
+          buttonClose={"Hủy"}
+          actionConfirm={handleApiBanOrUnBan}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"}
+        />
+      )}
+
       <Pagination
         currentPage={currentPage}
         totalItems={totalObject}
@@ -194,6 +354,8 @@ const AccountTable: React.FC<ProjectTableProps> = ({
       />
 
       {loadingUser && <SpinnerLoading />}
+
+      {loadingHandle && <SpinnerLoading />}
     </>
   );
 };

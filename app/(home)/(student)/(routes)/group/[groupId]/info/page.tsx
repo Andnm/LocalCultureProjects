@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import MemberGroup from "../member/page";
 import { useAuthContext } from "@/src/utils/context/auth-provider";
 import Project from "./_components/Project";
@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import "./style.scss";
+import { useAppDispatch } from "@/src/redux/store";
+import { checkUserAccessToViewWorkingProcess } from "@/src/redux/features/pitchingSlice";
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import toast from "react-hot-toast";
 
 const LECTURER_HEADER = [
   {
@@ -27,16 +31,43 @@ const LECTURER_HEADER = [
 const InfoGroup = ({ params }: { params: { groupId: number } }) => {
   const { selectedProjectContext, setSelectedProjectContext }: any =
     useAuthContext();
+  const [isLoadingHandle, setIsLoadingHandle] = useState(false);
+
   const projectId = selectedProjectContext?.project?.id;
-  console.log("selectedProjectContext",selectedProjectContext)
+  console.log("selectedProjectContext", selectedProjectContext);
+
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [selectedMenu, setSelectedMenu] = React.useState("Thành viên nhóm");
 
   const handleClickMenuItem = (nameItem: string) => {
     if (nameItem !== "Quá trình làm việc") {
       setSelectedMenu(nameItem);
     } else {
-      router.push(`/project/${projectId}/view`);
+      setIsLoadingHandle(true);
+      dispatch(
+        checkUserAccessToViewWorkingProcess({
+          groupId: selectedProjectContext?.group?.id,
+          projectId: projectId,
+        })
+      ).then((resCheck) => {
+        if (checkUserAccessToViewWorkingProcess.fulfilled.match(resCheck)) {
+          if (resCheck.payload) {
+            toast.success(
+              "Đang xử lý dữ liệu, vui lòng chờ!"
+            );
+            router.push(`/project/${projectId}/view`);
+          } else {
+            toast.error(
+              "Vui lòng phản hồi lời mời tham gia trước bấm vào đây!"
+            );
+          }
+        } else {
+          toast.error("Có lỗi khi xác thực thẩm quyền truy cập!");
+        }
+
+        setIsLoadingHandle(false);
+      });
     }
   };
 
@@ -78,6 +109,7 @@ const InfoGroup = ({ params }: { params: { groupId: number } }) => {
         <Project projectId={projectId as number} />
       )}
       {selectedMenu === "Thành viên nhóm" && <MemberGroup params={params} />}
+      {isLoadingHandle && <SpinnerLoading />}
     </>
   );
 };

@@ -20,6 +20,7 @@ import { storage } from "@/src/utils/configFirebase";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
+import { getAllAdmin } from "@/src/redux/features/authSlice";
 
 const supportTypes = [
   "Về kỹ thuật",
@@ -157,34 +158,46 @@ const ContactUs = () => {
     if (createNewSupport.fulfilled.match(resCreate)) {
       toast.success("Gửi mail thành công !");
 
-      // Gửi noti khi thành công
-      const dataBodyNoti = {
-        notification_type: NOTIFICATION_TYPE.SEND_SUPPORT_TO_ADMIN,
-        information: "Có một yêu cầu hỗ trợ vừa mới gửi tới!",
-        sender_email: formData.email,
-        receiver_email: "admin@gmail.com",
-      };
+      (async () => {
+        try {
+          const resGetAllAdmin = await dispatch(getAllAdmin());
 
-      dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-        console.log(resNoti);
-      });
+          await Promise.all(
+            resGetAllAdmin.payload.map(async (email: any) => {
+              const dataBodyNoti = {
+                notification_type: NOTIFICATION_TYPE.SEND_SUPPORT_TO_ADMIN,
+                information: "Có một yêu cầu hỗ trợ vừa mới gửi tới!",
+                sender_email: formData.email,
+                receiver_email: email,
+              };
 
-      setOpenModalConfirmAction(false);
+              const resNoti = await dispatch(
+                createNewNotification(dataBodyNoti)
+              );
+              console.log(resNoti);
+            })
+          );
 
-      setSupportImageOrigin([]);
-      setSupportImage([]);
+          setOpenModalConfirmAction(false);
 
-      setFormData({
-        fullname: "",
-        email: "",
-        support_type: "",
-        support_content: "",
-      });
+          setSupportImageOrigin([]);
+          setSupportImage([]);
 
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+          setFormData({
+            fullname: "",
+            email: "",
+            support_type: "",
+            support_content: "",
+          });
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     } else {
       toast.error("Có vấn đề xảy ra!");
       toast.error(`${resCreate.payload}`);

@@ -9,11 +9,19 @@ export const FILTER_ACCOUNT_BY_ADMIN = [
     ],
   },
   {
-    label: "Trạng thái",
+    label: "Xác thực",
     value: "status",
     options: [
-      { label: "Active", value: "Active" },
-      { label: "Inactive", value: "Inactive" },
+      { label: "Đã xác thực", value: "Active" },
+      { label: "Chưa xác thực", value: "Inactive" },
+    ],
+  },
+  {
+    label: "Tình trạng",
+    value: "is_ban",
+    options: [
+      { label: "Đang hoạt động", value: "False" },
+      { label: "Đã bị ban", value: "True" },
     ],
   },
 ];

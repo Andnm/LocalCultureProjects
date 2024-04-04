@@ -36,6 +36,7 @@ import { useUserLogin } from "@/src/hook/useUserLogin";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { useDispatch } from "react-redux";
+import { getAllAdmin } from "@/src/redux/features/authSlice";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -391,24 +392,31 @@ export const AlertDialogCreateProject = ({
                   console.log(result);
                   toast.error(`${result.payload}`);
                 } else if (createNewProject.fulfilled.match(result)) {
-                  const dataBodyNoti = {
-                    notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
-                    information: "Có một dự án mới cần được duyệt",
-                    sender_email: userLogin?.email,
-                    receiver_email: "admin@gmail.com",
-                  };
+                  dispatch(getAllAdmin())
+                    .then((resGetAllAdmin) => {
+                      const notificationsPromises = resGetAllAdmin.payload.map(
+                        (email: any) => {
+                          const dataBodyNoti = {
+                            notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
+                            information: "Có một dự án mới cần được duyệt",
+                            sender_email: userLogin?.email,
+                            receiver_email: email,
+                          };
 
-                  dispatch(createNewNotification(dataBodyNoti)).then(
-                    (resNoti) => {
-                      console.log(resNoti);
+                          return dispatch(createNewNotification(dataBodyNoti));
+                        }
+                      );
+
+                      return Promise.all(notificationsPromises);
+                    })
+                    .then((resNotis) => {
+                      console.log(resNotis);
                       toast.success("Tạo dự án thành công!");
-                      // setDataProjects((prevData) => [
-                      //   ...prevData,
-                      //   result.payload,
-                      // ]);
                       handleCancel();
-                    }
-                  );
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
                 }
               }
             );
@@ -425,19 +433,31 @@ export const AlertDialogCreateProject = ({
         if (createNewProject.rejected.match(result)) {
           toast.error(`${result.payload}`);
         } else if (createNewProject.fulfilled.match(result)) {
-          const dataBodyNoti = {
-            notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
-            information: "Có một dự án mới cần được duyệt",
-            sender_email: userLogin?.email,
-            receiver_email: "admin@gmail.com",
-          };
+          dispatch(getAllAdmin())
+            .then((resGetAllAdmin) => {
+              const notificationsPromises = resGetAllAdmin.payload.map(
+                (email: any) => {
+                  const dataBodyNoti = {
+                    notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
+                    information: "Có một dự án mới cần được duyệt",
+                    sender_email: userLogin?.email,
+                    receiver_email: email,
+                  };
 
-          dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-            console.log(resNoti);
-            toast.success("Tạo dự án thành công!");
-            // setDataProjects((prevData) => [...prevData, result.payload]);
-            handleCancel();
-          });
+                  return dispatch(createNewNotification(dataBodyNoti));
+                }
+              );
+
+              return Promise.all(notificationsPromises);
+            })
+            .then((resNotis) => {
+              console.log(resNotis);
+              toast.success("Tạo dự án thành công!");
+              handleCancel();
+            })
+            .catch((error) => {
+              console.error(error);
+            });
         }
       });
     }

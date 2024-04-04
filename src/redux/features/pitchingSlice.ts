@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { RegisterPitchingType } from "@/src/types/register-pitching.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import {
+  getConfigHeader,
+  getTokenFromSessionStorage,
+} from "../utils/handleToken";
 
 export interface PitchingState {
   data: any;
@@ -100,6 +103,24 @@ export const getAllRegisterPitchingByBusiness = createAsyncThunk(
   }
 );
 
+export const checkUserAccessToViewWorkingProcess = createAsyncThunk(
+  "pitching/checkUserAccessToViewWorkingProcess",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/register-pitching/checkUserAccessToViewWorkingProcess?groupId=${data.groupId}&projectId=${data.projectId}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 //register pitching
 interface RegisterPitchingBody {
   groupId: number;
@@ -120,7 +141,7 @@ export const registerPitching = createAsyncThunk(
         Authorization: `Bearer ${token}`,
       },
     };
- 
+
     try {
       const response = await http.post<any>(
         `/register-pitching`,
@@ -193,10 +214,13 @@ export const pitchingSlice = createSlice({
     );
 
     //get all register pitching of student BY PROJECT ID
-    builder.addCase(getAllRegisterPitchingOfStudentByProjectId.pending, (state) => {
-      state.loadingPitching = true;
-      state.error = "";
-    });
+    builder.addCase(
+      getAllRegisterPitchingOfStudentByProjectId.pending,
+      (state) => {
+        state.loadingPitching = true;
+        state.error = "";
+      }
+    );
     builder.addCase(
       getAllRegisterPitchingOfStudentByProjectId.fulfilled,
       (state, action) => {
@@ -256,6 +280,20 @@ export const pitchingSlice = createSlice({
       state.error = "";
     });
     builder.addCase(chooseGroupByBusiness.rejected, (state, action) => {
+      state.loadingPitching = false;
+      state.error = action.payload as string;
+    });
+
+    //checkUserAccessToViewWorkingProcess
+    builder.addCase(checkUserAccessToViewWorkingProcess.pending, (state) => {
+      state.loadingPitching = true;
+      state.error = "";
+    });
+    builder.addCase(checkUserAccessToViewWorkingProcess.fulfilled, (state, action) => {
+      state.loadingPitching = false;
+      state.error = "";
+    });
+    builder.addCase(checkUserAccessToViewWorkingProcess.rejected, (state, action) => {
       state.loadingPitching = false;
       state.error = action.payload as string;
     });

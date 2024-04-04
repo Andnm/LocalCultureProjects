@@ -101,7 +101,7 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
                 setFilterOption({
                   role_name: [],
                   status: [],
-                  searchValue: filterOption?.searchValue,
+                  searchValue: "",
                 })
               }
             >

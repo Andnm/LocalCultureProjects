@@ -15,7 +15,9 @@ const FirstProjectManagement = () => {
   const [dataTable, setDataTable] = React.useState<any[]>([]);
   const [originalDataTable, setOriginalDataTable] = React.useState<any[]>([]);
   const [totalObject, setTotalObject] = React.useState(1);
-  const { loadingUser, error } = useAppSelector((state) => state.user);
+  const { loadingProjectList, error } = useAppSelector(
+    (state) => state.project
+  );
 
   //pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -116,7 +118,7 @@ const FirstProjectManagement = () => {
         setFilterOption={setFilterOption}
       />
 
-      {loadingUser ? (
+      {loadingProjectList ? (
         <AdminSpinnerLoading />
       ) : (
         <>
@@ -126,7 +128,7 @@ const FirstProjectManagement = () => {
             totalObject={totalObject}
             dataTable={dataTable}
             setDataTable={setDataTable}
-            loadingUser={loadingUser}
+            loadingUser={loadingProjectList}
           />
         </>
       )}

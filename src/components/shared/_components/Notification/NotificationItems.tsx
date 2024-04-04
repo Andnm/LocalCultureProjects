@@ -22,6 +22,7 @@ const NotificationItems: React.FC<NotificationItemsProps> = ({ data }) => {
 
   React.useEffect(() => {
     const typeToLinkMapping: Record<string, string> = {
+      REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN: "/first-project",
       CREATE_PROJECT: "/manage-project",
       CONFIRM_PROJECT: "/business-board",
       UPDATE_PROJECT: "/business-board",
@@ -37,6 +38,7 @@ const NotificationItems: React.FC<NotificationItemsProps> = ({ data }) => {
       POST_EVIDENCE_BUSINESS: `/#`,
       DONE_PROJECT_BUSINESS: `/project/${data.note}/view`,
       DONE_PROJECT_STUDENT: `/project/${data.note}/view`,
+      SEND_SUPPORT_TO_ADMIN: "/manage-support",
     };
 
     setNavigateToLink(typeToLinkMapping[data.notification_type] || "");

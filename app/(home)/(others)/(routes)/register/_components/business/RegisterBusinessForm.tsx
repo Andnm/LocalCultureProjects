@@ -30,7 +30,11 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { createNewProject } from "@/src/redux/features/projectSlice";
-import { checkEmailExist, logout } from "@/src/redux/features/authSlice";
+import {
+  checkEmailExist,
+  getAllAdmin,
+  logout,
+} from "@/src/redux/features/authSlice";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 
@@ -459,24 +463,41 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         toast.error(`${resCreateProject.payload}`);
         return;
       } else {
-        const dataBodyNoti = {
-          notification_type: NOTIFICATION_TYPE.CREATE_PROJECT,
-          information: "Có một dự án mới cần được duyệt",
-          sender_email: resUpdate.payload.email,
-          receiver_email: "admin@gmail.com",
-        };
+        dispatch(getAllAdmin())
+          .then((resGetAllAdmin) => {
+            const notificationsPromises = resGetAllAdmin.payload.map(
+              (email: any) => {
+                const dataBodyNoti = {
+                  notification_type:
+                    NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN,
+                  information:
+                    "Có một dự án lần đầu đăng đang cần được phê duyệt!",
+                  sender_email: resUpdate.payload.email,
+                  receiver_email: email,
+                };
 
-        dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-          console.log(resNoti);
-        });
+                return dispatch(createNewNotification(dataBodyNoti));
+              }
+            );
 
+            return Promise.all(notificationsPromises);
+          })
+          .then((resNotis) => {
+            console.log(resNotis);
 
-        toast.success(
-          `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
-        );
-        await dispatch(logout());
-        setLoginInfo("");
-        router.push("/");
+            toast.success(
+              `Đăng ký tạo tài khoản doanh nghiệp thành công, vui lòng chờ xác minh!`
+            );
+
+            return dispatch(logout());
+          })
+          .then(() => {
+            setLoginInfo("");
+            router.push("/");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       }
     } catch (error) {
       console.error("Error occurred while updating profile:", error);

@@ -169,8 +169,27 @@ export const checkEmailExist = createAsyncThunk(
   "auth/checkEmailExist",
   async (email: string, thunkAPI) => {
     try {
-      const response = await http.post<any>(
+      const response = await http.get<any>(
         `/auth/checkEmailExist?email=${email}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const getAllAdmin = createAsyncThunk(
+  "auth/getAllAdmin",
+  async (_, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/auth/all/admin`,
         getConfigHeader()
       );
 
@@ -274,6 +293,20 @@ export const authSlice = createSlice({
       state.error = "";
     });
     builder.addCase(checkEmailExist.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+    //getAllAdmin
+    builder.addCase(getAllAdmin.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(getAllAdmin.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(getAllAdmin.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });

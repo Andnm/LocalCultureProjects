@@ -72,16 +72,18 @@ export const getColorByProjectStatus = (status: string): string => {
       return "bg-blue-200 text-blue-900";
     case "Public":
       return "bg-violet-200 text-violet-900";
-    case "Active":
+    case "Xác thực":
     case "Processing":
       return "bg-yellow-200 text-yellow-900";
     case "Done":
     case "Active":
+    case "Đang hoạt động":
       return "bg-green-200 text-green-900";
     case "Expired":
+    case "Đã bị ban":
       return "bg-red-200 text-red-900";
     case "End":
-    case "Inactive":
+    case "Chưa xác thực":
       return "bg-gray-200 text-gray-900";
     case "Rejected":
       return "bg-red-200 text-red-900";

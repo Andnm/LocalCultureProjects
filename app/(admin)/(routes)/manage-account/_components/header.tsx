@@ -90,6 +90,7 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
 
           {(filterOption.role_name !== "" ||
             filterOption.status !== "" ||
+            filterOption.is_ban !== "" ||
             filterOption.searchValue !== "") && (
             <Button
               variant={"default"}
@@ -101,7 +102,8 @@ const ManageAccountHeader: React.FC<ManageAccountHeaderProps> = ({
                 setFilterOption({
                   role_name: [],
                   status: [],
-                  searchValue: filterOption?.searchValue,
+                  is_ban: [],
+                  searchValue: "",
                 })
               }
             >

@@ -116,6 +116,62 @@ export const updateUserProfile = createAsyncThunk(
   }
 );
 
+export const deleteUser = createAsyncThunk(
+  "user/deleteUser",
+  async (email: any, thunkAPI) => {
+    try {
+      const response = await http.delete<any>(
+        `/users/deleteAccount/${email}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const banAccount = createAsyncThunk(
+  "user/banAccount",
+  async (email: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `users/banAccount/${email}`,
+        [],
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const unBanAccount = createAsyncThunk(
+  "user/unBanAccount",
+  async (email: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `users/unBanAccount/${email}`,
+        [],
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -178,6 +234,51 @@ export const userSlice = createSlice({
     });
     builder.addCase(updateUserProfile.rejected, (state, action) => {
       state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //deleteUser
+    builder.addCase(deleteUser.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(deleteUser.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //banAccount
+    builder.addCase(banAccount.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(banAccount.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(banAccount.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //unBanAccount
+    builder.addCase(unBanAccount.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(unBanAccount.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(unBanAccount.rejected, (state, action) => {
+      // state.loadingUser = false;
       state.error = action.payload as string;
     });
   },

@@ -32,7 +32,7 @@ const ManageGroupHeader: React.FC<ManageGroupHeaderProps> = ({
         <div className="mb-8 flex items-center justify-between gap-8">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Quản lý tài khoản
+              Quản lý Nhóm
             </Typography>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
@@ -98,7 +98,7 @@ const ManageGroupHeader: React.FC<ManageGroupHeaderProps> = ({
               onClick={() =>
                 setFilterOption({
                   group_status: [],
-                  searchValue: filterOption?.searchValue,
+                  searchValue: '',
                 })
               }
             >

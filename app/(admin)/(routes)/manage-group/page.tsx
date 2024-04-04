@@ -18,7 +18,7 @@ const ManageGroup = () => {
   const [originalDataTable, setOriginalDataTable] = React.useState<any[]>([]);
   const [dataTable, setDataTable] = React.useState<any[]>([]);
   const [totalObject, setTotalObject] = React.useState(1);
-  const { loadingUser, error } = useAppSelector((state) => state.user);
+  const { loadingGroup, error } = useAppSelector((state) => state.group);
 
   //pagination
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -46,7 +46,7 @@ const ManageGroup = () => {
     } else {
       const filteredData = originalDataTable.filter(
         (item: any) =>
-          item?.email.toLowerCase().includes(searchValue) ||
+          item?.email?.toLowerCase().includes(searchValue) ||
           item?.role?.role_name?.toLowerCase().includes(searchValue) ||
           (item.status ? "active" : "inactive")
             .toLowerCase()
@@ -60,20 +60,20 @@ const ManageGroup = () => {
   React.useEffect(() => {
     const filteredData = originalDataTable.filter((item) => {
       if (
-        filterOption.group_status.length > 0 &&
-        !filterOption.group_status.includes(item.group_status)
+        filterOption?.group_status?.length > 0 &&
+        !filterOption?.group_status?.includes(item.group_status)
       ) {
         return false;
       }
       if (
-        filterOption.searchValue &&
+        filterOption?.searchValue &&
         !(
-          item.group_name.toLowerCase().includes(filterOption.searchValue) ||
-          item.group_status
+          item?.group_name?.toLowerCase().includes(filterOption?.searchValue) ||
+          item?.group_status
             .toLowerCase()
-            .includes(filterOption.searchValue) ||
-          (item.status ? "active" : "inactive").includes(
-            filterOption.searchValue
+            .includes(filterOption?.searchValue) ||
+          (item?.status ? "active" : "inactive").includes(
+            filterOption?.searchValue
           )
         )
       ) {
@@ -127,7 +127,7 @@ const ManageGroup = () => {
         setFilterOption={setFilterOption}
       />
 
-      {loadingUser ? (
+      {loadingGroup ? (
         <AdminSpinnerLoading />
       ) : (
         <>
@@ -137,7 +137,7 @@ const ManageGroup = () => {
             totalObject={totalObject}
             dataTable={dataTable}
             setDataTable={setDataTable}
-            loadingProject={loadingUser}
+            loadingProject={loadingGroup}
           />
         </>
       )}
