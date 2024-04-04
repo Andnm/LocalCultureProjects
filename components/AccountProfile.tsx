@@ -28,7 +28,11 @@ const AccountProfile = () => {
   }, [userLogin]);
 
   if (loadingUser) {
-    return <SpinnerLoading />;
+    return (
+      <div className="h-screen">
+        <SpinnerLoading />
+      </div>
+    );
   }
 
   return (

@@ -623,7 +623,6 @@ export default function ModalCreateProject({
           if (actionClose) {
             actionClose();
           }
-          router.push("/");
         } catch (error) {
           console.error(error);
         }

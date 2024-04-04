@@ -42,6 +42,8 @@ import { GiCaptainHatProfile } from "react-icons/gi";
 import PopoverOption from "@/src/components/shared/PopoverOption";
 import CardInfo from "./CardInfo";
 import { CardAccountInfo } from "@/components/CardAccountInfo";
+import { FaStar } from "react-icons/fa";
+
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -165,7 +167,7 @@ const GroupTable: React.FC<ProjectTableProps> = ({
                                 </div>
                               </CardAccountInfo>
                               {member.role_in_group === "Leader" && (
-                                <GiCaptainHatProfile className="text-xl text-red-950 absolute -bottom-2 -right-1" />
+                                <FaStar className="text-xl text-orange-700 absolute -bottom-2 -right-1" />
                               )}
                             </div>
                           )}

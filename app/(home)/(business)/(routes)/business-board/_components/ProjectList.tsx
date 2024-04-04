@@ -2,8 +2,9 @@ import { AlertDialogCreateProject } from "@/components/alert-dialog/AlertDialogC
 import { DialogViewProject } from "@/components/alert-dialog/DialogViewProject";
 import { Hint } from "@/components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
+import ModalCreateProject from "@/src/components/shared/ModalCreateProject";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { IoHelpCircleOutline } from "react-icons/io5";
 
 interface ProjectListProps {
@@ -19,6 +20,8 @@ const ProjectList: React.FC<ProjectListProps> = ({
   loadingProject,
   loadingProjectList,
 }) => {
+  const [openModalCreateProject, setOpenModalCreateProject] = useState(false);
+
   const getProjectNameByStatus = (status: string) => {
     switch (status) {
       case "Pending":
@@ -149,7 +152,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        <AlertDialogCreateProject
+        {/* <AlertDialogCreateProject
           dataProjects={dataProjects}
           setDataProjects={setDataProjects}
         >
@@ -169,10 +172,37 @@ const ProjectList: React.FC<ProjectListProps> = ({
               <IoHelpCircleOutline className="absolute bottom-2 right-2 h-[14px] w-[14px]" />
             </Hint>
           </div>
-        </AlertDialogCreateProject>
+        </AlertDialogCreateProject> */}
+        <div
+          role="button"
+          className="aspect-video relative h-full w-full bg-muted rounded-sm flex flex-col gap-y-1 items-center justify-center
+                   transition"
+          style={{ backgroundColor: "rgb(229 231 235)" }}
+          onClick={() => setOpenModalCreateProject(true)}
+        >
+          <p className="text-sm">Tạo dự án mới</p>
+
+          <Hint
+            sideOffset={40}
+            description={`Bấm vào đây để khởi tạo dự án mới`}
+            side={"top"}
+          >
+            <IoHelpCircleOutline className="absolute bottom-2 right-2 h-[14px] w-[14px]" />
+          </Hint>
+        </div>
       </div>
 
       {renderProjectsByStatus()}
+
+      {openModalCreateProject && (
+        <ModalCreateProject
+          open={openModalCreateProject}
+          actionClose={() => setOpenModalCreateProject(false)}
+          buttonClose="Hủy"
+          actionConfirm={() => setOpenModalCreateProject(false)}
+          buttonConfirm="Xác nhận"
+        />
+      )}
     </div>
   );
 };

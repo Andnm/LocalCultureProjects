@@ -66,7 +66,7 @@ const NotificationItems: React.FC<NotificationItemsProps> = ({ data }) => {
             alt="ava"
           />
 
-          <div className="ml-3 w-80">
+          <div className="ml-3 w-[400px]">
             <p
               className={`h-full w-full text-sm  ${
                 data.is_new ? "text-black" : "text-gray-500"

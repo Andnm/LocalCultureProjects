@@ -108,7 +108,7 @@ const FirstStage: React.FC<FirstStageProps> = ({
             onChange={(e) => handleInputChange(e, "description")}
           />
           <label>
-            Mô tả bản thân <span className="text-red-700">*</span>
+            Mô tả bản thân 
           </label>
 
           {errorStudentForm.description && (

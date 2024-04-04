@@ -284,7 +284,8 @@ export const ViewNavbar = ({
           setSummaryReport(result.payload);
           console.log("result.payload", result.payload);
         } else {
-          toast.error("Lỗi khi lấy dữ liệu");
+          // toast.error("Lỗi khi lấy dữ liệu");
+          
           // socketInstance.on(
           //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
           //   (data: any) => {
@@ -308,7 +309,7 @@ export const ViewNavbar = ({
       )}
 
       <div
-        className="h-14 z-20 bg-black/50 fixed top-17 flex
+        className="h-14 z-10 bg-black/50 fixed top-17 flex
   items-center px-6 gap-x-4 text-white justify-between bg-black-header-board"
       >
         {pathName === `/project/${projectId}/view` && (

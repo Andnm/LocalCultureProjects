@@ -4,6 +4,7 @@ import React from "react";
 import BusinessSidebar from "./_components/BusinessSidebar";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
 import { getAllProjectByBusiness } from "@/src/redux/features/projectSlice";
+import Footer from "@/src/components/landing/Footer";
 
 const BusinessBoardLayout = (props: { children: React.ReactNode }) => {
   const [dataProjects, setDataProjects] = React.useState<any[]>([]);
@@ -23,7 +24,8 @@ const BusinessBoardLayout = (props: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <main className="py-4 md:py-4 px-4 max-w-6xl 2xl:max-w-screen-xl mx-auto">
+   <>
+    <main className="py-4 md:py-4 px-4 max-w-6xl 2xl:max-w-screen-xl mx-auto min-h-screen">
       <div className="flex gap-x-7">
         <div className="w-64 shrink-0 hidden md:block">
           <BusinessSidebar
@@ -36,6 +38,9 @@ const BusinessBoardLayout = (props: { children: React.ReactNode }) => {
         {props.children}
       </div>
     </main>
+
+    <Footer/>
+   </>
   );
 };
 

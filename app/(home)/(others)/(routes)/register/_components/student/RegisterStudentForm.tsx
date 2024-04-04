@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FirstStage from "./FirstStage";
 import ButtonBack from "@/src/components/shared/ButtonBack";
 import { StudentDataType } from "../../_types/student.type";
@@ -13,6 +13,7 @@ import {
   saveUserToSessionStorage,
 } from "@/src/redux/utils/handleUser";
 import { useAuthContext } from "@/src/utils/context/auth-provider";
+import { useUserLogin } from "@/src/hook/useUserLogin";
 
 interface RegisterStudentFormProps {
   selectedRole: any;
@@ -23,6 +24,8 @@ const RegisterStudentForm: React.FC<RegisterStudentFormProps> = ({
   selectedRole,
   setSelectedRole,
 }) => {
+  const [userLogin, setUserLogin] = useUserLogin();
+
   const [studentData, setStudentData] = useState<StudentDataType>({
     fullname: "",
     phone_number: "",
@@ -86,7 +89,7 @@ const RegisterStudentForm: React.FC<RegisterStudentFormProps> = ({
     const updatedErrorStudentForm: Partial<typeof errorStudentForm> = {};
 
     Object.keys(studentData).forEach((key) => {
-      if (!studentData[key as keyof StudentDataType]) {
+      if (key !== "description" && !studentData[key as keyof StudentDataType]) {
         updatedErrorStudentForm[key as keyof typeof errorStudentForm] =
           "Vui lòng không được để trống!";
         hasError = true;
@@ -146,6 +149,17 @@ const RegisterStudentForm: React.FC<RegisterStudentFormProps> = ({
       setIsLoading(false);
     });
   };
+
+  useEffect(() => {
+    if (userLogin) {
+      setStudentData({
+        fullname: userLogin.fullname || "",
+        phone_number: "",
+        roll_number: "",
+        description: "",
+      });
+    }
+  }, [userLogin]);
 
   return (
     <div className="container py-10">

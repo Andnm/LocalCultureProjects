@@ -9,6 +9,7 @@ import {
 } from "@/src/redux/features/projectSlice";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
 import { useUserLogin } from "@/src/hook/useUserLogin";
+import toast from "react-hot-toast";
 
 const BusinessBoard = () => {
   const [dataProjects, setDataProjects] = React.useState<any[]>([]);
@@ -23,15 +24,21 @@ const BusinessBoard = () => {
   React.useEffect(() => {
     dispatch(getAllProjectByBusiness()).then((result: any) => {
       if (getAllProjectByBusiness.fulfilled.match(result)) {
-
+        setDataProjects(result.payload);
         socketInstance.on(
           `getProjectsOfBusiness-${userLogin?.email}`,
           (data: any) => {
-            setDataProjects(data.projects);
-            console.log(data);
+            console.log("data socket project", data);
+            if (data && data.projects) {
+              setDataProjects(data.projects);
+            } else {
+              console.log("No projects data or error occurred from socket");
+              setDataProjects(result.payload);
+            }
           }
         );
       } else {
+        toast.error("Có lỗi xảy ra khi tải dữ liệu!");
       }
     });
   }, [userLogin]);
