@@ -1,0 +1,78 @@
+.choose-guideline-role-background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
+  .choose-guideline-role-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-direction: row;
+    padding: 30px;
+    border-radius: 20px;
+    width: fit-content;
+    flex-direction: column;
+    
+
+    .list-role {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-direction: row;
+
+      .card-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: fit-content;
+        padding: 15px;
+        text-align: center;
+        background-color: #f6f6f6;
+        flex-direction: column;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+
+        .card-item-image {
+          width: 300px;
+          height: 300px;
+          margin-bottom: 20px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+        }
+      }
+
+      .card-item:hover {
+        transform: scale(1.07);
+      }
+    }
+  }
+
+}
+
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: white;
+  border: 1px solid gray;
+  color: black;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
