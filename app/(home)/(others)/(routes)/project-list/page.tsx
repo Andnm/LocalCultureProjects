@@ -318,6 +318,7 @@ const ProjectList = () => {
           open={isOpenModalWarningLogin}
           title={<h2 className="text-2xl font-semibold">Cảnh báo đăng nhập</h2>}
           body={`Vui lòng đăng nhập trước khi xem thông tin chi tiết dự án`}
+          actionClose={() => setIsOpenModalWarningLogin(false)}
           actionConfirm={() => setIsOpenModalWarningLogin(false)}
           buttonConfirm={"Xác nhận"}
           styleWidth={"max-w-xl"}
