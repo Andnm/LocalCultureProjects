@@ -16,7 +16,10 @@ import {
   removeCommas,
   validateEmail,
 } from "@/src/utils/handleFunction";
-import { updateProfileNotAuth, updateUserProfile } from "@/src/redux/features/userSlice";
+import {
+  updateProfileNotAuth,
+  updateUserProfile,
+} from "@/src/redux/features/userSlice";
 import {
   getUserFromSessionStorage,
   saveUserToSessionStorage,
@@ -35,7 +38,11 @@ import "../../../app/(home)/(others)/(routes)/register/style.scss";
 import CustomModal from "./CustomModal";
 import SpinnerLoading from "../loading/SpinnerLoading";
 import { useUserLogin } from "@/src/hook/useUserLogin";
-import { checkEmailExist, createNewBusinessByBusinessName, getAllAdmin } from "@/src/redux/features/authSlice";
+import {
+  checkEmailExist,
+  createNewBusinessByBusinessName,
+  getAllAdmin,
+} from "@/src/redux/features/authSlice";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 
@@ -45,6 +52,10 @@ interface ModalProps {
   actionConfirm?: () => void;
   buttonClose?: string;
   buttonConfirm?: string;
+  setDataTable?: any;
+  setDataTableOrigin?: any;
+  dataTable?: any;
+  dataTableOrigin?: any;
 }
 
 export default function ModalCreateProject({
@@ -53,6 +64,10 @@ export default function ModalCreateProject({
   buttonClose,
   actionConfirm,
   buttonConfirm,
+  setDataTable,
+  setDataTableOrigin,
+  dataTable,
+  dataTableOrigin,
 }: ModalProps) {
   const closeByClickBackground = () => {
     if (actionClose) {
@@ -118,24 +133,24 @@ export default function ModalCreateProject({
     if (userLogin && userLogin.role_name === "Business") {
       setBusinessData((prevData) => ({
         ...prevData,
-        fullname: userLogin.fullname || "",
-        businessEmail: userLogin.email || "",
-        business_sector: userLogin.business_sector || "",
+        fullname: userLogin?.fullname || "",
+        businessEmail: userLogin?.email || "",
+        business_sector: userLogin?.business_sector || "",
         other_business_sector: "",
-        business_description: userLogin.business_description || "",
-        address: userLogin.address || "",
-        address_detail: userLogin.address_detail || "",
-        link_web: userLogin.link_web || "",
+        business_description: userLogin?.business_description || "",
+        address: userLogin?.address || "",
+        address_detail: userLogin?.address_detail || "",
+        link_web: userLogin?.link_web || "",
       }));
 
       setResponsiblePerson((prevData) => ({
         ...prevData,
-        fullname: userLogin.responsiblePerson.fullname || "",
-        position: userLogin.responsiblePerson.position || "",
-        email: userLogin.responsiblePerson.email || "",
-        phone_number: userLogin.responsiblePerson.phone_number || "",
-        other_contact: userLogin.responsiblePerson.other_contact || "",
-        businessEmail: userLogin.responsiblePerson.businessEmail || "",
+        fullname: userLogin?.responsiblePerson?.fullname || "",
+        position: userLogin?.responsiblePerson?.position || "",
+        email: userLogin?.responsiblePerson?.email || "",
+        phone_number: userLogin?.responsiblePerson?.phone_number || "",
+        other_contact: userLogin?.responsiblePerson?.other_contact || "",
+        businessEmail: userLogin?.responsiblePerson?.businessEmail || "",
       }));
     } else {
       setBusinessData({
@@ -173,7 +188,7 @@ export default function ModalCreateProject({
     is_extent: false,
     project_expected_end_date: "",
     project_actual_end_date: "",
-    expected_budget: 0,
+    expected_budget: "",
     is_first_project: true,
   });
 
@@ -454,13 +469,18 @@ export default function ModalCreateProject({
 
       // Tạo sơ business trước
       // kiểm tra đã tồn tại hay chưa, chưa thì tạo nhanh, còn rồi thì bỏ qua
+      const dataIsCreatedByAdmin = userLogin && userLogin.role_name === "Admin";
+
       const resCheckBusinessEmailExist = await dispatch(
         checkEmailExist(businessData?.businessEmail)
       );
 
+      console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
+
       if (checkEmailExist.fulfilled.match(resCheckBusinessEmailExist)) {
         if (!resCheckBusinessEmailExist.payload) {
           const data = {
+            is_created_by_admin: dataIsCreatedByAdmin,
             businessName: businessData.fullname,
             businessEmail: businessData.businessEmail,
           };
@@ -468,7 +488,7 @@ export default function ModalCreateProject({
             createNewBusinessByBusinessName(data)
           );
 
-          console.log("createNewBusiness", createNewBusiness.payload)
+          console.log("createNewBusiness", createNewBusiness.payload);
         }
       }
 
@@ -485,6 +505,11 @@ export default function ModalCreateProject({
           responsiblePersonEmail: responsiblePerson.email,
           businessEmail: businessData?.businessEmail,
         })
+      );
+
+      console.log(
+        "resCheckResponsiblePersonBelongToBusinessEmail",
+        resCheckResponsiblePersonBelongToBusinessEmail
       );
 
       if (!resCheckResponsiblePersonBelongToBusinessEmail.payload) {
@@ -577,13 +602,13 @@ export default function ModalCreateProject({
       const dataFirstProject = {
         ...firstProject,
         document_related_link: juridicalFilesURLs,
-        expected_budget: removeCommas(firstProject.expected_budget as any),
         businessEmail: businessData.businessEmail,
         email_responsible_person: responsiblePerson.email,
         project_start_date: projectTimeline.project_start_date,
         project_expected_end_date: projectTimeline.project_expected_end_date,
         businessName: businessData.fullname,
         is_first_project: dataIsFirstProject,
+        is_created_by_admin: dataIsCreatedByAdmin,
       };
 
       const resCreateProject = await dispatch(
@@ -623,6 +648,7 @@ export default function ModalCreateProject({
           if (resCheckBusinessEmailExist.payload) {
             const dataUpdateProfile = {
               ...businessData,
+              email: businessData.businessEmail,
             };
 
             const resUpdate = await dispatch(
@@ -634,6 +660,18 @@ export default function ModalCreateProject({
           toast.success(
             `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
           );
+
+          if (setDataTable) {
+            if (dataTable) {
+              setDataTable([resCreateProject.payload, ...dataTable]);
+            }
+          }
+
+          if (setDataTableOrigin) {
+            if (dataTableOrigin) {
+              setDataTable([resCreateProject.payload, ...dataTableOrigin]);
+            }
+          }
 
           if (actionClose) {
             actionClose();

@@ -49,7 +49,7 @@ const ManageProject = () => {
         console.log(result.payload);
         toast.error(`${result.payload}`);
       } else if (getAllProjectByAdmin.fulfilled.match(result)) {
-        console.log(result.payload[1])
+        console.log(result.payload[1]);
         setTotalObject(result.payload[0]?.totalProjects);
         setDataTableOrigin(result.payload[1]);
         setDataTable(result.payload[1]);
@@ -86,6 +86,10 @@ const ManageProject = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         onSearchChange={handleSearch}
+        dataTable={dataTable}
+        dataTableOrigin={dataTableOrigin}
+        setDataTable={setDataTable}
+        setDataTableOrigin={setDataTableOrigin}
       />
 
       {loadingProjectList ? (

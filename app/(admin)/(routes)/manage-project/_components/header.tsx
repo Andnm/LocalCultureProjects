@@ -51,6 +51,10 @@ interface ManageProjectHeaderProps {
   searchValue: any;
   setSearchValue: any;
   onSearchChange: any;
+  setDataTable: any;
+  setDataTableOrigin: any;
+  dataTable: any;
+  dataTableOrigin: any;
 }
 
 const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
@@ -60,6 +64,10 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
   searchValue,
   setSearchValue,
   onSearchChange,
+  setDataTable,
+  setDataTableOrigin,
+  dataTable,
+  dataTableOrigin,
 }) => {
   const [openModalCreateProject, setOpenModalCreateProject] =
     React.useState(false);
@@ -149,6 +157,10 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
           buttonClose="Hủy"
           actionConfirm={() => setOpenModalCreateProject(false)}
           buttonConfirm="Xác nhận"
+          dataTable={dataTable}
+          setDataTable={setDataTable}
+          dataTableOrigin={dataTableOrigin}
+          setDataTableOrigin={setDataTableOrigin}
         />
       )}
     </CardHeader>

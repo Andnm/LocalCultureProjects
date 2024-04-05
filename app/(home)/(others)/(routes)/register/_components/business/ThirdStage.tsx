@@ -42,12 +42,6 @@ const SecondStage: React.FC<SecondStageProps> = ({
 
     if (field === "is_extent") {
       value = e.target.checked;
-    } else if (field === "expected_budget") {
-      value = value.replace(/\D/g, "");
-    }
-
-    if (field === "expected_budget" && parseInt(value) > 1000) {
-      value = parseInt(value).toLocaleString();
     }
 
     setFirstProject({
@@ -229,6 +223,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
             spellCheck="false"
             value={firstProject.request}
             onChange={(e) => handleInputChange(e, "request")}
+            placeholder="Vui lòng cung cấp thông tin chi tiết (nếu có) về khoảng thời gian, phạm vi địa lý, nội dung các hoạt động truyền thông… mà doanh nghiệp mong muốn triển khai "
           />
           <label>
             Yêu cầu cụ thể <span className="text-red-700">*</span>
@@ -297,35 +292,66 @@ const SecondStage: React.FC<SecondStageProps> = ({
             onChange={(e) => handleInputChange(e, "is_extent")}
           />
           <label htmlFor="extendDeadline" className="ml-2 text-justify">
-            Quý DN có muốn gia hạn đề bài sang kỳ tiếp theo nếu không có nhóm
-            phù hợp trong kỳ hiện tại không
+            Bấm chọn dòng này nếu Quý Doanh nghiệp muốn gia hạn đề bài sang học
+            kỳ tiếp theo (Học kì Thu 2024) nếu không có nhóm phù hợp trong học
+            kỳ sắp tới (Học kì Hè 2024)
           </label>
         </div>
 
         {/* ngân sách dự kiến */}
-        <div className="form-group-material mt-4">
-          <input
-            type="text"
-            required={true}
-            className="form-control"
-            value={
-              firstProject.expected_budget !== 0
-                ? firstProject.expected_budget
-                : ""
-            }
-            onChange={(e) => handleInputChange(e, "expected_budget")}
-          />
-          <label>
-            Ngân sách dự kiến
-            <span className="text-red-700">*</span>
-          </label>
-          {errorFirstProject.expected_budget && (
-            <span className="error-message">
-              {errorFirstProject.expected_budget}
-            </span>
-          )}
-        </div>
 
+        {/* new ngân sách dự kiến */}
+        <fieldset
+          className="border border-gray-300 px-4"
+          style={{ borderRadius: "8px" }}
+        >
+          <legend
+            className="text-lg"
+            style={{ fontSize: "12px", color: "#6d859f", opacity: 0.7 }}
+          >
+            Ngân sách dự kiến <span className="text-red-700">*</span>
+          </legend>
+          <div className="pb-2">
+            <div className="flex flex-col justify-around gap-2 pl-4">
+              {[
+                "Dưới 5.000.000 VNĐ",
+                "Từ 5.000.000 tới dưới 15.000.000 VNĐ",
+                "Từ 15.000.000 tới dưới 25.000.000 VNĐ",
+                "Từ 25.000.000 VNĐ trở lên",
+                "Chưa xác định, tùy thuộc vào ý tưởng được đề xuất"
+              ].map((option) => (
+                <label
+                  key={option}
+                  className="inline-flex items-center cursor-pointer"
+                  style={{
+                    fontSize: "15px",
+                    color:
+                      firstProject.expected_budget === option
+                        ? "#000"
+                        : "#ced4da",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="expected_budget"
+                    value={option}
+                    checked={firstProject.expected_budget === option}
+                    onChange={(e) => handleInputChange(e, "expected_budget")}
+                    className="mr-2"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+        </fieldset>
+        {errorFirstProject.expected_budget && (
+          <span className="error-message">
+            {errorFirstProject.expected_budget}
+          </span>
+        )}
+
+        {/* lưu ý khác */}
         <div className="form-group-material mt-4">
           <textarea
             rows={3}

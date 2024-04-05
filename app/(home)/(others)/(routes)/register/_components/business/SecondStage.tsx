@@ -23,6 +23,9 @@ const SecondStage: React.FC<SecondStageProps> = ({
 
     if (field === "phone_number") {
       value = value.replace(/\D/g, "");
+      if (value.length > 10) {
+        value = value.slice(0, 10);
+      }
     }
 
     setResponsiblePerson({

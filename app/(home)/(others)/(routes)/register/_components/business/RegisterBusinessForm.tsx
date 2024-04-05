@@ -99,7 +99,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
     is_extent: false,
     project_expected_end_date: "",
     project_actual_end_date: "",
-    expected_budget: 0,
+    expected_budget: "",
     is_first_project: true,
   });
 
@@ -444,7 +444,6 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       const dataFirstProject = {
         ...firstProject,
         document_related_link: juridicalFilesURLs,
-        expected_budget: removeCommas(firstProject.expected_budget as any),
         businessEmail: resUpdate.payload.email,
         email_responsible_person: responsiblePerson.email,
         project_start_date: projectTimeline.project_start_date,
