@@ -42,6 +42,7 @@ import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import vn from "date-fns/locale/vi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useUserLogin } from "@/src/hook/useUserLogin";
+import ModalViewProjectDetail from "@/src/components/shared/ModalViewProjectDetail";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -82,6 +83,9 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   const [selectedProject, setSelectedProject] = React.useState<any | null>(
     null
   );
+
+  const [openModalConfirmProject, setOpenModalConfirmProject] =
+    React.useState(false);
 
   const bodyContent = (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -492,9 +496,49 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
     setIsOpenModalDetail(true);
   };
 
-  const handleCloseModalDetails = () => {
-    setSelectedProject(null);
-    setIsOpenModalDetail(false);
+  const handleCallApiConfirmProject = (id: number) => {
+    // console.log("confirm nè");
+    // console.log(selectedProject?.business?.email)
+    setLoadingHandle(true);
+    dispatch(confirmProjectByAdmin(id)).then((result) => {
+      if (confirmProjectByAdmin.fulfilled.match(result)) {
+        // console.log(result.payload);
+        const dataBodyNoti = {
+          notification_type: NOTIFICATION_TYPE.CONFIRM_PROJECT,
+          information: `Dự án ${selectedProject?.name_project} đã được phê duyệt`,
+          sender_email: `${userLogin?.email}`,
+          receiver_email: `${selectedProject?.business?.email}`,
+        };
+
+        dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
+          console.log(resNoti);
+        });
+
+        setDataTable((prevDataTable) => {
+          const updatedIndex = prevDataTable.findIndex(
+            (item) => item.id === result.payload.id
+          );
+
+          if (updatedIndex !== -1) {
+            const newDataTable = [...prevDataTable];
+            newDataTable[updatedIndex] = result.payload;
+            return newDataTable;
+          }
+
+          return prevDataTable;
+        });
+        toast.success("Phê duyệt thành công!");
+      } else if (confirmProjectByAdmin.rejected.match(result)) {
+        toast.error(`${result.payload}`);
+        console.log(result);
+      }
+      setDataTable((prevDataTable) =>
+        prevDataTable.filter((project) => project.id !== selectedProject.id)
+      );
+      setLoadingHandle(false);
+      setOpenModalConfirmProject(false);
+      setIsOpenModalDetail(false);
+    });
   };
 
   const handleCloseUpdateProject = () => {
@@ -644,9 +688,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 
   const body = isEditMode ? bodyUpdate : bodyContent;
 
-  const actionClose = isEditMode
-    ? handleCloseUpdateProject
-    : handleCloseModalDetails;
 
   const actionConfirm = isEditMode
     ? () => handleUpdateAndConfirmProject(selectedProject.id)
@@ -727,11 +768,11 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                 },
 
                 //Tạm thời ẩn đi
-                {
-                  name: "Sửa thông tin",
-                  icon: <CiEdit />,
-                  onClick: () => handleClickOpenInfo(business),
-                },
+                // {
+                //   name: "Sửa thông tin",
+                //   icon: <CiEdit />,
+                //   onClick: () => handleClickOpenInfo(business),
+                // },
                 {
                   name: "Xóa dự án",
                   icon: <MdOutlinePlaylistRemove />,
@@ -838,7 +879,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
             })}
         </table>
 
-        {isOpenModalDetail && selectedProject && (
+        {/* {isOpenModalDetail && selectedProject && (
           <CustomModal
             open={isOpenModalDetail}
             title={
@@ -858,6 +899,37 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
             actionConfirm={actionConfirm}
             buttonConfirm={buttonConfirm}
             status={selectedProject.project_status}
+          />
+        )} */}
+
+         {isOpenModalDetail && selectedProject && (
+          <ModalViewProjectDetail
+            open={isOpenModalDetail}
+            title={"Thông tin dự án"}
+            actionClose={() => setIsOpenModalDetail(false)}
+            buttonClose={"Chỉnh sửa dự án"}
+            actionConfirm={() => setOpenModalConfirmProject(true)}
+            buttonConfirm={"Xác nhận phê duyệt"}
+            status={selectedProject.project_status}
+            selectedProject={selectedProject}
+          />
+        )}
+
+        {openModalConfirmProject && (
+          <CustomModal
+            open={openModalConfirmProject}
+            title={
+              <h2 className="text-2xl font-semibold">Xác nhận phê duyệt</h2>
+            }
+            body={`Bạn có chắc muốn đăng dự án ${selectedProject.name_project} lên trên home page?`}
+            actionClose={() => setOpenModalConfirmProject(false)}
+            buttonClose={"Hủy"}
+            actionConfirm={() =>
+              handleCallApiConfirmProject(selectedProject.id)
+            }
+            buttonConfirm={"Xác nhận"}
+            styleWidth={"max-w-xl"}
+            status={"Pending"} //truyền pending để hiện button action
           />
         )}
       </CardBody>

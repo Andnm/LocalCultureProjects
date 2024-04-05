@@ -27,7 +27,7 @@ export const CHOOSE_LIST_ROLE_GUIDELINE = [
   {
     roleName: "Giảng viên",
     value: "Lecturer",
-    img: "https://cdn.tuoitre.vn/thumb_w/480/471584752817336320/2024/3/27/cong-danh-1-read-only-17115500192202085146867.jpg",
+    img: "https://daihoc.fpt.edu.vn/wp-content/uploads/2023/03/GIang_vien_DHFPT_giang_vien_cao_cap_toan_cau-1-e1679537966373.jpeg",
   },
 ];
 
