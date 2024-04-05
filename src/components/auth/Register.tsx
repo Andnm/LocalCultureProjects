@@ -129,7 +129,7 @@ const Register: React.FC<RegisterProps> = ({
             }
             actionClose();
           } else {
-            toast.error("Có lỗi xảy ra, vui lòng thử lại sau!");
+            toast.error(`${result.payload}`);
           }
         }
       );

@@ -135,7 +135,8 @@ const Login: React.FC<LoginProps> = ({
             }
             actionClose();
           } else {
-            toast.error("Có lỗi xảy ra, vui lòng thử lại sau!");
+            toast.error(`${result.payload}`);
+            
           }
         }
       );
