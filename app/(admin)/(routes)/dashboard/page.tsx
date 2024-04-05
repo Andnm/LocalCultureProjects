@@ -26,6 +26,7 @@ import { PiPlant } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { getColorByProjectStatus } from "@/src/utils/handleFunction";
 import toast from "react-hot-toast";
+import PieChart from "./_components/PieChart";
 
 const getIcon = (key: string) => {
   switch (key.toLowerCase()) {
@@ -80,7 +81,7 @@ const Dashboard = () => {
         );
 
         dispatch(statisticsBusinessFollowProvince()).then((result) => {
-          setBusinessFollowProvinceData(result.payload.slice(0, 6));
+          setBusinessFollowProvinceData(result.payload.slice(0, 8));
         });
 
         dispatch(statisticsAccount()).then((result) => {
@@ -124,7 +125,7 @@ const Dashboard = () => {
         className="h-full w-full bg-gray-50 relative overflow-y-auto"
       >
         <main>
-          <div className="pt-6 px-4">
+          <div className="p-6 px-4">
             <div className="w-full grid grid-cols-1 xl:grid-cols-3 gap-4">
               <div className=" rounded-lg xl:col-span-2">
                 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -242,70 +243,12 @@ const Dashboard = () => {
                 </div>
 
                 <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
-                  <div className="">
-                    <h2 className="text-xl leading-none font-bold mb-3 text-gray-900">
-                      Dự án theo trạng thái
-                    </h2>
+                  <h2 className="text-xl leading-none font-bold mb-3 text-gray-900">
+                    Dự án theo trạng thái
+                  </h2>
 
-                    <div className="flex justify-center">
-                      {projectData.map((item: any, index) => (
-                        <div key={index} className="ml-3">
-                          <div className="flex items-center gap-2">
-                            <div className="text-base font-normal">
-                              <h3
-                                className={`py-1 px-2 font-bold ${getColorByProjectStatus(
-                                  item?.key
-                                )}`}
-                                style={{ borderRadius: "7px" }}
-                              >
-                                {item?.key}
-                              </h3>
-                            </div>
-
-                            <div className="flex items-center flex-row gap-2 ">
-                              <span className="text-xl leading-none font-bold text-gray-900">
-                                {item?.value}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <PieChart projectData={projectData} />
                 </div>
-
-                {/* <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mt-4">
-                  <div className="">
-                    <h2 className="text-xl leading-none font-bold mb-3 text-gray-900">
-                      Dự án theo trạng thái
-                    </h2>
-
-                    <div className="flex justify-center">
-                      {projectData.map((item: any, index) => (
-                        <div key={index} className="ml-3">
-                          <div className="flex items-center gap-2">
-                            <div className="text-base font-normal">
-                              <h3
-                                className={`py-1 px-2 font-bold ${getColorByProjectStatus(
-                                  item?.key
-                                )}`}
-                                style={{ borderRadius: "7px" }}
-                              >
-                                {item?.key}
-                              </h3>
-                            </div>
-
-                            <div className="flex items-center flex-row gap-2 ">
-                              <span className="text-xl leading-none font-bold text-gray-900">
-                                {item?.value}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div> */}
               </div>
 
               <div className="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
