@@ -67,6 +67,8 @@
     }
   }
 
+
+
   .background-gray {
     background: #f4f5f9;
     width: 100%;
@@ -159,6 +161,14 @@
           }
         }
       }
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .banner-content {
+    h1 {
+      font-size: 28px !important;
     }
   }
 }
