@@ -40,7 +40,7 @@ const ContactUs = () => {
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
-    support_type: "",
+    support_type: "bất cập",
     support_content: "",
   });
 
@@ -61,10 +61,19 @@ const ContactUs = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    if (name === "email") {
+      if (/^\d{0,10}$/.test(value)) {
+        setFormData((prevState) => ({
+          ...prevState,
+          [name]: value,
+        }));
+      }
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
 
     setErrors((prevErrors) => ({
       ...prevErrors,
@@ -95,9 +104,9 @@ const ContactUs = () => {
     }
 
     if (!formData.email) {
-      newErrors.email = "Vui lòng nhập email.";
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Email không hợp lệ.";
+      newErrors.email = "Vui lòng nhập số điện thoại.";
+    } else if (!formData.email.startsWith("0")) {
+      newErrors.email = "Số điện thoại không hợp lệ.";
     }
 
     if (!formData.support_type) {
@@ -268,7 +277,7 @@ const ContactUs = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-3 mt-4">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 mt-4">
             <div className="text-center">
               <span className="inline-block p-3 text-blue-500 rounded-full bg-blue-100/80 dark:bg-gray-800">
                 <svg
@@ -321,223 +330,156 @@ const ContactUs = () => {
                 +84367082493
               </p>
             </div>
-
-            <div className="text-center">
-              <span className="inline-block p-3 text-blue-500 rounded-full bg-blue-100/80 dark:bg-gray-800">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                  />
-                </svg>
-              </span>
-
-              <h2 className="mt-4 text-base font-medium text-gray-800 dark:text-white">
-                Facebook
-              </h2>
-              <Link
-                href="https://www.facebook.com/adrian.hoangvu?locale=vi_VN"
-                className="mt-2 text-sm text-blue-500 dark:text-blue-400"
-                target="_blank"
-              >
-                www.facebook.com
-              </Link>
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 mt-10 lg:grid-cols-2">
-            <div className="grid grid-cols-1 gap-12">
-              <img
-                src="https://live.staticflickr.com/65535/53628620037_7fddfef48a_b.jpg"
-                alt="Trường Đại học FPT TPHCM"
-                className="w-full h-full rounded-lg object-cover"
-              />
-            </div>
-
-            <div className="p-4 py-6 rounded-lg bg-gray-50 dark:bg-gray-800 md:p-8">
-              <form onSubmit={handleSendEmail}>
-                <div className="-mx-2 md:items-center md:flex">
-                  <div className="flex-1 px-2">
-                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                      Tên doanh nghiệp <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      name="fullname"
-                      value={formData.fullname}
-                      onChange={handleChange}
-                      type="text"
-                      placeholder="Công ty hộ gia đình A "
-                      className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                    />
-                    {errors.fullname && (
-                      <p className="text-red-500">{errors.fullname}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-4">
+          <form
+            onSubmit={handleSendEmail}
+            className="grid grid-cols-1 gap-10 mt-10 md:grid-cols-2 bg-gray-50"
+          >
+            <div className="p-4 py-6 rounded-lg">
+              <div className="-mx-2 md:items-center md:flex">
+                <div className="flex-1 px-2">
                   <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                    Địa chỉ email <span className="text-red-500">*</span>
+                    Vui lòng cung cấp họ tên của bạn{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="email"
-                    placeholder="business@example.com"
-                    className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                    name="email"
-                    value={formData.email}
+                    name="fullname"
+                    value={formData.fullname}
                     onChange={handleChange}
+                    type="text"
+                    placeholder="Đặng Văn A"
+                    className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
-                  {errors.email && (
-                    <p className="text-red-500">{errors.email}</p>
+                  {errors.fullname && (
+                    <p className="text-red-500">{errors.fullname}</p>
                   )}
                 </div>
+              </div>
 
-                <div className="mt-4">
-                  <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                    Vấn đề cần hỗ trợ <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={selectedSupportType}
-                    onChange={handleSupportTypeChange}
-                    className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+              <div className="mt-4">
+                <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                  Số điện thoại <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="0123xxxxxxx"
+                  className="block w-full px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {errors.email && <p className="text-red-500">{errors.email}</p>}
+              </div>
+
+              <div className="grid grid-cols-1 space-y-2 mt-4">
+                <label className="cursor-pointer block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                  Đính kèm hình ảnh (Nếu cần)
+                </label>
+                <div className="flex items-center justify-center w-full">
+                  <label
+                    {...getRootProps({
+                      isFocused,
+                      isDragAccept,
+                      isDragReject,
+                    })}
+                    className="bg-white flex flex-col rounded-lg border-4 border-dashed w-full h-fit p-6 group text-center"
                   >
-                    <option value="" disabled hidden>
-                      Chọn một vấn đề
-                    </option>
-                    {supportTypes.map((type, index) => (
-                      <option key={index} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.support_type && (
-                    <p className="text-red-500">{errors.support_type}</p>
-                  )}
-                </div>
+                    {supportImage.length > 0 ? (
+                      <div className="form-group mb-0">
+                        <div className="photo-uploaded">
+                          <p className="font-semibold text-sm text-center">
+                            Ảnh đã chọn
+                          </p>
 
-                <div className="grid grid-cols-1 space-y-2 mt-4">
-                  <label className="cursor-pointer block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                    Đính kèm hình ảnh (Nếu cần)
-                  </label>
-                  <div className="flex items-center justify-center w-full">
-                    <label
-                      {...getRootProps({
-                        isFocused,
-                        isDragAccept,
-                        isDragReject,
-                      })}
-                      className="bg-white flex flex-col rounded-lg border-4 border-dashed w-full h-60 p-6 group text-center"
-                    >
-                      {supportImage.length > 0 ? (
-                        <div className="form-group mb-0">
-                          <div className="photo-uploaded">
-                            <p className="font-semibold text-sm text-center">
-                              Ảnh đã chọn
-                            </p>
-
-                            <ul className="list-photo flex flex-wrap gap-1">
-                              {supportImage.map((file: any) => (
-                                <li key={file.path}>
-                                  <div
-                                    className="photo-item relative overflow-hidden"
-                                    style={{
-                                      width: "130px",
-                                      height: "72px",
-                                      borderRadius: "4px",
-                                    }}
-                                  >
-                                    {file.previewUrl ? (
-                                      <img
-                                        src={file.previewUrl}
-                                        alt={file.path}
-                                        className="block w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <p>Loading...</p>
-                                    )}
-                                    <div className="delete-item">
-                                      <MdDeleteOutline
-                                        onClick={() => removeImage(file.path)}
-                                      />
-                                    </div>
+                          <ul className="list-photo flex flex-wrap gap-1 justify-center">
+                            {supportImage.map((file: any) => (
+                              <li key={file.path}>
+                                <div
+                                  className="photo-item relative overflow-hidden"
+                                  style={{
+                                    width: "130px",
+                                    height: "72px",
+                                    borderRadius: "4px",
+                                  }}
+                                >
+                                  {file.previewUrl ? (
+                                    <img
+                                      src={file.previewUrl}
+                                      alt={file.path}
+                                      className="block w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <p>Loading...</p>
+                                  )}
+                                  <div className="delete-item">
+                                    <MdDeleteOutline
+                                      onClick={() => removeImage(file.path)}
+                                    />
                                   </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                      ) : (
-                        <>
-                          <div className="cursor-pointer h-full w-full text-center flex flex-col items-center justify-center items-center  ">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="w-10 h-10 text-blue-400 group-hover:text-blue-600"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                              />
-                            </svg>
-                            <div className="flex flex-auto max-h-48 mx-auto -mt-10">
-                              <img
-                                className="has-mask h-36 object-center"
-                                src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
-                                alt="freepik image"
-                              />
-                            </div>
-                            <p className="pointer-none text-gray-500 ">
-                              <span className="text-sm">Kéo / thả ảnh </span>{" "}
-                              <br /> hoặc là{" "}
-                              <span className="text-blue-500">bấm vào đây</span>{" "}
-                              để tải ảnh lên từ thiết bị
-                            </p>
-                          </div>
-                        </>
-                      )}
-                    </label>
-                  </div>
-                </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="cursor-pointer w-full text-center flex flex-col items-center justify-center items-center  ">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-10 h-10 text-blue-400 group-hover:text-blue-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                            />
+                          </svg>
 
-                <div className="w-full mt-4">
-                  <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
-                    Mô tả <span className="text-red-500">*</span>
+                          <p className="pointer-none text-gray-500 ">
+                            <span className="text-sm">Kéo / thả ảnh </span>{" "}
+                            <br /> hoặc là{" "}
+                            <span className="text-blue-500">bấm vào đây</span>{" "}
+                            để tải ảnh lên từ thiết bị
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </label>
-                  <textarea
-                    className="block w-full h-32 px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg md:h-56 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
-                    placeholder="Lời nhắn viết đây"
-                    name="support_content"
-                    value={formData.support_content}
-                    onChange={handleChange}
-                  ></textarea>
-                  {errors.support_content && (
-                    <p className="text-red-500">{errors.support_content}</p>
-                  )}
                 </div>
-
-                <button className="w-full px-6 py-3 mt-4 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
-                  Gửi lời nhắn
-                </button>
-              </form>
+              </div>
             </div>
-          </div>
+
+            <div className="p-4 py-6 rounded-lg">
+              <div className="w-full mt-4">
+                <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                  Mô tả <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  className="block w-full h-32 px-5 py-2.5 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg md:h-56 dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                  placeholder="Mô tả vấn đề"
+                  name="support_content"
+                  value={formData.support_content}
+                  onChange={handleChange}
+                ></textarea>
+                {errors.support_content && (
+                  <p className="text-red-500">{errors.support_content}</p>
+                )}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="col-span-2 w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+            >
+              Gửi lời nhắn
+            </button>
+          </form>
         </div>
       </section>
       <Footer />

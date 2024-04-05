@@ -284,7 +284,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
           </span>
         )}
 
-        <div className="form-group-material my-6">
+        <div className="form-group-material mt-6 mb-3">
           <input
             type="checkbox"
             id="extendDeadline"
@@ -352,7 +352,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
         )}
 
         {/* lưu ý khác */}
-        <div className="form-group-material mt-4">
+        <div className="form-group-material mt-6">
           <textarea
             rows={3}
             required={true}

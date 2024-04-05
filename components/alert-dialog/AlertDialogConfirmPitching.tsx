@@ -79,6 +79,8 @@ export const AlertDialogConfirmPitching: React.FC<
     groupList[0]?.group?.group_name
   );
 
+  const [isChecked, setIsChecked] = React.useState(false);
+
   //subject
   const [selectedSubjectCode, setSelectedSubjectCode] = React.useState<any>();
 
@@ -346,6 +348,12 @@ export const AlertDialogConfirmPitching: React.FC<
   };
 
   const handleConfirmRegisterPitching = () => {
+    if (!isChecked) {
+      toast.error(
+        "Vui lòng đồng ý với chính sách bảo mật trước khi xác nhận đăng ký!"
+      );
+      return; 
+    }
     handleUpload();
   };
 
@@ -672,6 +680,23 @@ export const AlertDialogConfirmPitching: React.FC<
                 </Transition>
               </div>
             </Listbox>
+          </div>
+
+          <div className="form-group-material mt-6 cursor-pointer">
+            <input
+              type="checkbox"
+              id="extendDeadline"
+              className="cursor-pointer"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            />
+            <label
+              htmlFor="extendDeadline"
+              className="ml-2 text-justify cursor-pointer"
+            >
+              Theo chính sách bảo vệ thông tin, tôi đồng ý với cam kết bảo mật
+              Dự án.
+            </label>
           </div>
         </div>
 

@@ -13,6 +13,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
 import DrawerFilter from "@/components/drawer/DrawerFilter";
+import { useUserLogin } from "@/src/hook/useUserLogin";
+import { useRouter } from "next/navigation";
+import CustomModal from "@/src/components/shared/CustomModal";
 
 //có 2 trang là ProjectList lận
 //trang này là show all project list ở ngoài landing page
@@ -21,9 +24,23 @@ const ProjectList = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [dataProjectList, setDataProjectList] = React.useState<any[]>([]);
-  const dispatch = useAppDispatch();
+  const [isOpenModalWarningLogin, setIsOpenModalWarningLogin] =
+    React.useState(false);
 
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [userLogin, setUserLogin] = useUserLogin();
   const { loadingProjectList } = useAppSelector((state) => state.project);
+
+  const handleProjectClick = (project_id: any) => {
+    if (!userLogin) {
+      setIsOpenModalWarningLogin(true);
+    } else {
+      router.push(`/project-list/detail/${project_id}`);
+    }
+  };
+
   const [filterOption, setFilterOption] = React.useState<any>({
     business_type: [],
     business_sector: [],
@@ -253,9 +270,9 @@ const ProjectList = () => {
               </>
             ) : Array.isArray(dataProjectList) && dataProjectList.length > 0 ? (
               handleFilter(dataProjectList)?.map((project: any, index: any) => (
-                <Link
-                  href={`/project-list/detail/${project.id}`}
-                  className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2"
+                <div
+                  onClick={() => handleProjectClick(project.id)}
+                  className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2 cursor-pointer"
                   key={index}
                   style={{ borderRadius: "10px", width: 500, height: 148 }}
                 >
@@ -272,7 +289,9 @@ const ProjectList = () => {
                   </div>
 
                   <div className="ml-4 flex flex-1 flex-col justify-between">
-                    <h3 className="overflow-hidden font-semibold">{project?.name_project}</h3>
+                    <h3 className="overflow-hidden font-semibold">
+                      {project?.name_project}
+                    </h3>
                     <p className="overflow-hidden text-sm text-gray-400 ">
                       Doanh nghiệp: {project?.business?.fullname}
                     </p>
@@ -280,7 +299,7 @@ const ProjectList = () => {
                       Thời gian diễn ra: {project?.project_implement_time}
                     </p>
                   </div>
-                </Link>
+                </div>
               ))
             ) : (
               <div
@@ -294,6 +313,17 @@ const ProjectList = () => {
         </div>
       </main>
 
+      {isOpenModalWarningLogin && (
+        <CustomModal
+          open={isOpenModalWarningLogin}
+          title={<h2 className="text-2xl font-semibold">Cảnh báo đăng nhập</h2>}
+          body={`Vui lòng đăng nhập trước khi xem thông tin chi tiết dự án`}
+          actionConfirm={() => setIsOpenModalWarningLogin(false)}
+          buttonConfirm={"Xác nhận"}
+          styleWidth={"max-w-xl"}
+          status={"Pending"}
+        />
+      )}
       <ScrollGuide containerRef={containerRef} />
     </>
   );

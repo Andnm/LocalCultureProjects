@@ -17,6 +17,8 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { checkUserAccessToViewWorkingProcess } from "@/src/redux/features/pitchingSlice";
 import Link from "next/link";
+import { useUserLogin } from "@/src/hook/useUserLogin";
+import Footer from "@/src/components/landing/Footer";
 
 const ProjectDetail = () => {
   const params = useParams<{ detailId: string }>();
@@ -24,6 +26,8 @@ const ProjectDetail = () => {
   const [dataProject, setDataProject] = React.useState<ProjectType | undefined>(
     undefined
   );
+
+  const [userLogin, setUserLogin] = useUserLogin();
   const [groupList, setGroupList] = React.useState<UserGroupType[]>([]);
 
   const [isAccessToViewWorkingProcess, setIsAccessToViewWorkingProcess] =
@@ -43,9 +47,10 @@ const ProjectDetail = () => {
 
   React.useEffect(() => {
     const projectId = parseInt(params.detailId, 10);
+    let projectDetail = {};
     dispatch(getProjectById(projectId)).then((result) => {
       if (getProjectById.fulfilled.match(result)) {
-        console.log("project", result.payload);
+        projectDetail = result.payload;
         setDataProject(result.payload);
       }
     });
@@ -63,6 +68,8 @@ const ProjectDetail = () => {
           })
         ).then((resCheck) => {
           if (checkUserAccessToViewWorkingProcess.fulfilled.match(resCheck)) {
+            console.log("projectDetail", projectDetail);
+            console.log(userLogin);
             setIsAccessToViewWorkingProcess(resCheck.payload);
           }
         });
@@ -71,229 +78,261 @@ const ProjectDetail = () => {
   }, [params.detailId]);
 
   return (
-    <div className="bg-gray-100">
-      <div className="container">
-        <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
-          <div className="col-span-4 sm:col-span-3">
-            <div className="bg-white shadow rounded-lg p-6">
-              <div className="flex flex-col items-center">
-                <img
-                  src={
-                    dataProject?.business?.avatar_url
-                      ? dataProject?.business?.avatar_url
-                      : generateFallbackAvatar(dataProject?.business?.fullname)
-                  }
-                  className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0 object-cover"
-                ></img>
-                <h1 className="text-xl font-bold">
-                  {dataProject?.business?.fullname}
-                </h1>
-                <p className="text-gray-700">{dataProject?.business_sector}</p>
-                <p className="text-gray-700">{dataProject?.business?.email}</p>
-                {dataProject?.business?.link_web && (
-                  <div className="mt-6 flex flex-wrap gap-4 justify-center">
-                    <Link
-                      href={`${dataProject?.business?.link_web}`}
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
-                      target="_blank"
-                    >
-                      Web
-                    </Link>
+    <>
+      <div className="bg-gray-100">
+        <div className="container p-6">
+          <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
+            <div className="col-span-4 sm:col-span-3">
+              <div className="bg-white shadow rounded-lg p-6">
+                <div className="flex flex-col items-center">
+                  <img
+                    src={
+                      dataProject?.business?.avatar_url
+                        ? dataProject?.business?.avatar_url
+                        : generateFallbackAvatar(
+                            dataProject?.business?.fullname
+                          )
+                    }
+                    className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0 object-cover"
+                  ></img>
+                  <h1 className="text-xl font-bold">
+                    {dataProject?.business?.fullname}
+                  </h1>
+                  {isAccessToViewWorkingProcess && (
+                    <p className="text-gray-700">
+                      {dataProject?.business?.email}
+                    </p>
+                  )}
+                  {dataProject?.business?.link_web && (
+                    <div className="mt-6 flex flex-wrap gap-4 justify-center">
+                      <Link
+                        href={`${dataProject?.business?.link_web}`}
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
+                        target="_blank"
+                      >
+                        Web
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                <hr className="my-6 border-t border-gray-300" />
+
+                {isAccessToViewWorkingProcess && (
+                  <div className="flex flex-col">
+                    <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">
+                      Thông tin liên lạc
+                    </span>
+                    <ul>
+                      <li className="mb-2">
+                        <span className="font-bold">Số điện thoại: </span>{" "}
+                        {dataProject?.business?.phone_number ? (
+                          dataProject?.business?.phone_number
+                        ) : (
+                          <span style={{ fontStyle: "italic" }}>
+                            Chưa cập nhập
+                          </span>
+                        )}
+                      </li>
+                      <li className="mb-2">
+                        <span className="font-bold">Địa chỉ: </span>
+                        {dataProject?.business?.address_detail ? (
+                          dataProject?.business?.address_detail +
+                          ", " +
+                          dataProject?.business?.address
+                        ) : (
+                          <span style={{ fontStyle: "italic" }}>
+                            Chưa cập nhập
+                          </span>
+                        )}
+                      </li>
+                    </ul>
+
+                    <hr className="my-6 border-t border-gray-300" />
                   </div>
                 )}
-              </div>
-              <hr className="my-6 border-t border-gray-300" />
-              <div className="flex flex-col">
-                <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">
-                  Thông tin liên lạc
-                </span>
-                <ul>
-                  <li className="mb-2">
-                    <span className="font-bold">Số điện thoại: </span>{" "}
-                    {dataProject?.business?.phone_number ? (
-                      dataProject?.business?.phone_number
-                    ) : (
-                      <span style={{ fontStyle: "italic" }}>Chưa cập nhập</span>
-                    )}
-                  </li>
-                  <li className="mb-2">
-                    <span className="font-bold">Địa chỉ: </span>
-                    {dataProject?.business?.address_detail ? (
-                      dataProject?.business?.address_detail +
-                      ", " +
-                      dataProject?.business?.address
-                    ) : (
-                      <span style={{ fontStyle: "italic" }}>Chưa cập nhập</span>
-                    )}
-                  </li>
-                </ul>
 
-                <hr className="my-6 border-t border-gray-300" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">
-                  Thông tin khác
-                </span>
-                <ul>
-                  <li className="mb-2">
-                    <span className="font-bold">Lĩnh vực kinh doanh: </span>{" "}
-                    {dataProject?.business?.business_sector ? (
-                      dataProject?.business?.business_sector
-                    ) : (
-                      <span style={{ fontStyle: "italic" }}>Chưa cập nhập</span>
-                    )}
-                  </li>
-                  <li className="mb-2">
-                    <span className="font-bold">Mô tả: </span>
-                    {dataProject?.business?.business_description ? (
-                      truncateString(
-                        dataProject?.business?.business_description,
-                        25
-                      )
-                    ) : (
-                      <span style={{ fontStyle: "italic" }}>Chưa cập nhập</span>
-                    )}
-                  </li>
-                </ul>
+                <div className="flex flex-col">
+                  {isAccessToViewWorkingProcess && (
+                    <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">
+                      Thông tin khác
+                    </span>
+                  )}
+                  <ul>
+                    <li className="mb-2">
+                      <span className="font-bold">Lĩnh vực kinh doanh: </span>{" "}
+                      {dataProject?.business?.business_sector ? (
+                        dataProject?.business?.business_sector
+                      ) : (
+                        <span style={{ fontStyle: "italic" }}>
+                          Chưa cập nhập
+                        </span>
+                      )}
+                    </li>
+                    <li className="mb-2">
+                      <span className="font-bold">Mô tả: </span>
+                      {dataProject?.business?.business_description ? (
+                        truncateString(
+                          dataProject?.business?.business_description,
+                          25
+                        )
+                      ) : (
+                        <span style={{ fontStyle: "italic" }}>
+                          Chưa cập nhập
+                        </span>
+                      )}
+                    </li>
+                  </ul>
 
-                <hr className="my-6 border-t border-gray-300" />
+                  <hr className="my-6 border-t border-gray-300" />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-span-4 sm:col-span-9">
-            <div className="bg-white shadow rounded-lg p-6 relative">
-              <h2 className="text-xl font-bold mb-4">Tên dự án</h2>
-              <p className="text-gray-700 text-2xl">
-                {dataProject?.name_project}
-              </p>
-              <AlertDialogConfirmPitching
-                dataProject={dataProject}
-                projectId={parseInt(params.detailId, 10)}
-                groupList={groupList}
-              >
-                <div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 absolute right-3 top-1">
-                  Ứng tuyển ngay
-                </div>
-              </AlertDialogConfirmPitching>
+            <div className="col-span-4 sm:col-span-9">
+              <div className="bg-white shadow rounded-lg p-6 relative">
+                <h2 className="text-xl font-bold mb-4">Tên dự án</h2>
+                <p className="text-gray-700 text-2xl">
+                  {dataProject?.name_project}
+                </p>
+                {userLogin?.role_name === "Student" && (
+                  <AlertDialogConfirmPitching
+                    dataProject={dataProject}
+                    projectId={parseInt(params.detailId, 10)}
+                    groupList={groupList}
+                  >
+                    <div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 absolute right-3 top-1">
+                      Đăng kí thực hiện dự án
+                    </div>
+                  </AlertDialogConfirmPitching>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Loại hình Dự án
+                    </h2>
+                    <p className="text-gray-700">
+                      -{" "}
+                      {dataProject?.business_type === "Project"
+                        ? "Triển khai dự án"
+                        : "Lên kế hoạch"}
+                    </p>
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col">
-                  <h2 className="text-xl font-bold mt-6 mb-4">
-                    Hướng đi dự án
-                  </h2>
-                  <p className="text-gray-700">
-                    -{" "}
-                    {dataProject?.business_type === "Project"
-                      ? "Triển khai dự án"
-                      : "Lên kế hoạch"}
-                  </p>
-                </div>
-
-                <div className="flex flex-col">
-                  <h2 className="text-xl font-bold mt-6 mb-4">
-                    Tài liệu liên quan
-                  </h2>
-                  <p className="text-gray-700">
-                    {dataProject?.document_related_link ? (
-                      dataProject.document_related_link.length > 0 ? (
-                        <Button
-                          className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
-                          onClick={() =>
-                            handleDownloadFile(
-                              dataProject.document_related_link
-                            )
-                          }
-                        >
-                          Tải xuống tài liệu
-                        </Button>
+                  <div className="flex flex-col">
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Tài liệu liên quan
+                    </h2>
+                    <p className="text-gray-700">
+                      {dataProject?.document_related_link ? (
+                        dataProject.document_related_link.length > 0 ? (
+                          <Button
+                            className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
+                            onClick={() =>
+                              handleDownloadFile(
+                                dataProject.document_related_link
+                              )
+                            }
+                          >
+                            Tải xuống tài liệu
+                          </Button>
+                        ) : (
+                          <span className="italic"> (Chưa được cập nhập)</span>
+                        )
                       ) : (
                         <span className="italic"> (Chưa được cập nhập)</span>
-                      )
-                    ) : (
-                      <span className="italic"> (Chưa được cập nhập)</span>
-                    )}
-                  </p>
+                      )}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <h2 className="text-xl font-bold mt-6 mb-4">Mục đích Dự án</h2>
-              <p className="text-gray-700">- {dataProject?.purpose}</p>
-              {isAccessToViewWorkingProcess && (
-                <>
-                  <h2 className="text-xl font-bold mt-6 mb-4">
-                    Đối tượng mục tiêu
-                  </h2>
-                  <p className="text-gray-700">
-                    - {dataProject?.target_object}
-                  </p>
+                <h2 className="text-xl font-bold mt-6 mb-4">Mục đích Dự án</h2>
+                <p className="text-gray-700">- {dataProject?.purpose}</p>
+                {isAccessToViewWorkingProcess && (
+                  <>
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Đối tượng mục tiêu
+                    </h2>
+                    <p className="text-gray-700">
+                      - {dataProject?.target_object}
+                    </p>
 
-                  <h2 className="text-xl font-bold mt-6 mb-4">
-                    Yêu cầu cụ thể
-                  </h2>
-                  <p className="text-gray-700">
-                    {dataProject?.request ? (
-                      "- " + dataProject?.request
-                    ) : (
-                      <span className="italic">(Chưa được cập nhập)</span>
-                    )}
-                  </p>
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Yêu cầu cụ thể
+                    </h2>
+                    <p className="text-gray-700">
+                      {dataProject?.request ? (
+                        "- " + dataProject?.request
+                      ) : (
+                        <span className="italic">(Chưa được cập nhập)</span>
+                      )}
+                    </p>
 
-                  <h2 className="text-xl font-bold mt-6 mb-4">
-                    Ngân sách dự kiến
-                  </h2>
-                  <p className="text-gray-700">
-                    {convertToNumberFormat(dataProject?.expected_budget)} VNĐ
-                  </p>
-                </>
-              )}
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Ngân sách dự kiến
+                    </h2>
+                    <p className="text-gray-700">
+                      {convertToNumberFormat(dataProject?.expected_budget)} VNĐ
+                    </p>
+                  </>
+                )}
 
-              {dataProject?.note && (
-                <>
-                  <h2 className="text-xl font-bold mt-6 mb-4">Chú thích</h2>
-                  <p className="text-gray-700">- {dataProject?.note}</p>
-                </>
-              )}
+                {dataProject?.note && (
+                  <>
+                    <h2 className="text-xl font-bold mt-6 mb-4">Chú thích</h2>
+                    <p className="text-gray-700">- {dataProject?.note}</p>
+                  </>
+                )}
 
-              <h2 className="text-xl font-bold mt-6 mb-4">Thời gian</h2>
-              <p className="text-gray-700">
-                {dataProject?.project_implement_time}
-              </p>
+                <h2 className="text-xl font-bold mt-6 mb-4">
+                  Thời gian thực hiện dự án
+                </h2>
+                <p className="text-gray-700">
+                  {dataProject?.project_implement_time}
+                </p>
 
-              <h2 className="text-xl font-bold mt-6 mb-4">Người phụ trách</h2>
-              <div className="bg-gray-100 p-4 rounded-lg shadow-md grid grid-cols-3">
-                <div className="mb-4">
-                  <p className="font-semibold">Họ và tên:</p>
-                  <p>{dataProject?.responsible_person?.fullname}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="font-semibold">Số điện thoại:</p>
-                  <p>{dataProject?.responsible_person?.phone_number}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="font-semibold">Email:</p>
-                  <p>{dataProject?.responsible_person?.email}</p>
-                </div>
-                <div className="mb-4">
-                  <p className="font-semibold">Chức vụ:</p>
-                  <p>{dataProject?.responsible_person?.position}</p>
-                </div>
-                <div>
-                  <p className="font-semibold">Thông tin liên hệ khác:</p>
-                  <p>
-                    {dataProject?.responsible_person?.other_contact ? (
-                      dataProject?.responsible_person?.other_contact
-                    ) : (
-                      <span className="italic text-gray-500">
-                        Chưa cập nhập
-                      </span>
-                    )}
-                  </p>
-                </div>
+                {isAccessToViewWorkingProcess && (
+                  <>
+                    <h2 className="text-xl font-bold mt-6 mb-4">
+                      Người phụ trách
+                    </h2>
+                    <div className="bg-gray-100 p-4 rounded-lg shadow-md grid grid-cols-3">
+                      <div className="mb-4">
+                        <p className="font-semibold">Họ và tên:</p>
+                        <p>{dataProject?.responsible_person?.fullname}</p>
+                      </div>
+                      <div className="mb-4">
+                        <p className="font-semibold">Số điện thoại:</p>
+                        <p>{dataProject?.responsible_person?.phone_number}</p>
+                      </div>
+                      <div className="mb-4">
+                        <p className="font-semibold">Email:</p>
+                        <p>{dataProject?.responsible_person?.email}</p>
+                      </div>
+                      <div className="mb-4">
+                        <p className="font-semibold">Chức vụ:</p>
+                        <p>{dataProject?.responsible_person?.position}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Thông tin liên hệ khác:</p>
+                        <p>
+                          {dataProject?.responsible_person?.other_contact ? (
+                            dataProject?.responsible_person?.other_contact
+                          ) : (
+                            <span className="italic text-gray-500">
+                              Chưa cập nhập
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <Footer />
+    </>
   );
 };
 

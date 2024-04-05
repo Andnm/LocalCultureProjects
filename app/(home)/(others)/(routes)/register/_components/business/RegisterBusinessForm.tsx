@@ -339,6 +339,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
   const handleCallAPIUpdateProfile = async () => {
     setOpenModalConfirmAction(false);
     setIsLoading(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     toast("Tiến trình xử lý sẽ hơi lâu, vui lòng chờ trong giây lát!", {
       style: {
