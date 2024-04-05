@@ -518,23 +518,24 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
           const updatedIndex = prevDataTable.findIndex(
             (item) => item.id === result.payload.id
           );
-
+  
           if (updatedIndex !== -1) {
             const newDataTable = [...prevDataTable];
             newDataTable[updatedIndex] = result.payload;
             return newDataTable;
           }
-
+  
           return prevDataTable;
         });
+
+        
+
         toast.success("Phê duyệt thành công!");
       } else if (confirmProjectByAdmin.rejected.match(result)) {
         toast.error(`${result.payload}`);
         console.log(result);
       }
-      setDataTable((prevDataTable) =>
-        prevDataTable.filter((project) => project.id !== selectedProject.id)
-      );
+      
       setLoadingHandle(false);
       setOpenModalConfirmProject(false);
       setIsOpenModalDetail(false);
@@ -687,7 +688,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   };
 
   const body = isEditMode ? bodyUpdate : bodyContent;
-
 
   const actionConfirm = isEditMode
     ? () => handleUpdateAndConfirmProject(selectedProject.id)
@@ -902,7 +902,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
           />
         )} */}
 
-         {isOpenModalDetail && selectedProject && (
+        {isOpenModalDetail && selectedProject && (
           <ModalViewProjectDetail
             open={isOpenModalDetail}
             title={"Thông tin dự án"}
