@@ -171,10 +171,7 @@ const ProjectDetail = () => {
                     <li className="mb-2">
                       <span className="font-bold">Mô tả: </span>
                       {dataProject?.business?.business_description ? (
-                        truncateString(
-                          dataProject?.business?.business_description,
-                          25
-                        )
+                        dataProject?.business?.business_description
                       ) : (
                         <span style={{ fontStyle: "italic" }}>
                           Chưa cập nhập

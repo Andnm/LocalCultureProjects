@@ -37,7 +37,6 @@ const GeneralHeader = () => {
   const [userData, setUserData] = React.useState<any | null>(null);
   const pathName = usePathname();
 
-  //scroll thì sẽ thêm fixed
   React.useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
