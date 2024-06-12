@@ -105,7 +105,7 @@ const ProjectList = () => {
         setDataProjectList(newListProjects);
 
         socketInstance.on("getProjects", (data: any) => {
-          console.log("data socket", data);
+          // console.log("data socket", data);
           if (data && data.projects) {
             const newListProjects = data.projects.sort((a: any, b: any) => {
               const dateA = new Date(a.createdAt);

@@ -14,6 +14,7 @@ interface ModalProps {
   title: React.ReactNode;
   actionClose?: any;
   actionConfirm?: any;
+  actionEdit?: any;
   buttonClose?: string;
   buttonConfirm?: string;
   status?: any;
@@ -25,6 +26,7 @@ export default function ModalViewProjectDetail({
   title,
   actionClose,
   buttonClose,
+  actionEdit,
   actionConfirm,
   buttonConfirm,
   status,
@@ -221,7 +223,7 @@ export default function ModalViewProjectDetail({
                                 <button
                                   type="button"
                                   className="inline-flex justify-center items-center gap-2 rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                  onClick={actionClose}
+                                  onClick={actionEdit}
                                   style={{ borderRadius: "10px" }}
                                 >
                                   <Edit />

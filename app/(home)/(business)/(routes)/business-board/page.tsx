@@ -28,7 +28,7 @@ const BusinessBoard = () => {
         socketInstance.on(
           `getProjectsOfBusiness-${userLogin?.email}`,
           (data: any) => {
-            console.log("data socket project", data);
+            // console.log("data socket project", data);
             if (data && data.projects) {
               setDataProjects(data.projects);
             } else {

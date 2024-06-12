@@ -2,19 +2,11 @@
 
 import React, { Fragment } from "react";
 import "@/src/styles/admin/manage-project.scss";
-import { RiExpandUpDownLine } from "react-icons/ri";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { BiDetail } from "react-icons/bi";
-import { CiEdit } from "react-icons/ci";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
 import { Popover, Transition } from "@headlessui/react";
-import {
-  Typography,
-  Button,
-  CardBody,
-  CardFooter,
-  Avatar,
-} from "@material-tailwind/react";
+import { Button, CardBody, Avatar } from "@material-tailwind/react";
 import {
   formatDate,
   generateFallbackAvatar,
@@ -43,6 +35,8 @@ import vn from "date-fns/locale/vi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 import ModalViewProjectDetail from "@/src/components/shared/ModalViewProjectDetail";
+import ModalEditProject from "./ModalEditProject";
+import { CiEdit } from "react-icons/ci";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -87,408 +81,8 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   const [openModalConfirmProject, setOpenModalConfirmProject] =
     React.useState(false);
 
-  const bodyContent = (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {/* Business Information */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Doanh nghiệp:</h3>
-        <img
-          src={
-            !selectedProject?.business?.avatar_url ||
-            selectedProject?.business?.avatar_url === null
-              ? generateFallbackAvatar(selectedProject?.business?.fullname)
-              : selectedProject?.business?.avatar_url
-          }
-          alt={"img"}
-          className="w-10 h-10 rounded-full"
-        />
-        <div>
-          <h2 className="text-xl font-semibold">
-            {selectedProject?.business?.fullname}
-          </h2>
-          <p className="text-gray-500">{selectedProject?.business?.email}</p>
-        </div>
-      </div>
-
-      {/* Responsible Person Information */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Người phụ trách</h3>
-        <p className="text-gray-600">
-          Họ và tên: {selectedProject?.responsible_person?.fullname}
-        </p>
-        <p className="text-gray-600">
-          Chức vụ: {selectedProject?.responsible_person?.position}
-        </p>
-        <p className="text-gray-600">
-          Email: {selectedProject?.responsible_person?.email}
-        </p>
-        <p className="text-gray-600">
-          Số điện thoại: {selectedProject?.responsible_person?.phone_number}
-        </p>
-      </div>
-
-      {/* Project Information */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Thông tin dự án</h3>
-        <p className="text-gray-600">
-          Tên dự án: {selectedProject?.name_project}
-        </p>
-        <p className="text-gray-600 flex gap-1">
-          Trạng thái:
-          <p
-            className={`py-1 px-2 font-bold uppercase text-xs ${getColorByProjectStatus(
-              selectedProject?.project_status
-            )}`}
-            style={{ borderRadius: "7px" }}
-          >
-            {selectedProject?.project_status === "Pending"
-              ? "Chờ phê duyệt"
-              : selectedProject?.project_status === "Public"
-              ? "Công khai"
-              : "Đang diễn ra"}
-          </p>
-        </p>
-        <p className="text-gray-600">
-          Lĩnh vực chuyên môn: {selectedProject?.specialized_field}
-        </p>
-        <p className="text-gray-600">
-          Hướng đi dự án:{" "}
-          {selectedProject?.business_type === "Project"
-            ? "Triển khai dự án"
-            : "Lên kế hoạch"}
-        </p>
-
-        <p className="text-gray-600">
-          Mô tả về dự án:{" "}
-          {selectedProject?.description_project
-            ? selectedProject?.description_project
-            : "(Chưa cập nhập)"}
-        </p>
-        <p className="text-gray-600">
-          Các lưu ý khác:{" "}
-          {selectedProject?.note ? selectedProject?.note : "(Chưa cập nhập)"}
-        </p>
-      </div>
-
-      {/* Time Information */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Thời gian</h3>
-        <p className="text-gray-600">
-          Hạn đăng kí pitching:{" "}
-          {formatDate(selectedProject?.project_registration_expired_date)}
-        </p>
-        <p className="text-gray-600">
-          Ngày dự kiến bắt đầu:{" "}
-          {formatDate(selectedProject?.project_start_date)}
-        </p>
-        <p className="text-gray-600">
-          Ngày dự kiến kết thúc:{" "}
-          {formatDate(selectedProject?.project_expected_end_date)}
-        </p>
-      </div>
-
-      {/* Attachment Information */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Tài liệu đính kèm</h3>
-        <p className="text-gray-600">
-          {selectedProject?.document_related_link ? (
-            <Button
-              className="bg-blue-300 text-blue-900 hover:bg-blue-300 mt-2 rounded flex gap-1"
-              onClick={() =>
-                handleDownload(selectedProject?.document_related_link)
-              }
-            >
-              <Download className="w-4 h-4 mr-2" /> Bấm để tải xuống
-              {/* {group.document_url} */}
-            </Button>
-          ) : (
-            "(Chưa được cập nhập)"
-          )}
-        </p>
-      </div>
-    </div>
-  );
-
-  //quản lý thông tin update
-  const [isEditMode, setIsEditMode] = React.useState(false);
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-
-  //up file
-  // Xử lý tệp tin tại đây
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      setSelectedFile(file);
-    }
-  };
-
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
-
-  const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const bodyUpdate = (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-2">Doanh nghiệp:</h3>
-          <img
-            src={selectedProject?.business?.avatar_url}
-            alt={selectedProject?.business?.fullname}
-            className="w-10 h-10 rounded-full"
-          />
-          <div>
-            <h2 className="text-xl font-semibold">
-              {selectedProject?.business?.fullname}
-            </h2>
-            <p className="text-gray-500">{selectedProject?.business?.email}</p>
-          </div>
-        </div>
-
-        {/* Responsible Person Information */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-2">Người phụ trách</h3>
-          <label className="block">Họ và tên</label>
-          <input
-            type="text"
-            value={selectedProject?.responsible_person?.fullname}
-            onChange={(e) =>
-              setSelectedProject((prevSelectedProject: any) => ({
-                ...prevSelectedProject,
-                responsible_person: {
-                  ...prevSelectedProject.responsible_person,
-                  fullname: e.target.value,
-                },
-              }))
-            }
-            className="admin-project-input-field"
-          />
-
-          <label className="block">Chức vụ</label>
-          <input
-            type="text"
-            value={selectedProject?.responsible_person?.position}
-            onChange={(e) =>
-              setSelectedProject((prevSelectedProject: any) => ({
-                ...prevSelectedProject,
-                responsible_person: {
-                  ...prevSelectedProject.responsible_person,
-                  position: e.target.value,
-                },
-              }))
-            }
-            className="admin-project-input-field"
-          />
-
-          <label className="block">Email</label>
-          <input
-            type="text"
-            value={selectedProject?.responsible_person?.email}
-            onChange={(e) =>
-              setSelectedProject((prevSelectedProject: any) => ({
-                ...prevSelectedProject,
-                responsible_person: {
-                  ...prevSelectedProject.responsible_person,
-                  email: e.target.value,
-                },
-              }))
-            }
-            className="admin-project-input-field"
-          />
-
-          <label className="block">Số điện thoại</label>
-          <input
-            type="text"
-            value={selectedProject?.responsible_person?.phone_number}
-            onChange={(e) =>
-              setSelectedProject((prevSelectedProject: any) => ({
-                ...prevSelectedProject,
-                responsible_person: {
-                  ...prevSelectedProject.responsible_person,
-                  phone_number: e.target.value,
-                },
-              }))
-            }
-            className="admin-project-input-field"
-          />
-        </div>
-
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-2">Thông tin dự án</h3>
-          {/*  */}
-          <label>Tên dự án:</label>
-          <input
-            type="text"
-            value={selectedProject?.name_project}
-            onChange={(e) =>
-              setSelectedProject({
-                ...selectedProject,
-                name_project: e.target.value,
-              })
-            }
-            className="admin-project-input-field"
-          />
-
-          {/*  */}
-          <label>Lĩnh vực chuyên môn:</label>
-          <select
-            value={selectedProject?.specialized_field}
-            onChange={(e) =>
-              setSelectedProject({
-                ...selectedProject,
-                specialized_field: e.target.value,
-              })
-            }
-            className="admin-project-input-field"
-            style={{ height: "42px" }}
-          >
-            <option value="" disabled>
-              -- Chọn --
-            </option>
-            <option value="Nông nghiệp">Nông nghiệp</option>
-            <option value="Thủ công nghiệp">Thủ công nghiệp</option>
-          </select>
-
-          {/*  */}
-          <label>Hướng đi dự án:</label>
-          <select
-            value={selectedProject?.business_type}
-            onChange={(e) =>
-              setSelectedProject({
-                ...selectedProject,
-                business_type: e.target.value,
-              })
-            }
-            className="admin-project-input-field"
-            style={{ height: "42px" }}
-          >
-            <option value="" disabled>
-              -- Chọn --
-            </option>
-            <option value="Plan">Lên kế hoạch</option>
-            <option value="Project">Triển khai dự án</option>
-          </select>
-
-          {/*  */}
-          <label>Mô tả về dự án:</label>
-          <textarea
-            value={selectedProject?.description_project}
-            onChange={(e) =>
-              setSelectedProject({
-                ...selectedProject,
-                description_project: e.target.value,
-              })
-            }
-            className="admin-project-input-field"
-          />
-
-          {/*  */}
-          <label>Các lưu ý khác:</label>
-          <textarea
-            value={selectedProject?.note}
-            onChange={(e) =>
-              setSelectedProject({
-                ...selectedProject,
-                note: e.target.value,
-              })
-            }
-            className="admin-project-input-field"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Thời gian</h3>
-
-          <div className="flex items-center mb-1">
-            <label className="w-64">Hạn đăng kí pitching:</label>
-            <DatePicker
-              className="cursor-pointer border"
-              showIcon
-              selected={
-                new Date(selectedProject?.project_registration_expired_date)
-              }
-              dateFormat="dd/MM/yyyy"
-              onChange={(date) =>
-                setSelectedProject({
-                  ...selectedProject,
-                  project_registration_expired_date: date,
-                })
-              }
-              placeholderText=" "
-            />
-          </div>
-
-          <div className="flex items-center mb-1">
-            <label className="w-64">Ngày dự kiến bắt đầu:</label>
-            <DatePicker
-              className="cursor-pointer border "
-              showIcon
-              selected={new Date(selectedProject?.project_start_date)}
-              dateFormat="dd/MM/yyyy"
-              onChange={(date) =>
-                setSelectedProject({
-                  ...selectedProject,
-                  project_start_date: date,
-                })
-              }
-              placeholderText=" "
-            />
-          </div>
-
-          <div className="flex items-center mb-1">
-            <label className="w-64">Ngày dự kiến kết thúc:</label>
-            <DatePicker
-              className="cursor-pointer border"
-              showIcon
-              selected={new Date(selectedProject?.project_expected_end_date)}
-              dateFormat="dd/MM/yyyy"
-              onChange={(date) =>
-                setSelectedProject({
-                  ...selectedProject,
-                  project_expected_end_date: date,
-                })
-              }
-              placeholderText=" "
-            />
-          </div>
-        </div>
-
-        <div>
-          {!selectedProject?.document_related_link ? (
-            <>
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold">Tài liệu đính kèm</h3>
-                <Button
-                  className="bg-blue-300 text-blue-900 hover:bg-blue-300 mt-2 rounded flex gap-1"
-                  onClick={handleButtonClick}
-                >
-                  <Download className="w-4 h-4 mr-2" /> Bấm để tải file lên
-                </Button>
-                <input
-                  type="file"
-                  id="fileInput"
-                  style={{ display: "none" }}
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                />
-                {selectedFile && (
-                  <p className="mt-2">Tệp tin đã tải: {selectedFile.name}</p>
-                )}
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-      </div>
-    </>
-  );
+  const [openModalEditProject, setOpenModalEditProject] =
+    React.useState<boolean>(false);
 
   const handleOpenModalDetails = (business: any) => {
     // console.log(business);
@@ -518,36 +112,26 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
           const updatedIndex = prevDataTable.findIndex(
             (item) => item.id === result.payload.id
           );
-  
+
           if (updatedIndex !== -1) {
             const newDataTable = [...prevDataTable];
             newDataTable[updatedIndex] = result.payload;
             return newDataTable;
           }
-  
+
           return prevDataTable;
         });
-
-        
 
         toast.success("Phê duyệt thành công!");
       } else if (confirmProjectByAdmin.rejected.match(result)) {
         toast.error(`${result.payload}`);
         console.log(result);
       }
-      
+
       setLoadingHandle(false);
       setOpenModalConfirmProject(false);
       setIsOpenModalDetail(false);
     });
-  };
-
-  const handleCloseUpdateProject = () => {
-    setIsEditMode(false);
-  };
-
-  const handleClickOpenInfo = (business: any) => {
-    // console.log("Open info", business);
   };
 
   const handleClickRemoveProject = (business: any) => {
@@ -637,63 +221,8 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
       }
     });
 
-    setIsEditMode(false);
     setIsOpenModalDetail(false);
   };
-
-  // hàm phê duyệt
-  const handleConfirmProject = (id: number) => {
-    // console.log("confirm nè");
-    // console.log(selectedProject?.business?.email)
-
-    dispatch(confirmProjectByAdmin(id)).then((result) => {
-      if (confirmProjectByAdmin.fulfilled.match(result)) {
-        // console.log(result.payload);
-        const dataBodyNoti = {
-          notification_type: NOTIFICATION_TYPE.CONFIRM_PROJECT,
-          information: `Dự án ${selectedProject?.name_project} đã được phê duyệt`,
-          sender_email: `${userLogin?.email}`,
-          receiver_email: `${selectedProject?.business?.email}`,
-        };
-
-        dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-          console.log(resNoti);
-        });
-
-        setDataTable((prevDataTable) => {
-          const updatedIndex = prevDataTable.findIndex(
-            (item) => item.id === result.payload.id
-          );
-
-          if (updatedIndex !== -1) {
-            const newDataTable = [...prevDataTable];
-            newDataTable[updatedIndex] = result.payload;
-            return newDataTable;
-          }
-
-          return prevDataTable;
-        });
-        toast.success("Phê duyệt thành công!");
-      } else if (confirmProjectByAdmin.rejected.match(result)) {
-        toast.error(`${result.payload}`);
-        // console.log(result.payload);
-      }
-    });
-
-    setIsOpenModalDetail(false);
-  };
-
-  const handleChangeConfirmIntoUpdate = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  const body = isEditMode ? bodyUpdate : bodyContent;
-
-  const actionConfirm = isEditMode
-    ? () => handleUpdateAndConfirmProject(selectedProject.id)
-    : () => handleConfirmProject(selectedProject.id);
-
-  const buttonConfirm = isEditMode ? "Xác nhận thay đổi" : "Phê duyệt";
 
   if (dataTable?.length === 0) {
     return (
@@ -704,16 +233,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   }
 
   //new
-
-  const handleDownload = (object: any) => {
-    const link = document.createElement("a");
-    link.href = object;
-    link.download = `${object}_introduction`;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <>
@@ -767,12 +286,14 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                   onClick: () => handleOpenModalDetails(business),
                 },
 
-                //Tạm thời ẩn đi
-                // {
-                //   name: "Sửa thông tin",
-                //   icon: <CiEdit />,
-                //   onClick: () => handleClickOpenInfo(business),
-                // },
+                {
+                  name: "Sửa thông tin",
+                  icon: <CiEdit />,
+                  onClick: () => {
+                    setSelectedProject(business);
+                    setOpenModalEditProject(true);
+                  },
+                },
                 {
                   name: "Xóa dự án",
                   icon: <MdOutlinePlaylistRemove />,
@@ -879,39 +400,35 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
             })}
         </table>
 
-        {/* {isOpenModalDetail && selectedProject && (
-          <CustomModal
-            open={isOpenModalDetail}
-            title={
-              <div className="flex items-center gap-2">
-                {isEditMode ? "Sửa dự án" : "Thông tin dự án"}
-                {selectedProject?.project_status === "Pending" && (
-                  <CiEdit
-                    className="cursor-pointer"
-                    onClick={handleChangeConfirmIntoUpdate}
-                  />
-                )}
-              </div>
-            }
-            body={body}
-            actionClose={actionClose}
-            buttonClose={"Hủy"}
-            actionConfirm={actionConfirm}
-            buttonConfirm={buttonConfirm}
-            status={selectedProject.project_status}
-          />
-        )} */}
-
         {isOpenModalDetail && selectedProject && (
           <ModalViewProjectDetail
             open={isOpenModalDetail}
             title={"Thông tin dự án"}
-            actionClose={() => setIsOpenModalDetail(false)}
+            actionClose={() => {
+              setIsOpenModalDetail(false);
+            }}
+            actionEdit={() => {
+              setIsOpenModalDetail(false);
+              setOpenModalEditProject(true);
+            }}
             buttonClose={"Chỉnh sửa dự án"}
             actionConfirm={() => setOpenModalConfirmProject(true)}
             buttonConfirm={"Xác nhận phê duyệt"}
             status={selectedProject.project_status}
             selectedProject={selectedProject}
+          />
+        )}
+
+        {openModalEditProject && (
+          <ModalEditProject
+            open={openModalEditProject}
+            onClose={() => {
+              setOpenModalEditProject(false);
+            }}
+            setSelectedProject={setSelectedProject}
+            selectedProject={selectedProject}
+            dataTable={dataTable}
+            setDataTable={setDataTable}
           />
         )}
 
@@ -961,3 +478,67 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
 };
 
 export default ProjectTable;
+
+// const handleUpdateAndConfirmProject = (id: number) => {
+//     // console.log("update nè");
+
+//     const newDataArray = {
+//       fullname: selectedProject?.responsible_person?.fullname,
+//       position: selectedProject?.responsible_person?.position,
+//       email_responsible_person: selectedProject?.responsible_person?.email,
+//       phone_number: selectedProject?.responsible_person?.phone_number,
+//       name_project: selectedProject?.name_project,
+//       business_sector: selectedProject?.business_sector,
+//       specialized_field: selectedProject?.specialized_field,
+//       purpose: selectedProject?.purpose,
+//       description_project: selectedProject?.description_project,
+//       request: selectedProject?.request,
+//       note: selectedProject?.note,
+//       document_related_link: selectedProject?.document_related_link,
+//       project_registration_expired_date:
+//         selectedProject?.project_registration_expired_date,
+//       project_start_date: selectedProject?.project_start_date,
+//       project_expected_end_date: selectedProject?.project_expected_end_date,
+//     };
+
+//     const dataResponse = {
+//       id: id,
+//       data: newDataArray,
+//     };
+
+//     dispatch(updateProjectByAdmin(dataResponse)).then((result: any) => {
+//       if (updateProjectByAdmin.fulfilled.match(result)) {
+//         const dataBodyNoti = {
+//           notification_type: NOTIFICATION_TYPE.UPDATE_PROJECT,
+//           information: `Dự án ${selectedProject?.name_project} đã được sửa đổi và phê duyệt`,
+//           sender_email: `${userLogin?.email}`,
+//           receiver_email: `${selectedProject?.business?.email}`,
+//         };
+
+//         dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
+//           console.log(resNoti);
+//         });
+
+//         setDataTable((prevDataTable) => {
+//           const updatedIndex = prevDataTable.findIndex(
+//             (item) => item.id === result.payload.id
+//           );
+
+//           if (updatedIndex !== -1) {
+//             const newDataTable = [...prevDataTable];
+//             newDataTable[updatedIndex] = result.payload;
+//             return newDataTable;
+//           }
+
+//           return prevDataTable;
+//         });
+
+//         toast.success("Cập nhập dự án thành công!");
+//       } else if (updateProjectByAdmin.rejected.match(result)) {
+//         toast.error(`${result.payload}`);
+//         // console.log(result.payload);
+//       }
+//     });
+
+//     setIsOpenModalDetail(false);
+//   };
