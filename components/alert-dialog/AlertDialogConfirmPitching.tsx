@@ -1,8 +1,9 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useRef } from "react";
 
 import { useRouter } from "next/navigation";
+import { Form, Checkbox, message } from "antd";
 
 import "./style.scss";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
@@ -54,6 +55,7 @@ import {
 import { db } from "@/src/utils/configFirebase";
 import { createUserChat } from "@/src/redux/features/userChatSlice";
 import { FiTrash2 } from "react-icons/fi";
+import axios from "axios";
 
 interface AlertDialogConfirmPitchingProps {
   dataProject: any;
@@ -81,6 +83,10 @@ export const AlertDialogConfirmPitching: React.FC<
 
   const [isChecked, setIsChecked] = React.useState(false);
 
+  //handle antd
+  const formRef = useRef(null);
+  const [form] = Form.useForm();
+
   //subject
   const [selectedSubjectCode, setSelectedSubjectCode] = React.useState<any>();
 
@@ -88,18 +94,40 @@ export const AlertDialogConfirmPitching: React.FC<
     setSelectedSubjectCode(selectedOption);
   };
 
-  const optionsSubjectCode = [
-    { value: "MKT304", label: "MKT304" },
-    { value: "CCO201", label: "CCO201" },
-    { value: "MPL201", label: "MPL201" },
-    { value: "BRA301", label: "BRA301" },
-    { value: "MCO201m", label: "MCO201m" },
-    { value: "MEP201", label: "MEP201" },
-    { value: "GRA497", label: "GRA497" },
-    { value: "CSP201m", label: "CSP201m" },
-    { value: "MCO206m", label: "MCO206m" },
-    { value: "PRE202", label: "PRE202" },
-  ] as any;
+  const [dataSubjectCode, setDataSubjectCode] = React.useState([]);
+
+  // const optionsSubjectCode = [
+  //   { value: "MKT304", label: "MKT304" },
+  //   { value: "CCO201", label: "CCO201" },
+  //   { value: "MPL201", label: "MPL201" },
+  //   { value: "BRA301", label: "BRA301" },
+  //   { value: "MCO201m", label: "MCO201m" },
+  //   { value: "MEP201", label: "MEP201" },
+  //   { value: "GRA497", label: "GRA497" },
+  //   { value: "CSP201m", label: "CSP201m" },
+  //   { value: "MCO206m", label: "MCO206m" },
+  //   { value: "PRE202", label: "PRE202" },
+  // ] as any;
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get<any>(
+        `${process.env.NEXT_PUBLIC_MOCK_API_URL}/subject_code`
+      );
+
+      const convertedData = response.data.map((item: any) => ({
+        value: item.value,
+        label: item.label,
+      }));
+      setDataSubjectCode(convertedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   //chọn email giảng viên
   const [newMember, setNewMember] = React.useState<string>("");
@@ -352,7 +380,7 @@ export const AlertDialogConfirmPitching: React.FC<
       toast.error(
         "Vui lòng đồng ý với chính sách bảo mật trước khi xác nhận đăng ký!"
       );
-      return; 
+      return;
     }
     handleUpload();
   };
@@ -365,6 +393,8 @@ export const AlertDialogConfirmPitching: React.FC<
     setNewMember("");
     setMemberResultSearch([]);
     setOpen(false);
+    setIsChecked(false);
+    form.resetFields();
   };
 
   if (!userLogin) {
@@ -436,252 +466,385 @@ export const AlertDialogConfirmPitching: React.FC<
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>{children}</AlertDialogTrigger>
-      <AlertDialogContent className="opacity-100 max-w-lg bg-white">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Mẫu đăng kí</AlertDialogTitle>
-          <X
-            onClick={() => setOpen(false)}
-            className="absolute top-0 right-2 w-5 h-5 cursor-pointer text-gray-400"
-          />
-        </AlertDialogHeader>
 
-        <div className="top-16">
-          <div>
-            <p className="block font-semibold text-[#07074D]">Chọn mã môn: </p>
-            <Select
-              className="basic-single"
-              classNamePrefix="select"
-              defaultValue={""}
-              isLoading={false}
-              isClearable={true}
-              isRtl={false}
-              isSearchable={true}
-              name="color"
-              options={optionsSubjectCode}
-              placeholder="Chọn mã môn học"
-              onChange={handleSelectChange}
-              value={selectedSubjectCode}
+      {!isChecked ? (
+        <AlertDialogContent className="opacity-100 max-w-3xl bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cam Kết Bảo Mật Thông Tin Đề Bài Doanh Nghiệp
+            </AlertDialogTitle>
+            <X
+              onClick={() => setOpen(false)}
+              className="absolute top-0 right-2 w-5 h-5 cursor-pointer text-gray-400"
             />
-          </div>
+          </AlertDialogHeader>
 
-          <div className="my-4">
-            <div className="mt-4 relative">
-              {memberList.length === 0 && (
-                <>
-                  <label
-                    className="block font-semibold text-[#07074D]"
-                    htmlFor="invited_member"
-                  >
-                    Chọn giảng viên:
-                  </label>
-                  <input
-                    className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="invited_member"
-                    type="text"
-                    placeholder="Vui lòng nhập email để thêm giảng viên"
-                    value={newMember}
-                    onChange={handleNewMemberChange}
-                  />
-                </>
-              )}
+          <Form
+            form={form}
+            layout="vertical"
+            ref={formRef}
+            name="form_in_modal"
+          >
+            <Form.Item>
+              <p className="text-justify">
+                Trước khi tiếp cận đề bài chi tiết của dự án truyền thông từ
+                doanh nghiệp, bạn cần đọc kỹ và đồng ý với Cam kết Bảo mật Thông
+                tin dưới đây để đảm bảo tính bảo mật và an toàn thông tin cho
+                các dự án của doanh nghiệp đối tác.
+              </p>
+            </Form.Item>
 
-              {newMember && (
-                <div className="absolute z-50 w-full bg-white max-h-44 overflow-y-scroll shadow-lg border flex justify-start flex-col">
-                  {loadingSearchResult ? (
-                    <div className="flex items-center gap-3 px-2 py-2 text-gray-500 text-sm">
-                      <Skeleton className="w-10 h-10 object-cover rounded-full" />
-                      <div className="flex flex-col gap-2">
-                        <Skeleton className="w-60 h-5" />
-                        <Skeleton className="w-60 h-5" />
+            <Form.Item>
+              <p>Bằng việc bấm chọn vào ô bên dưới bạn cam kết:</p>
+              <ul>
+                <li className="pl-4 py-2 text-justify">
+                  <span className="font-bold">
+                    1. Bảo Mật Thông Tin Liên Hệ Người Phụ Trách từ phía doanh
+                    nghiệp:
+                  </span>{" "}
+                  Bạn sẽ không tiết lộ thông tin liên hệ của người phụ trách dự
+                  án từ phía doanh nghiệp bao gồm tên, chức vụ, số điện thoại và
+                  địa chỉ email với bên thứ ba nào mà không có sự đồng ý bằng
+                  văn bản từ người này và từ quản trị viên của website.
+                </li>
+                <li className="pl-4 py-2 text-justify">
+                  <span className="font-bold">
+                    2. Bảo mật Đối Tượng Mục Tiêu của dự án:
+                  </span>{" "}
+                  Bạn sẽ không tiết lộ thông tin liên quan đến đối tượng mục
+                  tiêu của dự án cho bất kỳ bên thứ ba nào bao gồm nhưng không
+                  giới hạn ở các phương tiện truyền thông mạng xã hội hoặc các
+                  đối tác không liên quan.
+                </li>
+                <li className="pl-4 py-2 text-justify">
+                  <span className="font-bold">
+                    3. Bảo mật Yêu Cầu Cụ Thể của dự án:{" "}
+                  </span>
+                  Bạn sẽ không tiết lộ thông tin yêu cầu cụ thể, chi tiết kỹ
+                  thuật và mô tả dự án được doanh nghiệp đối tác cung cấp, không
+                  công bố hay sử dụng thông tin này với mục đích cá nhân hoặc
+                  thương mại.
+                </li>
+                <li className="pl-4 pt-2 text-justify">
+                  <span className="font-bold">
+                    4. Bảo mật Ngân Sách Dự Kiến của dự án:{" "}
+                  </span>
+                  Bạn sẽ không công bố ngân sách dự kiến hay bất kỳ thông tin
+                  tài chính nào liên quan đến dự án này dưới mọi hình thức bao
+                  gồm việc chia sẻ thông tin qua email, mạng xã hội hoặc bất kỳ
+                  phương tiện điện tử nào khác.
+                </li>
+              </ul>
+            </Form.Item>
+
+            <Form.Item>
+              <p className="text-justify">
+                <strong>Lưu ý:</strong> Việc vi phạm Cam kết Bảo mật Thông tin
+                này có thể dẫn đến việc bạn bị loại khỏi dự án và có thể phải
+                chịu trách nhiệm pháp lý tùy theo mức độ vi phạm. Hãy đảm bảo
+                bạn hiểu rõ nội dung cam kết trước khi tiếp tục.
+              </p>
+            </Form.Item>
+
+            <Form.Item
+              name="agreement"
+              valuePropName="checked"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    value
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          "Bạn cần đồng ý với các điều khoản bảo mật thông tin."
+                        ),
+                },
+              ]}
+            >
+              <Checkbox>
+                Tôi đã đọc và đồng ý với các điều khoản của Cam Kết Bảo Mật
+                Thông Tin.
+              </Checkbox>
+            </Form.Item>
+            <div className="flex flex-row justify-end gap-4">
+              <Form.Item>
+                <div
+                  className="cursor-pointer btn-commit btn-cancel-commit"
+                  onClick={() => {
+                    setOpen(false);
+                    setIsChecked(false);
+                    form.resetFields();
+                  }}
+                >
+                  Huỷ
+                </div>
+              </Form.Item>
+              <Form.Item>
+                <div
+                  className="cursor-pointer btn-commit btn-agree-commit"
+                  onClick={async () => {
+                    await form.validateFields();
+                    setIsChecked(true);
+                  }}
+                >
+                  Tiếp tục
+                </div>
+              </Form.Item>
+            </div>
+          </Form>
+        </AlertDialogContent>
+      ) : (
+        <AlertDialogContent className="opacity-100 max-w-lg bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mẫu đăng kí</AlertDialogTitle>
+            <X
+              onClick={() => {
+                setIsChecked(false);
+                setOpen(false);
+                form.resetFields();
+              }}
+              className="absolute top-0 right-2 w-5 h-5 cursor-pointer text-gray-400"
+            />
+          </AlertDialogHeader>
+
+          <div className="top-16">
+            <div>
+              <p className="block font-semibold text-[#07074D]">
+                Chọn mã môn:{" "}
+              </p>
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                defaultValue={""}
+                isLoading={false}
+                isClearable={true}
+                isRtl={false}
+                isSearchable={true}
+                name="color"
+                options={dataSubjectCode}
+                placeholder="Chọn mã môn học"
+                onChange={handleSelectChange}
+                value={selectedSubjectCode}
+              />
+            </div>
+
+            <div className="my-4">
+              <div className="mt-4 relative">
+                {memberList.length === 0 && (
+                  <>
+                    <label
+                      className="block font-semibold text-[#07074D]"
+                      htmlFor="invited_member"
+                    >
+                      Chọn giảng viên:
+                    </label>
+                    <input
+                      className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="invited_member"
+                      type="text"
+                      placeholder="Vui lòng nhập email để thêm giảng viên"
+                      value={newMember}
+                      onChange={handleNewMemberChange}
+                    />
+                  </>
+                )}
+
+                {newMember && (
+                  <div className="absolute z-50 w-full bg-white max-h-44 overflow-y-scroll shadow-lg border flex justify-start flex-col">
+                    {loadingSearchResult ? (
+                      <div className="flex items-center gap-3 px-2 py-2 text-gray-500 text-sm">
+                        <Skeleton className="w-10 h-10 object-cover rounded-full" />
+                        <div className="flex flex-col gap-2">
+                          <Skeleton className="w-60 h-5" />
+                          <Skeleton className="w-60 h-5" />
+                        </div>
                       </div>
-                    </div>
-                  ) : memberResultSearch &&
-                    Array.isArray(memberResultSearch) &&
-                    memberResultSearch.length > 0 ? (
-                    memberResultSearch?.map((result, index) => (
-                      <div
-                        key={index}
-                        className="flex cursor-pointer hover:bg-gray-200 px-2 py-2 items-center gap-3 transition-all duration-300 ease-in-out"
-                        onClick={() => handleClickSelectMember(result)}
-                      >
+                    ) : memberResultSearch &&
+                      Array.isArray(memberResultSearch) &&
+                      memberResultSearch.length > 0 ? (
+                      memberResultSearch?.map((result, index) => (
+                        <div
+                          key={index}
+                          className="flex cursor-pointer hover:bg-gray-200 px-2 py-2 items-center gap-3 transition-all duration-300 ease-in-out"
+                          onClick={() => handleClickSelectMember(result)}
+                        >
+                          <img
+                            src={
+                              result.avatar_url ||
+                              generateFallbackAvatar(result.fullname)
+                            }
+                            alt={result.fullname}
+                            className="w-10 h-10 object-cover rounded-full"
+                          />
+                          <div className="flex flex-col">
+                            <p className="font-normal text-sm">
+                              {result.fullname}
+                            </p>
+                            <p className="font-normal opacity-70 text-sm">
+                              {result.email}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-2 py-2 text-gray-500 text-sm">
+                        Không tìm thấy người phù hợp.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4">
+                {memberList.length !== 0 && (
+                  <label className="block font-semibold text-[#07074D]">
+                    Giảng viên đã mời
+                  </label>
+                )}
+
+                <div>
+                  {memberList.map((member, index) => (
+                    <div
+                      className="flex items-center justify-between gap-3 mt-4"
+                      key={index}
+                    >
+                      <div className="flex items-center gap-3">
                         <img
                           src={
-                            result.avatar_url ||
-                            generateFallbackAvatar(result.fullname)
+                            member.avatar_url ||
+                            generateFallbackAvatar(member.fullname)
                           }
-                          alt={result.fullname}
+                          alt={""}
                           className="w-10 h-10 object-cover rounded-full"
                         />
                         <div className="flex flex-col">
-                          <p className="font-normal text-sm">
-                            {result.fullname}
+                          <p className={`font-normal text-sm`}>
+                            {member.fullname}
                           </p>
-                          <p className="font-normal opacity-70 text-sm">
-                            {result.email}
+
+                          <p className={`font-normal opacity-70 text-sm`}>
+                            {member.email}
                           </p>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className="px-2 py-2 text-gray-500 text-sm">
-                      Không tìm thấy người phù hợp.
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
 
-            <div className="mt-4">
-              {memberList.length !== 0 && (
-                <label className="block font-semibold text-[#07074D]">
-                  Giảng viên đã mời
-                </label>
-              )}
-
-              <div>
-                {memberList.map((member, index) => (
-                  <div
-                    className="flex items-center justify-between gap-3 mt-4"
-                    key={index}
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={
-                          member.avatar_url ||
-                          generateFallbackAvatar(member.fullname)
-                        }
-                        alt={""}
-                        className="w-10 h-10 object-cover rounded-full"
+                      <X
+                        className="cursor-pointer w-5 h-5 text-gray-500"
+                        onClick={() => removeSelectedUserFromMemberList(member)}
                       />
-                      <div className="flex flex-col">
-                        <p className={`font-normal text-sm`}>
-                          {member.fullname}
-                        </p>
-
-                        <p className={`font-normal opacity-70 text-sm`}>
-                          {member.email}
-                        </p>
-                      </div>
                     </div>
-
-                    <X
-                      className="cursor-pointer w-5 h-5 text-gray-500"
-                      onClick={() => removeSelectedUserFromMemberList(member)}
-                    />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* <div className="my-4">
+            {/* <div className="my-4">
             <p>Tài liệu của nhóm: </p>
             <input type="file" onChange={handleFileChange} />
           </div> */}
 
-          <div className="mb-6 pt-4">
-            <label className=" block font-semibold text-[#07074D]">
-              File giới thiệu nhóm
-            </label>
+            <div className="mb-6 pt-4">
+              <label className=" block font-semibold text-[#07074D]">
+                File giới thiệu nhóm
+              </label>
 
-            <div className="mb-4 cursor-pointer">
-              {!file ? (
-                <>
-                  <input
-                    type="file"
-                    name="file"
-                    id="file"
-                    className="sr-only cursor-pointer"
-                    onChange={handleFileChange}
-                  />
-
-                  <label
-                    htmlFor="file"
-                    className="cursor-pointer relative flex items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-3 text-center"
-                  >
-                    <span className="block font-semibold text-[#07074D]">
-                      Bấm vào để tải file lên
-                    </span>
-                  </label>
-                </>
-              ) : (
-                <div className="flex items-center">
-                  <span className="block font-semibold text-[#07074D]">
-                    {file.name}
-                  </span>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="ml-2 text-red-600"
-                    title="Xóa file"
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="">
-            <p className="block font-semibold text-[#07074D]">Chọn nhóm: </p>
-            <Listbox value={selected} onChange={setSelected}>
-              <div className="relative mt-1 ">
-                <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left ring-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                  <span className="block truncate">
-                    {selected?.group?.group_name}
-                  </span>
-                  <span className="pointer-events-none  absolute inset-y-0 right-0 flex items-center pr-2">
-                    <HiChevronUpDown
-                      className="h-5 w-5 text-black-400"
-                      aria-hidden="true"
+              <div className="mb-4 cursor-pointer">
+                {!file ? (
+                  <>
+                    <input
+                      type="file"
+                      name="file"
+                      id="file"
+                      className="sr-only cursor-pointer"
+                      onChange={handleFileChange}
                     />
-                  </span>
-                </Listbox.Button>
-                <Transition
-                  as={Fragment}
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                    {groupList.map((group: any, index: number) => (
-                      <Listbox.Option
-                        key={index}
-                        className={({ active }) =>
-                          `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                            active
-                              ? "bg-amber-100 text-amber-900"
-                              : "text-gray-900"
-                          }`
-                        }
-                        value={group}
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span
-                              className={`block truncate ${
-                                selected ? "font-medium" : "font-normal"
-                              }`}
-                            >
-                              {group.group?.group_name}
-                            </span>
-                            {selected ? (
-                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                <FaCheck
-                                  className="h-5 w-5 text-amber-600"
-                                  aria-hidden="true"
-                                />
-                              </span>
-                            ) : null}
-                          </>
-                        )}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Transition>
-              </div>
-            </Listbox>
-          </div>
 
+                    <label
+                      htmlFor="file"
+                      className="cursor-pointer relative flex items-center justify-center rounded-md border border-dashed border-[#e0e0e0] p-3 text-center"
+                    >
+                      <span className="block font-semibold text-[#07074D]">
+                        Bấm vào để tải file lên
+                      </span>
+                    </label>
+                  </>
+                ) : (
+                  <div className="flex items-center">
+                    <span className="block font-semibold text-[#07074D]">
+                      {file.name}
+                    </span>
+                    <button
+                      onClick={handleRemoveFile}
+                      className="ml-2 text-red-600"
+                      title="Xóa file"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="">
+              <p className="block font-semibold text-[#07074D]">Chọn nhóm: </p>
+              <Listbox value={selected} onChange={setSelected}>
+                <div className="relative mt-1 ">
+                  <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left ring-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <span className="block truncate">
+                      {selected?.group?.group_name}
+                    </span>
+                    <span className="pointer-events-none  absolute inset-y-0 right-0 flex items-center pr-2">
+                      <HiChevronUpDown
+                        className="h-5 w-5 text-black-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                      {groupList.map((group: any, index: number) => (
+                        <Listbox.Option
+                          key={index}
+                          className={({ active }) =>
+                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                              active
+                                ? "bg-amber-100 text-amber-900"
+                                : "text-gray-900"
+                            }`
+                          }
+                          value={group}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {group.group?.group_name}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                  <FaCheck
+                                    className="h-5 w-5 text-amber-600"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
+            </div>
+            {/* 
           <div className="form-group-material mt-6 cursor-pointer">
             <input
               type="checkbox"
@@ -697,24 +860,25 @@ export const AlertDialogConfirmPitching: React.FC<
               Theo chính sách bảo vệ thông tin, tôi đồng ý với cam kết bảo mật
               Dự án.
             </label>
+          </div> */}
           </div>
-        </div>
 
-        <div className="flex gap-4 justify-end mt-4">
-          <Button
-            onClick={handleCancel}
-            className="rounded-sm bg-orange-200 border-orange-200 border-2"
-          >
-            Hủy
-          </Button>
-          <Button
-            className="rounded-sm bg-blue-200 border-blue-200 border-2"
-            onClick={handleConfirmRegisterPitching}
-          >
-            Xác nhận đăng kí
-          </Button>
-        </div>
-      </AlertDialogContent>
+          <div className="flex gap-4 justify-end mt-4">
+            <Button
+              onClick={handleCancel}
+              className="rounded-sm bg-orange-200 border-orange-200 border-2"
+            >
+              Hủy
+            </Button>
+            <Button
+              className="rounded-sm bg-blue-200 border-blue-200 border-2"
+              onClick={handleConfirmRegisterPitching}
+            >
+              Xác nhận đăng kí
+            </Button>
+          </div>
+        </AlertDialogContent>
+      )}
 
       {loadingRegisterPitching && <SpinnerLoading />}
     </AlertDialog>

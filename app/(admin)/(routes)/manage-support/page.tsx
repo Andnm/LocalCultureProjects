@@ -38,7 +38,6 @@ const ManageSupport = () => {
     }
   };
 
-  console.log("dataTable1",dataTable)
 
   React.useEffect(() => {
     dispatch(getAllSupport()).then((result) => {

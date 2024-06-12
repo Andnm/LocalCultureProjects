@@ -1,12 +1,34 @@
 .create-project {
-    .input-item {
-        margin-top: 0px !important;
-    }
+  .input-item {
+    margin-top: 0px !important;
+  }
 
-    .text-error {
-        font-size: 0.7rem;
-        color: red !important;
-    }
+  .text-error {
+    font-size: 0.7rem;
+    color: red !important;
+  }
+}
 
-    
+.btn-commit {
+  padding: 5px 15px;
+  border: 1px solid white;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel-commit:hover {
+  border: 1px solid red;
+  transition: all 0.3s ease;
+}
+
+.btn-agree-commit {
+  border-color: #33ccff;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-agree-commit:hover {
+  background-color: #33ccff;
+  transition: all 0.3s ease;
 }

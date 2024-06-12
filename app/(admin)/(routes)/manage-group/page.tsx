@@ -84,8 +84,6 @@ const ManageGroup = () => {
     setDataTable(filteredData);
   }, [filterOption, originalDataTable]);
 
-  console.log("originalDataTable", originalDataTable)
-
   //load data
   React.useEffect(() => {
     dispatch(getAllGroupByAdmin()).then((result) => {

@@ -79,6 +79,39 @@ export const getAllGroupAreMembers = createAsyncThunk(
   }
 );
 
+interface DataKickMember {
+  groupId: string;
+  userId: string;
+}
+
+export const kickMemberByAdmin = createAsyncThunk(
+  "group/kickMemberByAdmin",
+  async (data: DataKickMember, thunkAPI) => {
+    const token = getTokenFromSessionStorage();
+    const configHeader = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await http.patch<any>(
+        `/groups/kick-member/${data?.groupId}/${data?.userId}`,
+        configHeader
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log("err: ", error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 interface InviteMemberParams {
   groupId: number;
   userEmail: string;
@@ -280,6 +313,17 @@ export const groupSlice = createSlice({
     });
     builder.addCase(getAllGroupByAdmin.rejected, (state, action) => {
       state.loadingGroup = false;
+      state.error = action.payload as string;
+    });
+
+    //kickMemberByAdmin
+    builder.addCase(kickMemberByAdmin.pending, (state) => {
+      state.error = "";
+    });
+    builder.addCase(kickMemberByAdmin.fulfilled, (state, action) => {
+      state.error = "";
+    });
+    builder.addCase(kickMemberByAdmin.rejected, (state, action) => {
       state.error = action.payload as string;
     });
   },

@@ -52,3 +52,12 @@
   scrollbar-color: #ccc #f3f4f7;
   scrollbar-width: thin;
 }
+
+.ant-btn-primary {
+  color: black !important;
+  border: 1px solid #1677ff;
+}
+
+.ant-btn-primary:hover {
+  color: #fff !important;
+}

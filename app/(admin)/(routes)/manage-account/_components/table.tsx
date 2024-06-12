@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { MdOutlinePersonRemove } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
@@ -47,6 +47,7 @@ import {
 } from "@/src/redux/features/userSlice";
 import { FaBan } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
+import ModalAccountDetail from "./ModalAccountDetail";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -96,6 +97,9 @@ const AccountTable: React.FC<ProjectTableProps> = ({
     openModalConfirmActionBanOrUnBan,
     setOpenModalConfirmActionBanOrUnBan,
   ] = React.useState(false);
+
+  const [openModalAccountDetail, setOpenModalAccountDetail] =
+    useState<boolean>(false);
 
   // delete flow
   const handleClickDeleteAccount = (account: any) => {
@@ -245,7 +249,10 @@ const AccountTable: React.FC<ProjectTableProps> = ({
               {
                 name: "Chi tiết",
                 icon: <BiDetail />,
-                onClick: () => {},
+                onClick: () => {
+                  setSelectedAccount(user);
+                  setOpenModalAccountDetail(true);
+                },
               },
               {
                 name: "Xóa tài khoản",
@@ -352,6 +359,16 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         totalItems={totalObject}
         onPageChange={onPageChange}
       />
+
+      {openModalAccountDetail && (
+        <ModalAccountDetail
+          open={openModalAccountDetail}
+          onClose={() => {
+            setOpenModalAccountDetail(false);
+          }}
+          dataAccount={selectedAccount}
+        />
+      )}
 
       {loadingUser && <SpinnerLoading />}
 

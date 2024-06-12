@@ -49,14 +49,14 @@ const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
         </div>
 
         <div className="flex flex-col items-center  gap-4 md:flex-row">
-          <Button
+          {/* <Button
             className="gap-2 border"
             onClick={openDrawerAction}
             style={{ borderRadius: "7px" }}
           >
             <MdFilterList className="w-5 h-5" />
             Bộ lọc
-          </Button>
+          </Button> */}
 
           <div
             style={{ borderRadius: "7px" }}
@@ -91,7 +91,7 @@ const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
         </div>
       </CardHeader>
 
-      {openDrawer && (
+      {/* {openDrawer && (
         <DrawerFilterAdmin
           listFilter={FILTER_ACCOUNT_BY_ADMIN}
           openDrawer={openDrawer}
@@ -99,7 +99,7 @@ const ManageSupportHeader: React.FC<ManageAccountHeaderProps> = ({
           filterOption={filterOption}
           setFilterOption={setFilterOption}
         />
-      )}
+      )} */}
     </>
   );
 };

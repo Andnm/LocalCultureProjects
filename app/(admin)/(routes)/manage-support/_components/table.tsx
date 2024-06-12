@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { MdOutlinePersonRemove } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
@@ -40,6 +40,7 @@ import vn from "date-fns/locale/vi";
 import PopoverOption from "@/src/components/shared/PopoverOption";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
+import ModalSupportDetail from "./ModalSupportDetail";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -62,20 +63,6 @@ const TABLE_HEAD = [
   { name: "", key: "" },
 ];
 
-const POPOVER_OPTION = [
-  {
-    name: "Chi tiết",
-    icon: <BiDetail />,
-    onClick: () => {},
-  },
-
-  {
-    name: "Xóa tài khoản",
-    icon: <MdOutlinePersonRemove />,
-    onClick: () => {},
-  },
-];
-
 const SupportTable: React.FC<SupportTableProps> = ({
   totalObject,
   dataTable,
@@ -85,11 +72,13 @@ const SupportTable: React.FC<SupportTableProps> = ({
   onPageChange,
 }) => {
   const dispatch = useAppDispatch();
-  console.log("dataTable", dataTable);
   //quản lý thông tin hiện ra
-  const [selectedProject, setSelectedProject] = React.useState<any | null>(
+  const [selectedSupport, setSelectedSupport] = React.useState<any | null>(
     null
   );
+
+  const [openModalSupportDetail, setOpenModalSupportDetail] =
+    useState<boolean>(false);
 
   return (
     <>
@@ -129,10 +118,27 @@ const SupportTable: React.FC<SupportTableProps> = ({
             </tr>
           </thead>
 
-          {dataTable?.map((user: any, index) => {
+          {dataTable?.map((support: any, index) => {
             const isLast = index === dataTable.length - 1;
 
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
+            const POPOVER_OPTION = [
+              {
+                name: "Chi tiết",
+                icon: <BiDetail />,
+                onClick: () => {
+                  setOpenModalSupportDetail(true);
+                  setSelectedSupport(support);
+                },
+              },
+
+              // {
+              //   name: "Xóa tài khoản",
+              //   icon: <MdOutlinePersonRemove />,
+              //   onClick: () => {},
+              // },
+            ];
 
             return (
               <tbody key={index}>
@@ -140,27 +146,29 @@ const SupportTable: React.FC<SupportTableProps> = ({
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
-                        <InfoText>{user?.fullname}</InfoText>
+                        <InfoText>{support?.fullname}</InfoText>
 
                         <InfoText className="opacity-70">
-                          {truncateString(user?.email, 35)}
+                          {truncateString(support?.email, 35)}
                         </InfoText>
                       </div>
                     </div>
                   </td>
                   <td className={classes}>
-                    <InfoText>{user?.support_type}</InfoText>
+                    <InfoText>{support?.support_type}</InfoText>
                   </td>
 
                   <td className={classes}>
-                    <InfoText>{truncateString(user?.support_content, 30)}</InfoText>
+                    <InfoText>
+                      {truncateString(support?.support_content, 30)}
+                    </InfoText>
                   </td>
 
                   <td className={classes}>
-                    {user?.support_image ? (
+                    {support?.support_image ? (
                       <img
                         className="w-24 h-20 object-cover"
-                        src={user?.support_image}
+                        src={support?.support_image}
                         alt="img"
                       />
                     ) : (
@@ -169,7 +177,7 @@ const SupportTable: React.FC<SupportTableProps> = ({
                   </td>
 
                   <td className={classes}>
-                    <InfoText>{formatDate(user?.createdAt)}</InfoText>
+                    <InfoText>{formatDate(support?.createdAt)}</InfoText>
                   </td>
 
                   <td className={classes}>
@@ -187,6 +195,16 @@ const SupportTable: React.FC<SupportTableProps> = ({
         totalItems={totalObject}
         onPageChange={onPageChange}
       />
+
+      {openModalSupportDetail && (
+        <ModalSupportDetail
+          open={openModalSupportDetail}
+          onClose={() => {
+            setOpenModalSupportDetail(false);
+          }}
+          dataSupport={selectedSupport}
+        />
+      )}
 
       {loadingUser && <SpinnerLoading />}
     </>

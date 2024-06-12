@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import "@/src/styles/admin/manage-project.scss";
 import { RiExpandUpDownLine } from "react-icons/ri";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
@@ -43,6 +43,7 @@ import PopoverOption from "@/src/components/shared/PopoverOption";
 import CardInfo from "./CardInfo";
 import { CardAccountInfo } from "@/components/CardAccountInfo";
 import { FaStar } from "react-icons/fa";
+import ModalGroupDetail from "./ModalGroupDetail";
 
 registerLocale("vi", vn);
 setDefaultLocale("vi");
@@ -65,14 +66,6 @@ const TABLE_HEAD = [
   { name: "", key: "" },
 ];
 
-const POPOVER_OPTION = [
-  {
-    name: "Chi tiết",
-    icon: <BiDetail />,
-    onClick: () => {},
-  },
-];
-
 const GroupTable: React.FC<ProjectTableProps> = ({
   totalObject,
   dataTable,
@@ -84,9 +77,11 @@ const GroupTable: React.FC<ProjectTableProps> = ({
   const dispatch = useAppDispatch();
 
   //quản lý thông tin hiện ra
-  const [selectedProject, setSelectedProject] = React.useState<any | null>(
-    null
-  );
+  const [selectedGroup, setSelectedGroup] = React.useState<any | null>(null);
+
+  //state cho modal
+  const [openModalGroupDetail, setOpenModalGroupDetail] =
+    useState<boolean>(false);
 
   if (dataTable?.length === 0) {
     return (
@@ -138,6 +133,17 @@ const GroupTable: React.FC<ProjectTableProps> = ({
 
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
+            const POPOVER_OPTION = [
+              {
+                name: "Chi tiết",
+                icon: <BiDetail />,
+                onClick: () => {
+                  setSelectedGroup(group);
+                  setOpenModalGroupDetail(true);
+                },
+              },
+            ];
+
             return (
               <tbody key={index}>
                 <tr>
@@ -163,7 +169,7 @@ const GroupTable: React.FC<ProjectTableProps> = ({
                                     alt={member?.user?.fullname}
                                     size="sm"
                                     className="w-10 h-10 object-cover rounded-full"
-                                  />                               
+                                  />
                                 </div>
                               </CardAccountInfo>
                               {member.role_in_group === "Leader" && (
@@ -234,6 +240,18 @@ const GroupTable: React.FC<ProjectTableProps> = ({
         totalItems={totalObject}
         onPageChange={onPageChange}
       />
+      {openModalGroupDetail && (
+        <ModalGroupDetail
+          open={openModalGroupDetail}
+          onClose={() => {
+            setOpenModalGroupDetail(false);
+          }}
+          dataGroup={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
+          setDataTable={setDataTable}
+          dataTable={dataTable}
+        />
+      )}
 
       {loadingProject && <SpinnerLoading />}
     </>

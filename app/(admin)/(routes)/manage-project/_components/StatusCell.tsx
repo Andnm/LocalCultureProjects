@@ -1,6 +1,6 @@
 import { getColorByProjectStatus } from "@/src/utils/handleFunction";
 
-const StatusCell: React.FC<{ status: string; classes: string }> = ({
+const StatusCell: React.FC<{ status: string; classes?: string }> = ({
   status,
   classes,
 }) => {
