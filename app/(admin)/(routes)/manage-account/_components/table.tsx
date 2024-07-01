@@ -126,6 +126,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
           )
         );
       } else {
+
         toast.error(`${resDelete.payload}`);
       }
       setOpenModalConfirmActionDelete(false);
@@ -273,8 +274,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                     <div className="flex items-center gap-3">
                       <Avatar
                         src={
-                          user?.avatar_url ||
-                          generateFallbackAvatar(user?.fullname)
+                          user?.avatar_url ?? generateFallbackAvatar(user?.fullname)
                         }
                         alt={user?.fullname}
                         size="sm"

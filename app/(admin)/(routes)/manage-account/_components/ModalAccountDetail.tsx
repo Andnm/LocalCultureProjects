@@ -3,7 +3,7 @@ import { Avatar, Descriptions, Divider, Image, Modal, Rate } from "antd";
 import { Form } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextNotUpdate from "@/src/components/shared/TextNotUpdate";
-import { formatDate } from "@/src/utils/handleFunction";
+import { formatDate, generateFallbackAvatar } from "@/src/utils/handleFunction";
 const { confirm } = Modal;
 
 interface Props {
@@ -38,7 +38,9 @@ const ModalAccountDetail: React.FC<Props> = (props) => {
             <Avatar
               shape="square"
               size={150}
-              src={`${dataAccount?.avatar_url}`}
+              src={
+                dataAccount?.avatar_url ?? generateFallbackAvatar(dataAccount?.fullname)
+              }
             >
               {dataAccount?.email.charAt(0)}
             </Avatar>
