@@ -26,6 +26,10 @@ const ProjectDetail = () => {
   const [dataProject, setDataProject] = React.useState<ProjectType | undefined>(
     undefined
   );
+  const [businessUser, setBusinessUser] = React.useState<any>();
+  const [responsiblePersonList, setResponsiblePersonList] = React.useState<
+    any[]
+  >([]);
 
   const [userLogin, setUserLogin] = useUserLogin();
   const [groupList, setGroupList] = React.useState<UserGroupType[]>([]);
@@ -47,18 +51,30 @@ const ProjectDetail = () => {
 
   React.useEffect(() => {
     const projectId = parseInt(params.detailId, 10);
-    let projectDetail = {};
+    let projectDetail: any = null;
     dispatch(getProjectById(projectId)).then((result) => {
       if (getProjectById.fulfilled.match(result)) {
         projectDetail = result.payload;
         setDataProject(result.payload);
+
+        setBusinessUser(
+          projectDetail?.user_projects?.find(
+            (up: any) => up.user.role_name === "Business"
+          )?.user
+        );
+
+        setResponsiblePersonList(
+          projectDetail.user_projects
+            .filter((up: any) => up.user.role_name === "ResponsiblePerson")
+            .map((up: any) => up.user)
+        );
+
       }
     });
 
     dispatch(getAllGroupAreMembers()).then((result) => {
       if (getAllGroupAreMembers.fulfilled.match(result)) {
         setGroupList(result.payload);
-        console.log("group", result.payload);
 
         dispatch(
           checkUserAccessToViewWorkingProcess({
@@ -68,8 +84,6 @@ const ProjectDetail = () => {
           })
         ).then((resCheck) => {
           if (checkUserAccessToViewWorkingProcess.fulfilled.match(resCheck)) {
-            console.log("projectDetail", projectDetail);
-            console.log(userLogin);
             setIsAccessToViewWorkingProcess(resCheck.payload);
           }
         });
@@ -87,26 +101,22 @@ const ProjectDetail = () => {
                 <div className="flex flex-col items-center">
                   <img
                     src={
-                      dataProject?.business?.avatar_url
-                        ? dataProject?.business?.avatar_url
-                        : generateFallbackAvatar(
-                            dataProject?.business?.fullname
-                          )
+                      businessUser?.avatar_url
+                        ? businessUser?.avatar_url
+                        : generateFallbackAvatar(businessUser?.fullname)
                     }
                     className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0 object-cover"
                   ></img>
                   <h1 className="text-xl font-bold">
-                    {dataProject?.business?.fullname}
+                    {businessUser?.fullname}
                   </h1>
                   {isAccessToViewWorkingProcess && (
-                    <p className="text-gray-700">
-                      {dataProject?.business?.email}
-                    </p>
+                    <p className="text-gray-700">{businessUser?.email}</p>
                   )}
-                  {dataProject?.business?.link_web && (
+                  {businessUser?.link_web && (
                     <div className="mt-6 flex flex-wrap gap-4 justify-center">
                       <Link
-                        href={`${dataProject?.business?.link_web}`}
+                        href={`${businessUser?.link_web}`}
                         className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
                         target="_blank"
                       >
@@ -125,8 +135,8 @@ const ProjectDetail = () => {
                     <ul>
                       <li className="mb-2">
                         <span className="font-bold">Số điện thoại: </span>{" "}
-                        {dataProject?.business?.phone_number ? (
-                          dataProject?.business?.phone_number
+                        {businessUser?.phone_number ? (
+                          businessUser?.phone_number
                         ) : (
                           <span style={{ fontStyle: "italic" }}>
                             Chưa cập nhập
@@ -135,10 +145,10 @@ const ProjectDetail = () => {
                       </li>
                       <li className="mb-2">
                         <span className="font-bold">Địa chỉ: </span>
-                        {dataProject?.business?.address_detail ? (
-                          dataProject?.business?.address_detail +
+                        {businessUser?.address_detail ? (
+                          businessUser?.address_detail +
                           ", " +
-                          dataProject?.business?.address
+                          businessUser?.address
                         ) : (
                           <span style={{ fontStyle: "italic" }}>
                             Chưa cập nhập
@@ -160,8 +170,8 @@ const ProjectDetail = () => {
                   <ul>
                     <li className="mb-2">
                       <span className="font-bold">Lĩnh vực kinh doanh: </span>{" "}
-                      {dataProject?.business?.business_sector ? (
-                        dataProject?.business?.business_sector
+                      {businessUser?.business_sector ? (
+                        businessUser?.business_sector
                       ) : (
                         <span style={{ fontStyle: "italic" }}>
                           Chưa cập nhập
@@ -170,8 +180,8 @@ const ProjectDetail = () => {
                     </li>
                     <li className="mb-2">
                       <span className="font-bold">Mô tả: </span>
-                      {dataProject?.business?.business_description ? (
-                        dataProject?.business?.business_description
+                      {businessUser?.business_description ? (
+                        businessUser?.business_description
                       ) : (
                         <span style={{ fontStyle: "italic" }}>
                           Chưa cập nhập
@@ -290,36 +300,53 @@ const ProjectDetail = () => {
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Người phụ trách
                     </h2>
-                    <div className="bg-gray-100 p-4 rounded-lg shadow-md grid grid-cols-3">
-                      <div className="mb-4">
-                        <p className="font-semibold">Họ và tên:</p>
-                        <p>{dataProject?.responsible_person?.fullname}</p>
-                      </div>
-                      <div className="mb-4">
-                        <p className="font-semibold">Số điện thoại:</p>
-                        <p>{dataProject?.responsible_person?.phone_number}</p>
-                      </div>
-                      <div className="mb-4">
-                        <p className="font-semibold">Email:</p>
-                        <p>{dataProject?.responsible_person?.email}</p>
-                      </div>
-                      <div className="mb-4">
-                        <p className="font-semibold">Chức vụ:</p>
-                        <p>{dataProject?.responsible_person?.position}</p>
-                      </div>
-                      <div>
-                        <p className="font-semibold">Thông tin liên hệ khác:</p>
-                        <p>
-                          {dataProject?.responsible_person?.other_contact ? (
-                            dataProject?.responsible_person?.other_contact
-                          ) : (
-                            <span className="italic text-gray-500">
-                              Chưa cập nhập
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                    {responsiblePersonList.map(
+                      (responsiblePersonInfo, index) => (
+                        <div
+                          key={index}
+                          className="bg-gray-100 p-4 rounded-lg shadow-md grid grid-cols-3 mb-4"
+                        >
+                          <div className="mb-4">
+                            <p className="font-semibold">Họ và tên:</p>
+                            <p>{responsiblePersonInfo.fullname}</p>
+                          </div>
+                          <div className="mb-4">
+                            <p className="font-semibold">Số điện thoại:</p>
+                            <p>{responsiblePersonInfo.phone_number}</p>
+                          </div>
+                          <div className="mb-4">
+                            <p className="font-semibold">Email:</p>
+                            <p>{responsiblePersonInfo.email}</p>
+                          </div>
+                          <div className="mb-4">
+                            <p className="font-semibold">Chức vụ:</p>
+                            <p>
+                              {responsiblePersonInfo.position ? (
+                                responsiblePersonInfo.position
+                              ) : (
+                                <span className="italic text-gray-500">
+                                  Chưa cập nhập
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="font-semibold">
+                              Thông tin liên hệ khác:
+                            </p>
+                            <p>
+                              {responsiblePersonInfo.other_contact ? (
+                                responsiblePersonInfo.other_contact
+                              ) : (
+                                <span className="italic text-gray-500">
+                                  Chưa cập nhập
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    )}
                   </>
                 )}
               </div>

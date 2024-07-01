@@ -269,38 +269,45 @@ const ProjectList = () => {
                 </div>
               </>
             ) : Array.isArray(dataProjectList) && dataProjectList.length > 0 ? (
-              handleFilter(dataProjectList)?.map((project: any, index: any) => (
-                <div
-                  onClick={() => handleProjectClick(project.id)}
-                  className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2 cursor-pointer"
-                  key={index}
-                  style={{ borderRadius: "10px", width: 500, height: 148 }}
-                >
-                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
-                    <img
-                      src={
-                        project?.business?.avatar_url
-                          ? project?.business?.avatar_url
-                          : generateFallbackAvatar(project?.business?.fullname)
-                      }
-                      alt={project?.business?.email}
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
+              handleFilter(dataProjectList)?.map((project: any, index: any) => {
+                const businessUser = project?.user_projects?.find(
+                  (up: any) => up.user.role_name === "Business"
+                )?.user;
 
-                  <div className="ml-4 flex flex-1 flex-col justify-between">
-                    <h3 className="overflow-hidden font-semibold">
-                      {project?.name_project}
-                    </h3>
-                    <p className="overflow-hidden text-sm text-gray-400 ">
-                      Doanh nghiệp: {project?.business?.fullname}
-                    </p>
-                    <p className="text-gray-500">
-                      Thời gian diễn ra: {project?.project_implement_time}
-                    </p>
+                return (
+                  <div
+                    onClick={() => handleProjectClick(project.id)}
+                    className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2 cursor-pointer"
+                    key={index}
+                    style={{ borderRadius: "10px", width: 500, height: 148 }}
+                  >
+                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
+                      <img
+                        src={
+                          businessUser?.avatar_url
+                            ? businessUser.avatar_url
+                            : generateFallbackAvatar(businessUser?.fullname)
+                        }
+                        alt={businessUser?.email}
+                        className="h-full w-full object-cover object-center"
+                      />
+                    </div>
+
+                    <div className="ml-4 flex flex-1 flex-col justify-between">
+                      <h3 className="overflow-hidden font-semibold">
+                        {project?.name_project}
+                      </h3>
+                      <p className="overflow-hidden text-sm text-gray-400 ">
+                        Doanh nghiệp: {businessUser?.fullname}
+                      </p>
+
+                      <p className="text-gray-500">
+                        Thời gian diễn ra: {project?.project_implement_time}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div
                 className="text-gray-500 flex justify-center items-center text-xl"
