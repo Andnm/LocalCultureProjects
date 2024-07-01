@@ -10,11 +10,9 @@ const LandingPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-
     if (userLogin?.status === false || userLogin?.role_name === null) {
       router.push("/register");
     }
-
   }, [userLogin]);
 
   return (

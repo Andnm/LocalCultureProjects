@@ -247,7 +247,7 @@ export default function ModalViewProjectDetail({
                                   Hướng đi dự án
                                 </h2>
                                 <p className="text-gray-700">
-                                  -{" "}
+                                  {" "}
                                   {selectedProject?.business_type === "Project"
                                     ? "Triển khai dự án"
                                     : "Lên kế hoạch"}
@@ -290,29 +290,29 @@ export default function ModalViewProjectDetail({
                             <h2 className="text-xl font-bold mt-6 mb-4">
                               Mục đích Dự án
                             </h2>
-                            <p className="text-gray-700">
-                              - {selectedProject?.purpose}
-                            </p>
+                            <pre className="text-gray-700">
+                              {selectedProject?.purpose}
+                            </pre>
 
                             <h2 className="text-xl font-bold mt-6 mb-4">
                               Đối tượng mục tiêu
                             </h2>
                             <p className="text-gray-700">
-                              - {selectedProject?.target_object}
+                              {selectedProject?.target_object}
                             </p>
 
                             <h2 className="text-xl font-bold mt-6 mb-4">
                               Yêu cầu cụ thể
                             </h2>
-                            <p className="text-gray-700">
+                            <pre className="text-gray-700">
                               {selectedProject?.request ? (
-                                "- " + selectedProject?.request
+                                selectedProject?.request
                               ) : (
                                 <span className="italic">
                                   (Chưa được cập nhập)
                                 </span>
                               )}
-                            </p>
+                            </pre>
 
                             <h2 className="text-xl font-bold mt-6 mb-4">
                               Ngân sách dự kiến

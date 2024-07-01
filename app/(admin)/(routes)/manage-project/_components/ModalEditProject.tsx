@@ -197,10 +197,10 @@ const ModalEditProject: React.FC<Props> = (props) => {
               className="mx-3"
             >
               <Select>
-                <Option value="HK He 2024">
+                <Option value="Học kì Hè 2024 (Từ 5/2024 tới 8/2024)">
                   Học kì Hè 2024 (Từ 5/2024 tới 8/2024)
                 </Option>
-                <Option value="HK Thu 2024">
+                <Option value="Học kì Thu 2024 (Từ 9/2024 tới 12/2024)">
                   Học kì Thu 2024 (Từ 9/2024 tới 12/2024)
                 </Option>
               </Select>

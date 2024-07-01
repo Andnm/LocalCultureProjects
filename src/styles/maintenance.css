@@ -1,0 +1,172 @@
+.background-maintenance {
+  /* background: linear-gradient(to right, #87ccf0, #bfe7f9); */
+  background: linear-gradient(
+    to right,
+    rgba(135, 204, 240, 1),
+    rgba(191, 231, 249, 1)
+  );
+
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.background-maintenance .another-css-logo {
+}
+
+.background-maintenance .main-maintenance {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px 7%;
+}
+
+.background-maintenance .content-maintenance {
+  flex: 1 1 400px;
+}
+
+.background-maintenance .content-maintenance .title-maintenance {
+  font-size: 30px;
+  text-transform: uppercase;
+  color: #1743a5;
+}
+
+.background-maintenance .content-maintenance p {
+  font-size: 30px;
+  text-align: justify;
+}
+
+.background-maintenance .img-svg {
+  flex: 1 1 400px;
+}
+
+.background-maintenance .img-svg {
+  max-width: 800px;
+  min-width: 200px;
+  height: auto;
+}
+
+.background-maintenance .contact-maintenance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.background-maintenance .contact-maintenance .social-links a svg:hover {
+  transform: scale(1.25);
+  transition: all 0.5s ease-in-out;
+}
+
+.background-maintenance .contact-maintenance .social-links a img:hover {
+  transform: scale(1.25);
+  transition: all 0.5s ease-in-out;
+}
+
+.social-links {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.social-links a {
+  margin: 5px;
+}
+
+.social-links a .logo-phone {
+  width: 42px;
+  height: auto;
+}
+
+.logo-email {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.logo-email .emailContainer {
+  position: absolute;
+  top: 0;
+  left: 50px;
+}
+
+.emailContainer {
+  opacity: 0;
+  display: none;
+  width: 0%;
+}
+
+.logo-email:hover .emailContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid;
+  border-radius: 10px;
+  background-color: azure;
+  opacity: 1;
+  z-index: 999;
+  transition: all 1s ease-in-out;
+  height: 45px;
+  padding: 5px 10px 5px 10px;
+  text-align: center;
+  width: 200px;
+}
+
+
+.emailContainer p {
+  margin-bottom: 0px !important;
+}
+
+@media only screen and (max-width: 1160px) {
+  .background-maintenance
+    .main-maintenance
+    .content-maintenance
+    .title-maintenance {
+    font-size: 35px;
+  }
+
+  .background-maintenance .main-maintenance .content-maintenance p {
+    font-size: 25px;
+  }
+}
+
+@media only screen and (max-width: 1014px) {
+  .background-maintenance
+    .main-maintenance
+    .content-maintenance
+    .title-maintenance {
+    font-size: 30px;
+  }
+
+  .background-maintenance .main-maintenance .content-maintenance p {
+    font-size: 25px;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  .background-maintenance .main-maintenance .content-maintenance {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 427px) {
+  .background-maintenance
+    .main-maintenance
+    .content-maintenance
+    .title-maintenance {
+    font-size: 25px;
+  }
+
+  .background-maintenance .main-maintenance .content-maintenance p {
+    font-size: 20px;
+  }
+}
