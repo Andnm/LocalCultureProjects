@@ -126,7 +126,7 @@ interface RegisterPitchingBody {
   groupId: number;
   document_url?: string;
   subject_code?: string;
-  lecturer_email?: string;
+  lecturer_email?: string[];
   projectId: number;
 }
 

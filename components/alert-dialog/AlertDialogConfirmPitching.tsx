@@ -81,6 +81,13 @@ export const AlertDialogConfirmPitching: React.FC<
     groupList[0]?.group?.group_name
   );
 
+  const [errors, setErrors] = React.useState({
+    selectedSubjectCode: "",
+    memberList: "",
+    file: "",
+    selected: "",
+  });
+
   const [isChecked, setIsChecked] = React.useState(false);
 
   //handle antd
@@ -91,6 +98,7 @@ export const AlertDialogConfirmPitching: React.FC<
   const [selectedSubjectCode, setSelectedSubjectCode] = React.useState<any>();
 
   const handleSelectChange = (selectedOption: any) => {
+    setErrors({ ...errors, selectedSubjectCode: "" });
     setSelectedSubjectCode(selectedOption);
   };
 
@@ -139,6 +147,7 @@ export const AlertDialogConfirmPitching: React.FC<
   const handleNewMemberChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    setErrors({ ...errors, memberList: "" });
     setLoadingSearchResult(true);
     setNewMember(event.target.value);
     // console.log('email search', event.target.value)
@@ -170,6 +179,15 @@ export const AlertDialogConfirmPitching: React.FC<
     );
   };
 
+  //chọn nhóm
+  const handleChangeGroup = (event: any) => {
+    setSelected(event);
+    setErrors({
+      ...errors,
+      selected: "",
+    });
+  };
+
   // upfile
   const [file, setFile] = React.useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = React.useState<number | null>(
@@ -178,9 +196,9 @@ export const AlertDialogConfirmPitching: React.FC<
   const [downloadURL, setDownloadURL] = React.useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors({ ...errors, file: "" });
     if (event.target.files && event.target.files.length > 0) {
       const selectedFile = event.target.files[0];
-      console.log("selectedFile", selectedFile);
       setFile(selectedFile);
     }
   };
@@ -190,189 +208,314 @@ export const AlertDialogConfirmPitching: React.FC<
   };
   // console.log(dataProject)
   const handleUpload = async () => {
-    setLoadingRegisterPitching(true);
+    //KIỂM tra điều kiện
+    let hasError = false;
+    let newErrors = {
+      selectedSubjectCode: "",
+      memberList: "",
+      file: "",
+      selected: "",
+    };
 
-    if (file) {
-      const storageRef = ref(storage, `uploads/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+    if (!selectedSubjectCode) {
+      newErrors.selectedSubjectCode = "Vui lòng chọn mã môn học";
+      hasError = true;
+    }
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error("Lỗi khi tải tệp lên Firebase Storage", error);
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            setDownloadURL(downloadURL);
+    if (memberList.length !== 2) {
+      newErrors.memberList = "Vui lòng chọn đủ 2 giảng viên";
+      hasError = true;
+    }
 
-            const email_of_lecture: string = memberList[0]?.email;
-            const subject_code: string = selectedSubjectCode?.value;
+    if (!file) {
+      newErrors.file = "Vui lòng đăng file giới thiệu nhóm";
+      hasError = true;
+    }
 
-            const dataBody = {
-              groupId: selected?.group?.id,
-              projectId: projectId,
-              document_url: downloadURL,
-              subject_code: subject_code,
-              lecturer_email: email_of_lecture,
-            };
+    if (!selected) {
+      newErrors.selected = "Vui lòng chọn nhóm";
+      hasError = true;
+    }
 
-            const result = await dispatch(registerPitching(dataBody));
+    setErrors(newErrors);
 
-            if (registerPitching.fulfilled.match(result)) {
-              const dataBodyNoti = {
-                notification_type: NOTIFICATION_TYPE.REGISTER_PITCHING_BUSINESS,
-                information: `Nhóm ${selected?.group?.group_name} đã đăng kí pitching dự án ${dataProject?.name_project} của bạn`,
-                sender_email: `${userLogin?.email}`,
-                receiver_email: `${dataProject?.business?.email}`,
-              };
+    if (!hasError) {
+      setLoadingRegisterPitching(true);
 
-              const resNoti = await dispatch(
-                createNewNotification(dataBodyNoti)
+      if (file) {
+        const storageRef = ref(storage, `uploads/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+          },
+          (error) => {
+            console.error("Lỗi khi tải tệp lên Firebase Storage", error);
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              setDownloadURL(downloadURL);
+
+              const email_of_lecture: string[] = memberList.map(
+                (member) => member.email
               );
-
-              console.log(selected);
-              const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
+              const subject_code: string = selectedSubjectCode?.value;
 
               const dataBody = {
-                groupName: selected?.group?.group_name,
-                avatarGroup: userLogin?.avatar_url,
-                lastMessage: "",
-                identifierUserChat: compareIdentifierUserChat,
+                groupId: selected?.group?.id,
+                projectId: projectId,
+                document_url: downloadURL,
+                subject_code: subject_code,
+                lecturer_email: email_of_lecture,
               };
 
-              dispatch(createUserChat(dataBody)).then((result) => {
-                if (createUserChat.fulfilled.match(result)) {
-                  console.log("tạo userChat thành công");
-                  console.log("create userchat SUCCESS", result.payload);
-                } else {
-                  console.log("create userchat FAIL", result.payload);
-                  console.log("tạo userchat thất bại");
-                }
-              });
+              const result = await dispatch(registerPitching(dataBody));
 
-              //FIREBASE
+              if (registerPitching.fulfilled.match(result)) {
+                const dataBodyNoti = {
+                  notification_type:
+                    NOTIFICATION_TYPE.REGISTER_PITCHING_BUSINESS,
+                  information: `Nhóm ${selected?.group?.group_name} đã đăng kí pitching dự án ${dataProject?.name_project} của bạn`,
+                  sender_email: `${userLogin?.email}`,
+                  receiver_email: `${
+                    dataProject?.user_projects?.find(
+                      (up: any) => up.user.role_name === "Business"
+                    )?.user?.email
+                  }`,
+                };
 
-              // try {
-              //   await setDoc(doc(db, "userChats", compareIdentifierUserChat), {
-              //     groupName: selected?.group?.group_name,
-              //     avatarGroup: userLogin?.avatar_url,
-              //     lastMessages: " ",
-              //     identifierUserChat: compareIdentifierUserChat,
-              //     createdAt: serverTimestamp(),
-              //   });
-              // } catch (error) {
-              //   console.error("Error handling the message:", error);
-              // }
+                const resNoti = await dispatch(
+                  createNewNotification(dataBodyNoti)
+                );
 
-              router.push("/student-board");
-              toast.success("Đăng kí thành công!");
-            } else {
-              console.log(result.payload);
-              toast.error(`${result.payload}`);
+                console.log("resNoti", resNoti);
+                const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
+
+                const dataBody = {
+                  groupName: selected?.group?.group_name,
+                  avatarGroup: userLogin?.avatar_url,
+                  lastMessage: "",
+                  identifierUserChat: compareIdentifierUserChat,
+                };
+
+                dispatch(createUserChat(dataBody)).then((result) => {
+                  if (createUserChat.fulfilled.match(result)) {
+                    console.log("tạo userChat thành công");
+                    console.log("create userchat SUCCESS", result.payload);
+                  } else {
+                    console.log("create userchat FAIL", result.payload);
+                    console.log("tạo userchat thất bại");
+                  }
+                });
+
+                router.push("/student-board");
+                toast.success("Đăng kí thành công!");
+              } else {
+                console.log(result.payload);
+                toast.error(`${result.payload}`);
+              }
+
+              setOpen(false);
+              setLoadingRegisterPitching(false);
+            } catch (error) {
+              console.error("Error getting download URL:", error);
             }
-
-            setOpen(false);
-            setLoadingRegisterPitching(false);
-          } catch (error) {
-            console.error("Error getting download URL:", error);
           }
-        }
-      );
-    } else {
-      const email_of_lecture: string = memberList[0]?.email;
-      const subject_code: string = selectedSubjectCode?.value;
-
-      const dataBody = {
-        groupId: selected?.group?.id,
-        projectId: projectId,
-        document_url: "",
-        subject_code: subject_code,
-        lecturer_email: email_of_lecture,
-      };
-
-      const result = await dispatch(registerPitching(dataBody));
-
-      // const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
-
-      // const dataBody1 = {
-      //   groupName: selected?.group?.group_name,
-      //   avatarGroup: userLogin?.avatar_url,
-      //   lastMessage: "",
-      //   identifierUserChat: compareIdentifierUserChat,
-      // };
-
-      // dispatch(createUserChat(dataBody1)).then((result) => {
-      //   if (createUserChat.fulfilled.match(result)) {
-      //     console.log("tạo userChat thành công");
-      //     console.log("create userchat SUCCESS", result.payload);
-      //   } else {
-      //     console.log("create userchat FAIL", result.payload);
-      //     console.log("tạo userchat thất bại");
-      //   }
-      // });
-
-      if (registerPitching.fulfilled.match(result)) {
-        const dataBodyNoti = {
-          notification_type: NOTIFICATION_TYPE.REGISTER_PITCHING_BUSINESS,
-          information: `Nhóm ${selected?.group?.group_name} đã đăng kí pitching dự án ${dataProject?.name_project} của bạn`,
-          sender_email: `${userLogin?.email}`,
-          receiver_email: `${dataProject?.business?.email}`,
-        };
-
-        const resNoti = await dispatch(createNewNotification(dataBodyNoti));
-
-        console.log(selected);
-        const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
-
-        const dataBody = {
-          groupName: selected?.group?.group_name,
-          avatarGroup: userLogin?.avatar_url,
-          lastMessage: "",
-          identifierUserChat: compareIdentifierUserChat,
-        };
-
-        dispatch(createUserChat(dataBody)).then((result) => {
-          if (createUserChat.fulfilled.match(result)) {
-            console.log("tạo userChat thành công");
-            console.log("create userchat SUCCESS", result.payload);
-          } else {
-            console.log("create userchat FAIL", result.payload);
-            console.log("tạo userchat thất bại");
-          }
-        });
-
-        //FIREBASE
-
-        // try {
-        //   await setDoc(doc(db, "userChats", compareIdentifierUserChat), {
-        //     groupName: selected?.group?.group_name,
-        //     avatarGroup: userLogin?.avatar_url,
-        //     lastMessages: " ",
-        //     identifierUserChat: compareIdentifierUserChat,
-        //     createdAt: serverTimestamp(),
-        //   });
-        // } catch (error) {
-        //   console.error("Error handling the message:", error);
-        // }
-
-        router.push("/student-board");
-        toast.success("Đăng kí thành công!");
-      } else {
-        console.log(result.payload);
-        toast.error(`${result.payload}`);
+        );
       }
-
-      setOpen(false);
-      setLoadingRegisterPitching(false);
-      // toast.error('Vui lòng cập nhập file giới thiệu nhóm')
-      // setLoadingRegisterPitching(false);
     }
+
+    //nếu có file thì chạy code trên, còn ko có file chạy code dưới
+    // if (file) {
+    //   const storageRef = ref(storage, `uploads/${file.name}`);
+    //   const uploadTask = uploadBytesResumable(storageRef, file);
+
+    //   uploadTask.on(
+    //     "state_changed",
+    //     (snapshot) => {
+    //       const progress =
+    //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //       setUploadProgress(progress);
+    //     },
+    //     (error) => {
+    //       console.error("Lỗi khi tải tệp lên Firebase Storage", error);
+    //     },
+    //     async () => {
+    //       try {
+    //         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    //         setDownloadURL(downloadURL);
+
+    //         const email_of_lecture: string[] = memberList.map(
+    //           (member) => member.email
+    //         );
+    //         const subject_code: string = selectedSubjectCode?.value;
+
+    //         const dataBody = {
+    //           groupId: selected?.group?.id,
+    //           projectId: projectId,
+    //           document_url: downloadURL,
+    //           subject_code: subject_code,
+    //           lecturer_email: email_of_lecture,
+    //         };
+
+    //         const result = await dispatch(registerPitching(dataBody));
+
+    //         if (registerPitching.fulfilled.match(result)) {
+    //           const dataBodyNoti = {
+    //             notification_type: NOTIFICATION_TYPE.REGISTER_PITCHING_BUSINESS,
+    //             information: `Nhóm ${selected?.group?.group_name} đã đăng kí pitching dự án ${dataProject?.name_project} của bạn`,
+    //             sender_email: `${userLogin?.email}`,
+    //             receiver_email: `${dataProject?.business?.email}`,
+    //           };
+
+    //           const resNoti = await dispatch(
+    //             createNewNotification(dataBodyNoti)
+    //           );
+
+    //           console.log(selected);
+    //           const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
+
+    //           const dataBody = {
+    //             groupName: selected?.group?.group_name,
+    //             avatarGroup: userLogin?.avatar_url,
+    //             lastMessage: "",
+    //             identifierUserChat: compareIdentifierUserChat,
+    //           };
+
+    //           dispatch(createUserChat(dataBody)).then((result) => {
+    //             if (createUserChat.fulfilled.match(result)) {
+    //               console.log("tạo userChat thành công");
+    //               console.log("create userchat SUCCESS", result.payload);
+    //             } else {
+    //               console.log("create userchat FAIL", result.payload);
+    //               console.log("tạo userchat thất bại");
+    //             }
+    //           });
+
+    //           //FIREBASE
+
+    //           // try {
+    //           //   await setDoc(doc(db, "userChats", compareIdentifierUserChat), {
+    //           //     groupName: selected?.group?.group_name,
+    //           //     avatarGroup: userLogin?.avatar_url,
+    //           //     lastMessages: " ",
+    //           //     identifierUserChat: compareIdentifierUserChat,
+    //           //     createdAt: serverTimestamp(),
+    //           //   });
+    //           // } catch (error) {
+    //           //   console.error("Error handling the message:", error);
+    //           // }
+
+    //           router.push("/student-board");
+    //           toast.success("Đăng kí thành công!");
+    //         } else {
+    //           console.log(result.payload);
+    //           toast.error(`${result.payload}`);
+    //         }
+
+    //         setOpen(false);
+    //         setLoadingRegisterPitching(false);
+    //       } catch (error) {
+    //         console.error("Error getting download URL:", error);
+    //       }
+    //     }
+    //   );
+    // } else {
+    //   const email_of_lecture: string[] = memberList.map(
+    //     (member) => member.email
+    //   );
+    //   const subject_code: string = selectedSubjectCode?.value;
+
+    //   const dataBody = {
+    //     groupId: selected?.group?.id,
+    //     projectId: projectId,
+    //     document_url: "",
+    //     subject_code: subject_code,
+    //     lecturer_email: email_of_lecture,
+    //   };
+
+    //   const result = await dispatch(registerPitching(dataBody));
+
+    //   // const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
+
+    //   // const dataBody1 = {
+    //   //   groupName: selected?.group?.group_name,
+    //   //   avatarGroup: userLogin?.avatar_url,
+    //   //   lastMessage: "",
+    //   //   identifierUserChat: compareIdentifierUserChat,
+    //   // };
+
+    //   // dispatch(createUserChat(dataBody1)).then((result) => {
+    //   //   if (createUserChat.fulfilled.match(result)) {
+    //   //     console.log("tạo userChat thành công");
+    //   //     console.log("create userchat SUCCESS", result.payload);
+    //   //   } else {
+    //   //     console.log("create userchat FAIL", result.payload);
+    //   //     console.log("tạo userchat thất bại");
+    //   //   }
+    //   // });
+
+    //   if (registerPitching.fulfilled.match(result)) {
+    //     const dataBodyNoti = {
+    //       notification_type: NOTIFICATION_TYPE.REGISTER_PITCHING_BUSINESS,
+    //       information: `Nhóm ${selected?.group?.group_name} đã đăng kí pitching dự án ${dataProject?.name_project} của bạn`,
+    //       sender_email: `${userLogin?.email}`,
+    //       receiver_email: `${dataProject?.business?.email}`,
+    //     };
+
+    //     const resNoti = await dispatch(createNewNotification(dataBodyNoti));
+
+    //     console.log(selected);
+    //     const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
+
+    //     const dataBody = {
+    //       groupName: selected?.group?.group_name,
+    //       avatarGroup: userLogin?.avatar_url,
+    //       lastMessage: "",
+    //       identifierUserChat: compareIdentifierUserChat,
+    //     };
+
+    //     dispatch(createUserChat(dataBody)).then((result) => {
+    //       if (createUserChat.fulfilled.match(result)) {
+    //         console.log("tạo userChat thành công");
+    //         console.log("create userchat SUCCESS", result.payload);
+    //       } else {
+    //         console.log("create userchat FAIL", result.payload);
+    //         console.log("tạo userchat thất bại");
+    //       }
+    //     });
+
+    //     //FIREBASE
+
+    //     // try {
+    //     //   await setDoc(doc(db, "userChats", compareIdentifierUserChat), {
+    //     //     groupName: selected?.group?.group_name,
+    //     //     avatarGroup: userLogin?.avatar_url,
+    //     //     lastMessages: " ",
+    //     //     identifierUserChat: compareIdentifierUserChat,
+    //     //     createdAt: serverTimestamp(),
+    //     //   });
+    //     // } catch (error) {
+    //     //   console.error("Error handling the message:", error);
+    //     // }
+
+    //     router.push("/student-board");
+    //     setOpen(false);
+    //     toast.success("Đăng kí thành công!");
+    //   } else {
+    //     console.log(result.payload);
+    //     toast.error(`${result.payload}`);
+    //   }
+
+    //   setLoadingRegisterPitching(false);
+    //   // toast.error('Vui lòng cập nhập file giới thiệu nhóm')
+    //   // setLoadingRegisterPitching(false);
+    // }
   };
 
   const handleConfirmRegisterPitching = () => {
@@ -390,6 +533,16 @@ export const AlertDialogConfirmPitching: React.FC<
   };
 
   const handleCancel = () => {
+    setErrors({
+      selectedSubjectCode: "",
+      memberList: "",
+      file: "",
+      selected: "",
+    });
+    setSelected("");
+    setFile(null);
+    setMemberList([]);
+    setSelectedSubjectCode("");
     setNewMember("");
     setMemberResultSearch([]);
     setOpen(false);
@@ -597,11 +750,7 @@ export const AlertDialogConfirmPitching: React.FC<
           <AlertDialogHeader>
             <AlertDialogTitle>Mẫu đăng kí</AlertDialogTitle>
             <X
-              onClick={() => {
-                setIsChecked(false);
-                setOpen(false);
-                form.resetFields();
-              }}
+              onClick={handleCancel}
               className="absolute top-0 right-2 w-5 h-5 cursor-pointer text-gray-400"
             />
           </AlertDialogHeader>
@@ -626,10 +775,15 @@ export const AlertDialogConfirmPitching: React.FC<
                 value={selectedSubjectCode}
               />
             </div>
+            {errors.selectedSubjectCode && (
+              <p className="text-red-500 text-sm">
+                {errors.selectedSubjectCode}
+              </p>
+            )}
 
             <div className="my-4">
               <div className="mt-4 relative">
-                {memberList.length === 0 && (
+                {memberList.length < 2 && (
                   <>
                     <label
                       className="block font-semibold text-[#07074D]"
@@ -737,6 +891,10 @@ export const AlertDialogConfirmPitching: React.FC<
               </div>
             </div>
 
+            {errors.memberList && (
+              <p className="text-red-500 text-sm">{errors.memberList}</p>
+            )}
+
             {/* <div className="my-4">
             <p>Tài liệu của nhóm: </p>
             <input type="file" onChange={handleFileChange} />
@@ -784,9 +942,13 @@ export const AlertDialogConfirmPitching: React.FC<
               </div>
             </div>
 
+            {errors.file && (
+              <p className="text-red-500 text-sm">{errors.file}</p>
+            )}
+
             <div className="">
               <p className="block font-semibold text-[#07074D]">Chọn nhóm: </p>
-              <Listbox value={selected} onChange={setSelected}>
+              <Listbox value={selected} onChange={handleChangeGroup}>
                 <div className="relative mt-1 ">
                   <Listbox.Button className="h-10 relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left ring-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                     <span className="block truncate">
@@ -844,23 +1006,10 @@ export const AlertDialogConfirmPitching: React.FC<
                 </div>
               </Listbox>
             </div>
-            {/* 
-          <div className="form-group-material mt-6 cursor-pointer">
-            <input
-              type="checkbox"
-              id="extendDeadline"
-              className="cursor-pointer"
-              checked={isChecked}
-              onChange={(e) => setIsChecked(e.target.checked)}
-            />
-            <label
-              htmlFor="extendDeadline"
-              className="ml-2 text-justify cursor-pointer"
-            >
-              Theo chính sách bảo vệ thông tin, tôi đồng ý với cam kết bảo mật
-              Dự án.
-            </label>
-          </div> */}
+
+            {errors.selected && (
+              <p className="text-red-500 text-sm">{errors.selected}</p>
+            )}
           </div>
 
           <div className="flex gap-4 justify-end mt-4">
