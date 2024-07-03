@@ -17,3 +17,20 @@ export interface UserType {
   business_description?: string;
   address_detail?: string;
 }
+
+export interface CheckBusinessInfoType {
+  businessName: string
+  businessEmail: string
+  business_description: string
+  business_sector: string
+  address: string
+  address_detail: string
+}
+
+export interface CheckResponsibleInfoType {
+  fullname: string
+  phone_number: string
+  position: string
+  email_responsible_person: string
+}
+

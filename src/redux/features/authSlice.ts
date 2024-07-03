@@ -65,8 +65,7 @@ export const login = createAsyncThunk(
       saveTokenToSessionStorage(response.data.accessToken);
 
       const userData = {
-        responsiblePerson: resGetProfile.data.responsiblePerson,
-        ...resGetProfile.data.user,
+        ...resGetProfile.data,
         ...decodeTokenToUser(response.data.accessToken),
       };
 

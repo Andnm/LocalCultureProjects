@@ -10,28 +10,18 @@ import { BusinessDataType } from "@/app/(home)/(others)/(routes)/register/_types
 import { ResponsibleType } from "@/app/(home)/(others)/(routes)/register/_types/responsible.type";
 import { ProjectType } from "@/app/(home)/(others)/(routes)/register/_types/project.type";
 import toast from "react-hot-toast";
+import { extractProjectDates, validateEmail } from "@/src/utils/handleFunction";
 import {
-  extractProjectDates,
-  generateRandomString,
-  removeCommas,
-  validateEmail,
-} from "@/src/utils/handleFunction";
-import {
-  updateProfileNotAuth,
-  updateUserProfile,
+  checkBusinessInfo,
+  checkResponsibleInfo,
 } from "@/src/redux/features/userSlice";
-import {
-  getUserFromSessionStorage,
-  saveUserToSessionStorage,
-} from "@/src/redux/utils/handleUser";
-import {
-  checkExistResponsiblePersonByEmail,
-  checkResponsiblePersonBelongsToBusiness,
-  createResponsiblePerson,
-} from "@/src/redux/features/responsiblePersonSlice";
+
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
-import { createNewProject } from "@/src/redux/features/projectSlice";
+import {
+  createNewProject,
+  createNewProjectWithAuthentication,
+} from "@/src/redux/features/projectSlice";
 import { useRouter } from "next/navigation";
 
 import "../../../app/(home)/(others)/(routes)/register/style.scss";
@@ -45,6 +35,7 @@ import {
 } from "@/src/redux/features/authSlice";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
+import ModalCheckMatchInfo from "./ModalCheckMatchInfo";
 
 interface ModalProps {
   open: boolean;
@@ -61,9 +52,6 @@ interface ModalProps {
 export default function ModalCreateProject({
   open,
   actionClose,
-  buttonClose,
-  actionConfirm,
-  buttonConfirm,
   setDataTable,
   setDataTableOrigin,
   dataTable,
@@ -211,7 +199,7 @@ export default function ModalCreateProject({
   });
 
   const [selectedJuridicalFiles, setSelectedJuridicalFiles] = useState([]);
-  const [juridicalFilesOrigin, setJuridicalFilesOrigin] = useState([]);
+  const [juridicalFilesOrigin, setJuridicalFilesOrigin] = useState<any>([]);
   const [errorFile, setErrorFile] = useState("");
 
   const [stageEnabled, setStageEnabled] = useState<Record<number, boolean>>({
@@ -305,6 +293,11 @@ export default function ModalCreateProject({
               "Vui lòng không được để trống!";
             hasError = true;
           }
+        }
+
+        if (!validateEmail(businessData.businessEmail)) {
+          updatedErrorBusinessData.businessEmail = "Email không hợp lệ!";
+          hasError = true;
         }
 
         if (
@@ -425,12 +418,171 @@ export default function ModalCreateProject({
     }
   };
 
+  // xử lý thay đổi info
+  const [
+    openModalConfirmChangeBusinessInfo,
+    setOpenModalConfirmChangeBusinessInfo,
+  ] = useState<boolean>(false);
+  const [
+    openModalConfirmChangeResponsibleInfo,
+    setOpenModalConfirmChangeResponsibleInfo,
+  ] = useState<boolean>(false);
+  const [isChangeBusinessInfo, setIsChangeBusinessInfo] =
+    useState<boolean>(false);
+  const [isChangeResponsibleInfo, setIsChangeResponsibleInfo] =
+    useState<boolean>(false);
+  const [newFields, setNewFields] = useState<any[]>([]);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  const handleCallApiCheckResponsibleInfoToChange = async () => {
+    //nếu có đăng nhập thì mới chạy hàm check
+    if (userLogin?.role_name === null && userLogin?.role_name === undefined) {
+      return true;
+    }
+
+    try {
+      setIsPaused(true);
+      // Mở modal xác nhận thay đổi thông tin responsible
+      const responsiblePersonInfo = {
+        fullname: responsiblePerson.fullname,
+        phone_number: responsiblePerson.phone_number,
+        position: responsiblePerson.position,
+        email_responsible_person: responsiblePerson.email,
+      };
+
+      await dispatch(checkResponsibleInfo(responsiblePersonInfo)).then(
+        (res) => {
+          console.log("come responsible");
+
+          if (checkResponsibleInfo.rejected.match(res)) {
+            toast.error(`${res.payload}`);
+          } else if (checkResponsibleInfo.fulfilled.match(res)) {
+            if (res.payload.length != 0) {
+              setNewFields(res.payload);
+              setOpenModalConfirmChangeResponsibleInfo(true);
+            }
+          }
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra!");
+      setIsPaused(false);
+      return false;
+    } finally {
+      return true;
+    }
+  };
+
+  const handleCallApiCheckBusinessInfoToChange = async () => {
+    //nếu có đăng nhập thì mới chạy hàm check
+    if (userLogin?.role_name === null && userLogin?.role_name === undefined) {
+      return true;
+    }
+
+    setIsPaused(true);
+    try {
+      // Mở modal xác nhận thay đổi thông tin doanh nghiệp
+      const businessInfo = {
+        businessName: businessData.fullname ?? "",
+        businessEmail: businessData.businessEmail,
+        business_description: businessData.business_description,
+        business_sector: businessData.business_sector,
+        address: businessData.address,
+        address_detail: businessData.address_detail,
+      };
+
+      await dispatch(checkBusinessInfo(businessInfo)).then((res) => {
+        console.log("come business");
+
+        if (checkBusinessInfo.rejected.match(res)) {
+          toast.error(`${res.payload}`);
+        } else if (checkBusinessInfo.fulfilled.match(res)) {
+          if (res.payload.length != 0) {
+            setNewFields(res.payload);
+            setOpenModalConfirmChangeBusinessInfo(true);
+          }
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra!");
+      setIsPaused(false);
+      return false;
+    } finally {
+      return true;
+    }
+  };
+
   // xử lý api
   // luồng đi
   // create new account for business (new api) /create responsible / create new project/update business
-  const handleCallAPIUpdateProfile = async () => {
+  const handleProcessConfirmCreateProject = async () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setOpenModalConfirmAction(false);
+    // showToastsError
+
+    //nếu có login thì gọi hàm create ngay không cần thông qua bước check
+    if (userLogin?.role_name !== null && userLogin?.role_name !== undefined) {
+      await handleCallApiToCreateProject();
+    }
+
+    const businessInfo = {
+      businessName: businessData.fullname ?? "",
+      businessEmail: businessData.businessEmail,
+      business_description: businessData.business_description,
+      business_sector: businessData.business_sector,
+      address: businessData.address,
+      address_detail: businessData.address_detail,
+    };
+
+    const responsiblePersonInfo = {
+      fullname: responsiblePerson.fullname,
+      phone_number: responsiblePerson.phone_number,
+      position: responsiblePerson.position,
+      email_responsible_person: responsiblePerson.email,
+    };
+
+    // đầu tiên gọi api để check business -> gọi api check responsible
+    // res check business mà [] và res check responsible mà [] -> tự gọi api create project
+    // res check business mà [] -> res check responsible mà khác [] -> open modal responsible -> truyền handle api create project vào button
+    // res check business mà khác [] -> check responsible -> res check responsible mà [] -> 
+
+
+    await dispatch(checkBusinessInfo(businessInfo)).then(async (res) => {
+      console.log("come business");
+
+      if (checkBusinessInfo.rejected.match(res)) {
+        toast.error(`${res.payload}`);
+      } else if (checkBusinessInfo.fulfilled.match(res)) {
+        if (res.payload.length != 0) {
+          setNewFields(res.payload);
+          setOpenModalConfirmChangeBusinessInfo(true);
+        } else {
+          await dispatch(checkResponsibleInfo(responsiblePersonInfo)).then(
+            async (res) => {
+              console.log("come responsible");
+
+              if (checkResponsibleInfo.rejected.match(res)) {
+                toast.error(`${res.payload}`);
+              } else if (checkResponsibleInfo.fulfilled.match(res)) {
+                if (res.payload.length != 0) {
+                  setNewFields(res.payload);
+                  setOpenModalConfirmChangeResponsibleInfo(true);
+                }
+              } else {
+                await handleCallApiToCreateProject();
+              }
+            }
+          );
+        }
+      }
+    });
+
+    // gọi api để check responsible info
+  };
+
+  const handleCallApiToCreateProject = async () => {
     setIsLoading(true);
 
     toast("Tiến trình xử lý sẽ hơi lâu, vui lòng chờ trong giây lát!", {
@@ -443,121 +595,19 @@ export default function ModalCreateProject({
     });
 
     try {
-      // // XỬ LÝ UPDATE PROFILE
-      // const dataUpdateProfile = {
-      //   ...businessData,
-      // };
+      const dataIsCreatedByAdmin: boolean | undefined =
+        userLogin && userLogin.role_name === "Admin";
 
-      // const resUpdate = await dispatch(updateUserProfile(dataUpdateProfile));
-      // console.log("resUpdate", resUpdate);
-
-      // if (updateUserProfile.fulfilled.match(resUpdate)) {
-      //   const user = getUserFromSessionStorage();
-
-      //   if (user) {
-      //     user.role_name = "Business";
-      //     user.fullname = dataUpdateProfile.fullname;
-      //     user.status = true;
-      //     saveUserToSessionStorage(user);
-      //   }
-      //   setLoginInfo(user);
-      // } else {
-      //   toast.error(`Có lỗi xảy ra ở bước 1!`);
-      //   toast.error(`${resUpdate.payload}`);
-      //   return;
-      // }
-
-      // Tạo sơ business trước
-      // kiểm tra đã tồn tại hay chưa, chưa thì tạo nhanh, còn rồi thì bỏ qua
-      const dataIsCreatedByAdmin = userLogin && userLogin.role_name === "Admin";
-
-      const resCheckBusinessEmailExist = await dispatch(
-        checkEmailExist(businessData?.businessEmail)
-      );
-
-      console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
-
-      if (checkEmailExist.fulfilled.match(resCheckBusinessEmailExist)) {
-        if (!resCheckBusinessEmailExist.payload) {
-          const data = {
-            is_created_by_admin: dataIsCreatedByAdmin,
-            businessName: businessData.fullname,
-            businessEmail: businessData.businessEmail,
-          };
-          const createNewBusiness = await dispatch(
-            createNewBusinessByBusinessName(data)
-          );
-
-          console.log("createNewBusiness", createNewBusiness.payload);
-        }
-      }
-
-      // XỬ LÝ TẠO NGƯỜI PHỤ TRÁCH
-      const resCheckResEmailExist = await dispatch(
-        checkExistResponsiblePersonByEmail(responsiblePerson.email)
-      );
-
-      console.log("resCheckResEmailExist", resCheckResEmailExist);
-
-      // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
-      const resCheckResponsiblePersonBelongToBusinessEmail = await dispatch(
-        checkResponsiblePersonBelongsToBusiness({
-          responsiblePersonEmail: responsiblePerson.email,
-          businessEmail: businessData?.businessEmail,
-        })
-      );
-
-      console.log(
-        "resCheckResponsiblePersonBelongToBusinessEmail",
-        resCheckResponsiblePersonBelongToBusinessEmail
-      );
-
-      if (!resCheckResponsiblePersonBelongToBusinessEmail.payload) {
-        if (
-          checkExistResponsiblePersonByEmail.fulfilled.match(
-            resCheckResEmailExist
-          )
-        ) {
-          if (!resCheckResEmailExist.payload) {
-            const resCreateResponsiblePerson = await dispatch(
-              createResponsiblePerson({
-                ...responsiblePerson,
-                businessEmail: businessData.businessEmail,
-              })
-            );
-
-            console.log(
-              "resCreateResponsiblePerson",
-              resCreateResponsiblePerson
-            );
-
-            if (
-              createResponsiblePerson.rejected.match(resCreateResponsiblePerson)
-            ) {
-              toast.error(`Có lỗi xảy ra ở bước 2!`);
-              toast.error(`${resCreateResponsiblePerson.payload}`);
-              return;
-            }
-          } else {
-            toast.error(`Người phụ trách này đã tồn tại ở doanh nghiệp khác!`);
-            return;
-          }
-        } else {
-          toast.error(`Có lỗi xảy ra ở kiểm tra người phụ trách tồn tại!`);
-          toast.error(`${resCheckResEmailExist.payload}`);
-          return;
-        }
-      }
-
-      // XỬ LÝ TẠO PROJECT
       let juridicalFilesURLs: any = [];
+      console.log("juridicalFilesOrigin: ", juridicalFilesOrigin);
 
       if (juridicalFilesOrigin.length > 0) {
         const uploadPromises: any[] = [];
         const uploadedFiles: any[] = [];
 
-        const juridicalFilesDownload = juridicalFilesOrigin.map((file) => {
-          const randomFileName = generateRandomString();
+        const juridicalFilesDownload = juridicalFilesOrigin.map((file: any) => {
+          // const randomFileName = generateRandomString();
+          const randomFileName = juridicalFilesOrigin[0]?.name;
           const storageRef = ref(storage, `khoduan/${randomFileName}`);
           const uploadTask = uploadBytes(storageRef, file);
           uploadPromises.push(uploadTask);
@@ -568,121 +618,102 @@ export default function ModalCreateProject({
         await Promise.all(uploadPromises);
 
         juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
-      }
 
-      // FE thì sẽ gọi api check exist email
-      //(kiểm tra cái isAdminConfirm nữa để xem tk đó như thế nào rồi
-      //thay đổi is_first_project cho phù hợp)
+        //kiểm tra business đã tồn tại chưa để lấy first project
+        const resCheckBusinessEmailExist = await dispatch(
+          checkEmailExist(businessData?.businessEmail)
+        );
 
-      // nếu isConfirmByAdmin mà là true thì tức là đã đăng dự án đầu rồi và đã được duyệt
-      // nếu là false thì tức là mới
-      console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
+        console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
 
-      setFirstProject((prevData) => ({
-        ...prevData,
-        is_first_project:
+        const dataIsFirstProject =
           resCheckBusinessEmailExist.payload &&
           resCheckBusinessEmailExist.payload.isConfirmByAdmin !== null &&
           resCheckBusinessEmailExist.payload.isConfirmByAdmin !== undefined
             ? !resCheckBusinessEmailExist.payload.isConfirmByAdmin
-            : false,
-      }));
+            : false;
 
-      const projectTimeline = extractProjectDates(
-        firstProject.project_implement_time
-      );
+        const projectTimeline = extractProjectDates(
+          firstProject.project_implement_time
+        );
 
-      const dataIsFirstProject =
-        resCheckBusinessEmailExist.payload &&
-        resCheckBusinessEmailExist.payload.isConfirmByAdmin !== null &&
-        resCheckBusinessEmailExist.payload.isConfirmByAdmin !== undefined
-          ? !resCheckBusinessEmailExist.payload.isConfirmByAdmin
-          : false;
+        const dataBody = {
+          is_created_by_admin: dataIsCreatedByAdmin,
+          ...businessData,
+          ...responsiblePerson,
+          ...firstProject,
+          businessName: businessData.fullname,
+          businessEmail: businessData.businessEmail,
+          email_responsible_person: responsiblePerson.email,
+          is_change_business_info: isChangeBusinessInfo,
+          is_change_responsible_info: isChangeResponsibleInfo,
+          document_related_link: juridicalFilesURLs,
+          project_start_date: projectTimeline.project_start_date,
+          project_expected_end_date: projectTimeline.project_expected_end_date,
+          is_first_project: dataIsFirstProject,
+        };
 
-      const dataFirstProject = {
-        ...firstProject,
-        document_related_link: juridicalFilesURLs,
-        businessEmail: businessData.businessEmail,
-        email_responsible_person: responsiblePerson.email,
-        project_start_date: projectTimeline.project_start_date,
-        project_expected_end_date: projectTimeline.project_expected_end_date,
-        businessName: businessData.fullname,
-        is_first_project: dataIsFirstProject,
-        is_created_by_admin: dataIsCreatedByAdmin,
-      };
+        console.log("dataBody: ", dataBody);
 
-      const resCreateProject = await dispatch(
-        createNewProject(dataFirstProject)
-      );
+        const resCreateProject = await dispatch(
+          createNewProjectWithAuthentication(dataBody)
+        );
 
-      console.log("resCreateProject", resCreateProject);
+        if (
+          createNewProjectWithAuthentication.rejected.match(resCreateProject)
+        ) {
+          toast.error(`${resCreateProject.payload}`);
+          return;
+        } else {
+          try {
+            const resGetAllAdmin = await dispatch(getAllAdmin());
 
-      if (createNewProject.rejected.match(resCreateProject)) {
-        toast.error(`Có lỗi xảy ra ở bước 3!`);
-        toast.error(`${resCreateProject.payload}`);
-        return;
-      } else {
-        try {
-          const resGetAllAdmin = await dispatch(getAllAdmin());
+            await Promise.all(
+              resGetAllAdmin.payload.map(async (email: any) => {
+                const dataBodyNoti = {
+                  notification_type: dataIsFirstProject
+                    ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
+                    : NOTIFICATION_TYPE.CREATE_PROJECT,
+                  information: dataIsFirstProject
+                    ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
+                    : "Có một dự án mới cần được duyệt",
+                  sender_email: businessData.businessEmail,
+                  receiver_email: email,
+                };
 
-          await Promise.all(
-            resGetAllAdmin.payload.map(async (email: any) => {
-              const dataBodyNoti = {
-                notification_type: dataIsFirstProject
-                  ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
-                  : NOTIFICATION_TYPE.CREATE_PROJECT,
-                information: dataIsFirstProject
-                  ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
-                  : "Có một dự án mới cần được duyệt",
-                sender_email: businessData.businessEmail,
-                receiver_email: email,
-              };
-
-              const resNoti = await dispatch(
-                createNewNotification(dataBodyNoti)
-              );
-              console.log(resNoti);
-            })
-          );
-
-          if (resCheckBusinessEmailExist.payload) {
-            const dataUpdateProfile = {
-              ...businessData,
-              email: businessData.businessEmail,
-            };
-
-            const resUpdate = await dispatch(
-              updateProfileNotAuth(dataUpdateProfile)
+                const resNoti = await dispatch(
+                  createNewNotification(dataBodyNoti)
+                );
+                console.log(resNoti);
+              })
             );
-            console.log("updateProfileNotAuth", resUpdate);
-          }
 
-          toast.success(
-            `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
-          );
+            toast.success(
+              `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
+            );
 
-          if (setDataTable) {
-            if (dataTable) {
-              setDataTable([resCreateProject.payload, ...dataTable]);
+            if (setDataTable) {
+              if (dataTable) {
+                setDataTable([resCreateProject.payload, ...dataTable]);
+              }
             }
-          }
 
-          if (setDataTableOrigin) {
-            if (dataTableOrigin) {
-              setDataTable([resCreateProject.payload, ...dataTableOrigin]);
+            if (setDataTableOrigin) {
+              if (dataTableOrigin) {
+                setDataTable([resCreateProject.payload, ...dataTableOrigin]);
+              }
             }
-          }
 
-          if (actionClose) {
-            actionClose();
+            if (actionClose) {
+              actionClose();
+            }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
         }
       }
     } catch (error) {
-      console.error("Error occurred while updating profile:", error);
-      toast.error("Đã xảy ra lỗi khi cập nhật hồ sơ");
+      console.log("error create project: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -796,36 +827,40 @@ export default function ModalCreateProject({
                           }
                           actionClose={() => setOpenModalConfirmAction(false)}
                           buttonClose={"Hủy"}
-                          actionConfirm={handleCallAPIUpdateProfile}
+                          actionConfirm={handleProcessConfirmCreateProject}
                           buttonConfirm={"Xác nhận"}
                           styleWidth={"max-w-xl"}
                           status={"Pending"} //truyền pending để hiện button action
                         />
                       )}
 
+                      {openModalConfirmChangeBusinessInfo && (
+                        <ModalCheckMatchInfo
+                          object="Doanh nghiệp"
+                          open={openModalConfirmChangeBusinessInfo}
+                          onClose={() => {
+                            setOpenModalConfirmChangeBusinessInfo(false);
+                          }}
+                          data={newFields}
+                          setIsChangeInfo={setIsChangeBusinessInfo}
+                        />
+                      )}
+
+                      {openModalConfirmChangeResponsibleInfo && (
+                        <ModalCheckMatchInfo
+                          object="Người phụ trách"
+                          open={openModalConfirmChangeResponsibleInfo}
+                          onClose={() => {
+                            setOpenModalConfirmChangeResponsibleInfo(false);
+                          }}
+                          data={newFields}
+                          setIsChangeInfo={setIsChangeResponsibleInfo}
+                        />
+                      )}
+
                       {isLoading && <SpinnerLoading />}
                     </div>
                   </div>
-
-                  {/* <div className="mt-4 flex gap-4 justify-end">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={actionClose}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      {buttonClose}
-                    </button>
-
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={actionConfirm}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      {buttonConfirm}
-                    </button>
-                  </div> */}
                 </Dialog.Panel>
               </Transition.Child>
               <div className="overlay" style={styleOverlay}></div>

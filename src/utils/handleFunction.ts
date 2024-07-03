@@ -1,4 +1,5 @@
 import * as moment from "moment-timezone";
+import toast from "react-hot-toast";
 
 export const validateEmail = (email: string) => {
   return String(email)
@@ -191,7 +192,7 @@ export const generateFallbackAvatar = (
   const initials = handleLowerCaseNonAccentVietnamese(
     fullname?.charAt(0).toUpperCase() || ""
   );
-  
+
   const svgString = `
   <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
     <rect width="100%" height="100%" fill="${fallbackColor}" />
@@ -355,5 +356,16 @@ export const extractProjectDates = (inputString: string): any | null => {
     };
   } else {
     return null;
+  }
+};
+
+//toast error
+export const showToastsError = (payload: any) => {
+  if (Array.isArray(payload)) {
+    payload.forEach((item) => {
+      toast.error(item);
+    });
+  } else {
+    toast.error(payload);
   }
 };

@@ -51,3 +51,34 @@ export interface ProjectType {
   target_object?: string;
   expected_budget?: number;
 }
+
+export interface CreateProjectType {
+  is_created_by_admin: boolean
+  businessName: string
+  businessEmail: string
+  link_web: string
+  business_description: string
+  business_sector: string
+  address: string
+  address_detail: string
+  is_change_business_info: boolean
+  fullname: string
+  phone_number: string
+  position: string
+  email_responsible_person: string
+  other_contact: string
+  is_change_responsible_info: boolean
+  name_project: string
+  business_type: string
+  purpose: string
+  target_object: string
+  note: string
+  document_related_link: string[]
+  request: string
+  project_implement_time: string
+  project_start_date: string
+  is_extent: boolean
+  project_expected_end_date: string
+  expected_budget: string
+  is_first_project: boolean
+}

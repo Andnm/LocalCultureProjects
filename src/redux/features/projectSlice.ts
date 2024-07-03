@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import http from "../utils/https";
-import { ProjectType } from "@/src/types/project.type";
+import { CreateProjectType, ProjectType } from "@/src/types/project.type";
 import { ErrorType } from "@/src/types/error.type";
 import {
   getConfigHeader,
@@ -45,6 +45,47 @@ export const createNewProject = createAsyncThunk(
     }
   }
 );
+
+export const createNewProjectWithAuthentication = createAsyncThunk(
+  "listProject/createNewProjectWithAuthentication",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        "/projects/withAuthentication",
+        dataBody,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const createNewProjectWithoutAuthentication = createAsyncThunk(
+  "listProject/createNewProjectWithoutAuthentication",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        "/projects/withoutAuthentication",
+        dataBody,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 
 export const getProjectById = createAsyncThunk(
   "listProject/getProjectById",
@@ -339,6 +380,36 @@ export const projectSlice = createSlice({
       state.error = "";
     });
     builder.addCase(createNewProject.rejected, (state, action) => {
+      state.loadingProject = false;
+      state.error = action.payload as string;
+    });
+
+    //create New Project With Authentication
+    builder.addCase(createNewProjectWithAuthentication.pending, (state) => {
+      state.loadingProject = true;
+      state.error = "";
+    });
+    builder.addCase(createNewProjectWithAuthentication.fulfilled, (state, action) => {
+      state.loadingProject = false;
+      state.data = [action.payload];
+      state.error = "";
+    });
+    builder.addCase(createNewProjectWithAuthentication.rejected, (state, action) => {
+      state.loadingProject = false;
+      state.error = action.payload as string;
+    });
+
+    //create New Project Without Authentication
+    builder.addCase(createNewProjectWithoutAuthentication.pending, (state) => {
+      state.loadingProject = true;
+      state.error = "";
+    });
+    builder.addCase(createNewProjectWithoutAuthentication.fulfilled, (state, action) => {
+      state.loadingProject = false;
+      state.data = [action.payload];
+      state.error = "";
+    });
+    builder.addCase(createNewProjectWithoutAuthentication.rejected, (state, action) => {
       state.loadingProject = false;
       state.error = action.payload as string;
     });

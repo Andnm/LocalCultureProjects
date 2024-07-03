@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
-import { UserType } from "@/src/types/user.type";
+import {
+  CheckBusinessInfoType,
+  CheckResponsibleInfoType,
+  UserType,
+} from "@/src/types/user.type";
 import {
   getConfigHeader,
   getTokenFromSessionStorage,
@@ -36,6 +40,47 @@ export const getAllUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+//check xem có match với những thông tin đã có trong database
+export const checkBusinessInfo = createAsyncThunk(
+  "user/checkBusinessInfo",
+  async (businessInfo: CheckBusinessInfoType, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `/users/checkBusinessInfo`,
+        businessInfo,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log("error: ", error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+//check xem có match với những thông tin đã có trong database
+export const checkResponsibleInfo = createAsyncThunk(
+  "user/checkResponsibleInfo",
+  async (responsiblePersonInfo: CheckResponsibleInfoType, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `/users/checkResponsibleInfo`,
+        responsiblePersonInfo,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
       return thunkAPI.rejectWithValue(
         (error as ErrorType)?.response?.data?.message
       );
@@ -175,7 +220,7 @@ export const unBanAccount = createAsyncThunk(
 export const updateProfileNotAuth = createAsyncThunk(
   "user/updateProfileNotAuth",
   async (data: any, thunkAPI) => {
-    console.log("data update", data)
+    console.log("data update", data);
     try {
       const response = await http.patch<any>(
         `users/update-profile-not-auth`,
@@ -208,6 +253,36 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(getAllUser.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //check Business Info
+    builder.addCase(checkBusinessInfo.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(checkBusinessInfo.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(checkBusinessInfo.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //check Responsible Info
+    builder.addCase(checkResponsibleInfo.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(checkResponsibleInfo.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(checkResponsibleInfo.rejected, (state, action) => {
       state.loadingUser = false;
       state.error = action.payload as string;
     });
