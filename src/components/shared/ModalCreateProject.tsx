@@ -21,6 +21,7 @@ import { storage } from "@/src/utils/configFirebase";
 import {
   createNewProject,
   createNewProjectWithAuthentication,
+  createNewProjectWithoutAuthentication,
 } from "@/src/redux/features/projectSlice";
 import { useRouter } from "next/navigation";
 
@@ -542,6 +543,13 @@ export default function ModalCreateProject({
       },
     });
 
+    let createProjectActionAPI;
+    if (userLogin?.role_name === null || userLogin?.role_name === undefined) {
+      createProjectActionAPI = createNewProjectWithoutAuthentication;
+    } else {
+      createProjectActionAPI = createNewProjectWithAuthentication;
+    }
+
     try {
       const dataIsCreatedByAdmin: boolean | undefined =
         userLogin && userLogin.role_name === "Admin";
@@ -570,8 +578,6 @@ export default function ModalCreateProject({
         const resCheckBusinessEmailExist = await dispatch(
           checkEmailExist(businessData?.businessEmail)
         );
-
-        console.log("resCheckBusinessEmailExist", resCheckBusinessEmailExist);
 
         const dataIsFirstProject =
           resCheckBusinessEmailExist.payload &&
@@ -602,12 +608,10 @@ export default function ModalCreateProject({
 
         console.log("dataBody: ", dataBody);
 
-        const resCreateProject = await dispatch(
-          createNewProjectWithAuthentication(dataBody)
-        );
+        const resCreateProject = await dispatch(createProjectActionAPI(dataBody));
 
         if (
-          createNewProjectWithAuthentication.rejected.match(resCreateProject)
+          createProjectActionAPI.rejected.match(resCreateProject)
         ) {
           toast.error(`${resCreateProject.payload}`);
           return;
