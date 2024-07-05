@@ -23,23 +23,27 @@ const { confirm } = Modal;
 const { TextArea } = Input;
 const { Option } = Select;
 
+import "@/src/styles/button-style.scss";
+
 interface Props {
   open: boolean;
   onClose: () => void;
-  object: string;
   data: any; //dùng để phát hiện những field thay đôi
+  resultCase: number; //dùng để xét trường hợp và click button chạy function cho đúng
   onSubmit?: () => void;
-  setIsChangeInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsChangeBusinessInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  handleCreateProject: () => Promise<void>;
 }
 
-const ModalCheckMatchInfo: React.FC<Props> = (props) => {
+const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
   const {
     onSubmit,
     open,
     onClose,
     data,
-    object,
-    setIsChangeInfo,
+    setIsChangeBusinessInfo,
+    resultCase,
+    handleCreateProject,
   } = props;
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -51,12 +55,13 @@ const ModalCheckMatchInfo: React.FC<Props> = (props) => {
       title={<span className="inline-block m-auto">CẢNH BÁO </span>}
       open={open}
       confirmLoading={confirmLoading}
-      onCancel={() => {}}
+      onCancel={() => {
+        onClose();
+      }}
       closable
       footer={[
         <>
           <Button
-            danger
             className="btn-submit"
             key="submit"
             type="text"
@@ -64,15 +69,33 @@ const ModalCheckMatchInfo: React.FC<Props> = (props) => {
               onClose();
             }}
           >
+            Huỷ
+          </Button>
+
+          <Button
+            className="btn-submit btn-continue-with-new-info"
+            key="submit"
+            onClick={async () => {
+              onClose();
+              if (resultCase === 3) {
+                await handleCreateProject();
+              }
+            }}
+          >
             Tiếp tục mà không thay đổi
           </Button>
 
           <Button
+            danger
             className="btn-submit"
             key="submit"
-            onClick={() => {
-              setIsChangeInfo(true);
+            type="text"
+            onClick={async () => {
+              setIsChangeBusinessInfo(true);
               onClose();
+              if (resultCase === 3) {
+                await handleCreateProject();
+              }
             }}
           >
             Tiếp tục với thông tin mới
@@ -81,11 +104,12 @@ const ModalCheckMatchInfo: React.FC<Props> = (props) => {
       ]}
     >
       <p>
-        Có sự thay đổi thông tin của <span className="font-bold">{object}</span> ở các ô:
+        Có sự thay đổi thông tin của{" "}
+        <span className="font-bold">Doanh nghiệp</span> ở các ô:
         {data.length > 0 ? (
           <ul>
             {data.map((changedField: string, index: number) => (
-              <li key={index}>{changedField}</li>
+              <li key={index}>- {changedField}</li>
             ))}
           </ul>
         ) : (
@@ -96,4 +120,4 @@ const ModalCheckMatchInfo: React.FC<Props> = (props) => {
   );
 };
 
-export default ModalCheckMatchInfo;
+export default ModalConfirmUpdateBusiness;
