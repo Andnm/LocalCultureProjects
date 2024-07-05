@@ -39,19 +39,6 @@ const ModalConfigData: React.FC<ModalConfigDataProps> = ({
       const values = await form.validateFields();
       setLoadingSubmit(true);
 
-      // Kiểm tra nếu tagApi là project_implement_time thì kiểm tra giá trị nhập vào
-      if (tagApi === "project_implement_time") {
-        const regex =
-          /^Học kì (?:Xuân|Hạ|Thu|Đông) \d{4} \(Từ \d{1,2}\/\d{4} tới \d{1,2}\/\d{4}\)$/;
-        if (!regex.test(values.value)) {
-          message.error(
-            "Định dạng giá trị không đúng. Vui lòng nhập theo định dạng 'Học kì [mùa] [năm] (Từ MM/yyyy tới MM/yyyy)!'"
-          );
-          setLoadingSubmit(false);
-          return;
-        }
-      }
-
       const newConfigData = {
         id: editModel
           ? editModel.id
@@ -176,10 +163,30 @@ const ModalConfigData: React.FC<ModalConfigDataProps> = ({
               <Form.Item
                 name="value"
                 label={text}
-                rules={[{ required: true, message: `Vui lòng nhập ${text}!` }]}
+                rules={[
+                  {
+                    required: true,
+                    message: `Vui lòng nhập ${text}!`,
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (text === "mốc thời gian") {
+                        const regex =
+                          /^Học kì (?:Xuân|Hè|Thu|xuân|hè|thu) \d{4} \(Từ \d{1,2}\/\d{4} tới \d{1,2}\/\d{4}\)$/;
+                        if (!regex.test(value)) {
+                          return Promise.reject(
+                            "Định dạng giá trị không đúng. Vui lòng nhập theo định dạng 'Học kì [Xuân|Hè|Thu] [năm] (Từ MM/yyyy tới MM/yyyy)!'"
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
               >
                 <Input />
               </Form.Item>
+
               <Form.Item>
                 <div className="flex justify-end gap-4">
                   {loadingSubmit && <SpinnerLoading />}
