@@ -13,6 +13,9 @@ interface SelectedProvinceProps {
   setBusinessData: any;
   errorBusinessData: any;
   setErrorBusinessData: any;
+  wardOriginData?: string;
+  districtOriginData?: string;
+  provinceOriginData?: string;
 }
 
 const SelectedProvince: React.FC<SelectedProvinceProps> = ({
@@ -20,14 +23,21 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
   setBusinessData,
   errorBusinessData,
   setErrorBusinessData,
+  wardOriginData,
+  districtOriginData,
+  provinceOriginData,
 }) => {
   // api chọn tỉnh thành phố
   const [provincesList, setProvincesList] = useState([]);
   const [districtsList, setDistrictsList] = useState([]);
   const [wardsList, setWardsList] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState(
+    provinceOriginData || ""
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    districtOriginData || ""
+  );
+  const [selectedWard, setSelectedWard] = useState(wardOriginData || "");
 
   const apiGetPublicProvinces = async () => {
     try {
@@ -63,6 +73,7 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
   };
 
   const handleProvinceChange = (selectedOption: any) => {
+    console.log("se: ", selectedOption?.value);
     setSelectedProvince(selectedOption?.value);
     setErrorBusinessData((prevErrorBusinessData: any) => ({
       ...prevErrorBusinessData,
@@ -104,6 +115,38 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
     apiGetPublicProvinces();
   }, []);
 
+  useEffect(() => {
+    if (provinceOriginData && provincesList.length > 0) {
+      const selectedProvinceObj: any = provincesList.find((province: any) =>
+        province?.province_name.includes(provinceOriginData)
+      );
+
+      if (selectedProvinceObj) {
+        setSelectedProvince(selectedProvinceObj?.province_name);
+        apiGetPublicDistrict(selectedProvinceObj?.province_id);
+      }
+    }
+  }, [provinceOriginData, provincesList]);
+
+  useEffect(() => {
+    if (districtOriginData && districtsList.length > 0) {
+      const selectedDistrictObj: any = districtsList.find((district: any) =>
+        district?.district_name.includes(districtOriginData)
+      );
+
+      if (selectedDistrictObj) {
+        setSelectedDistrict(selectedDistrictObj?.district_name);
+        apiGetPublicWard(selectedDistrictObj?.district_id);
+      }
+    }
+  }, [districtOriginData, districtsList]);
+
+  useEffect(() => {
+    if (wardOriginData) {
+      setSelectedWard(wardOriginData);
+    }
+  }, [wardOriginData]);
+
   return (
     <div className="form-group mt-2">
       <div className="flex flex-col gap-4 justify-center">
@@ -120,6 +163,15 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
                 label: removeKeywords(province.province_name),
               })) || []
             }
+            value={
+              selectedProvince
+                ? {
+                    key: selectedProvince,
+                    value: selectedProvince,
+                    label: removeKeywords(selectedProvince),
+                  }
+                : null
+            }
           />
 
           <Select
@@ -132,6 +184,15 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
               value: district.district_name,
               label: removeKeywords(district.district_name),
             }))}
+            value={
+              selectedDistrict
+                ? {
+                    key: selectedDistrict,
+                    value: selectedDistrict,
+                    label: removeKeywords(selectedDistrict),
+                  }
+                : null
+            }
             isDisabled={!selectedProvince}
           />
 
@@ -146,6 +207,15 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
               label: removeKeywords(ward.ward_name),
             }))}
             isDisabled={!selectedProvince || !selectedDistrict}
+            value={
+              selectedWard
+                ? {
+                    key: selectedWard,
+                    value: selectedWard,
+                    label: removeKeywords(selectedWard),
+                  }
+                : null
+            }
           />
         </div>
       </div>

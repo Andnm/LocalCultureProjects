@@ -359,6 +359,14 @@ export const extractProjectDates = (inputString: string): any | null => {
   }
 };
 
+export const parseAddress = (address: string) => {
+  const parts = address?.split(",").map((part) => part.trim());
+  const ward = parts[0]?.replace(/^Xã\s*/, "");
+  const district = parts[1]?.replace(/^Huyện\s*/, "");
+  const province = parts[2]?.replace(/^Thành phố\s*/, "");
+  return { ward, district, province };
+};
+
 //toast error
 export const showToastsError = (payload: any) => {
   if (Array.isArray(payload)) {

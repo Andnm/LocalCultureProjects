@@ -20,6 +20,17 @@ const FirstStage: React.FC<FirstStageProps> = ({
   setErrorBusinessData,
   userLogin,
 }) => {
+  const parseAddress = (address: string) => {
+    const parts = address?.split(",").map((part) => part.trim());
+    const wardOriginData = parts[0]?.replace(/^Xã\s*/, "");
+    const districtOriginData = parts[1]?.replace(/^Huyện\s*/, "");
+    const provinceOriginData = parts[2]?.replace(/^Thành phố\s*/, "");
+    return { wardOriginData, districtOriginData, provinceOriginData };
+  };
+
+  const { wardOriginData, districtOriginData, provinceOriginData } =
+    parseAddress(businessData?.address || "");
+
   const handleInputChange = (e: any, field: string) => {
     let value = e.target.value;
 
@@ -313,12 +324,15 @@ const FirstStage: React.FC<FirstStageProps> = ({
 
         {!userLogin ||
         userLogin?.role_name !== "Business" ||
-        !userLogin?.address ? (
+        userLogin?.address ? (
           <SelectedProvince
             businessData={businessData}
             setBusinessData={setBusinessData}
             errorBusinessData={errorBusinessData}
             setErrorBusinessData={setErrorBusinessData}
+            wardOriginData={wardOriginData}
+            districtOriginData={districtOriginData}
+            provinceOriginData={provinceOriginData}
           />
         ) : (
           <div className="form-group-material mt-4">
