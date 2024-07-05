@@ -117,6 +117,44 @@ export const searchUserByEmail = createAsyncThunk(
   }
 );
 
+export const searchResponsibleByEmail = createAsyncThunk(
+  "user/searchResponsibleByEmail",
+  async (searchEmail: any, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/users/searchResponsible/${searchEmail}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const searchUserForAdmin = createAsyncThunk(
+  "user/searchUserForAdmin",
+  async ({ roleName, searchEmail }: SearchUserByEmailParams, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        `/users/searchUserForAdmin/${searchEmail}/${roleName}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      // console.log('error', error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const getProfileUser = createAsyncThunk(
   "user/getProfileUser",
   async (email: any, thunkAPI) => {
@@ -298,6 +336,36 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(searchUserByEmail.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //search Responsible By Email
+    builder.addCase(searchResponsibleByEmail.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(searchResponsibleByEmail.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(searchResponsibleByEmail.rejected, (state, action) => {
+      state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //search User For Admin
+    builder.addCase(searchUserForAdmin.pending, (state) => {
+      state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(searchUserForAdmin.fulfilled, (state, action) => {
+      state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(searchUserForAdmin.rejected, (state, action) => {
       state.loadingUser = false;
       state.error = action.payload as string;
     });

@@ -257,6 +257,7 @@ export default function ModalCreateProject({
             setResponsiblePerson={setResponsiblePerson}
             errorResponsiblePerson={errorResponsiblePerson}
             setErrorResponsiblePerson={setErrorResponsiblePerson}
+            userLogin={userLogin}
           />
         );
       case 3:
