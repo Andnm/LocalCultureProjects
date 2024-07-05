@@ -68,7 +68,6 @@ const ProjectDetail = () => {
             .filter((up: any) => up.user.role_name === "ResponsiblePerson")
             .map((up: any) => up.user)
         );
-
       }
     });
 
@@ -111,7 +110,9 @@ const ProjectDetail = () => {
                     {businessUser?.fullname}
                   </h1>
                   {isAccessToViewWorkingProcess && (
-                    <p className="text-gray-700">{businessUser?.email}</p>
+                    <p className="text-gray-700 font-sans">
+                      {businessUser?.email}
+                    </p>
                   )}
                   {businessUser?.link_web && (
                     <div className="mt-6 flex flex-wrap gap-4 justify-center">
@@ -197,7 +198,7 @@ const ProjectDetail = () => {
             <div className="col-span-4 sm:col-span-9">
               <div className="bg-white shadow rounded-lg p-6 relative">
                 <h2 className="text-xl font-bold mb-4">Tên dự án</h2>
-                <p className="text-gray-700 text-2xl">
+                <p className="text-gray-700 text-2xl font-sans">
                   {dataProject?.name_project}
                 </p>
                 {userLogin?.role_name === "Student" && (
@@ -216,7 +217,7 @@ const ProjectDetail = () => {
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Loại hình Dự án
                     </h2>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 font-sans">
                       -{" "}
                       {dataProject?.business_type === "Project"
                         ? "Triển khai dự án"
@@ -228,7 +229,7 @@ const ProjectDetail = () => {
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Tài liệu liên quan
                     </h2>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 font-sans">
                       {dataProject?.document_related_link ? (
                         dataProject.document_related_link.length > 0 ? (
                           <Button
@@ -251,31 +252,39 @@ const ProjectDetail = () => {
                   </div>
                 </div>
                 <h2 className="text-xl font-bold mt-6 mb-4">Mục đích Dự án</h2>
-                <p className="text-gray-700">- {dataProject?.purpose}</p>
+                <div className="max-w-4xl">
+                  <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
+                    {dataProject?.purpose}
+                  </pre>
+                </div>
                 {isAccessToViewWorkingProcess && (
                   <>
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Đối tượng mục tiêu
                     </h2>
-                    <p className="text-gray-700">
-                      - {dataProject?.target_object}
-                    </p>
+                    <div className="max-w-4xl">
+                      <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
+                        {dataProject?.target_object}
+                      </pre>
+                    </div>
 
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Yêu cầu cụ thể
                     </h2>
-                    <p className="text-gray-700">
-                      {dataProject?.request ? (
-                        "- " + dataProject?.request
-                      ) : (
-                        <span className="italic">(Chưa được cập nhập)</span>
-                      )}
-                    </p>
+                    <div className="max-w-4xl">
+                      <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
+                        {dataProject?.request ? (
+                          "- " + dataProject?.request
+                        ) : (
+                          <span className="italic">(Chưa được cập nhập)</span>
+                        )}
+                      </pre>
+                    </div>
 
                     <h2 className="text-xl font-bold mt-6 mb-4">
                       Ngân sách dự kiến
                     </h2>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 font-sans">
                       {convertToNumberFormat(dataProject?.expected_budget)} VNĐ
                     </p>
                   </>
@@ -284,14 +293,16 @@ const ProjectDetail = () => {
                 {dataProject?.note && (
                   <>
                     <h2 className="text-xl font-bold mt-6 mb-4">Chú thích</h2>
-                    <p className="text-gray-700">- {dataProject?.note}</p>
+                    <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
+                      {dataProject?.note}
+                    </pre>
                   </>
                 )}
 
                 <h2 className="text-xl font-bold mt-6 mb-4">
                   Thời gian thực hiện dự án
                 </h2>
-                <p className="text-gray-700">
+                <p className="text-gray-700 font-sans">
                   {dataProject?.project_implement_time}
                 </p>
 
@@ -307,19 +318,23 @@ const ProjectDetail = () => {
                           className="bg-gray-100 p-4 rounded-lg shadow-md grid grid-cols-3 mb-4"
                         >
                           <div className="mb-4">
-                            <p className="font-semibold">Họ và tên:</p>
+                            <p className="font-semibold font-sans">
+                              Họ và tên:
+                            </p>
                             <p>{responsiblePersonInfo.fullname}</p>
                           </div>
                           <div className="mb-4">
-                            <p className="font-semibold">Số điện thoại:</p>
+                            <p className="font-semibold font-sans">
+                              Số điện thoại:
+                            </p>
                             <p>{responsiblePersonInfo.phone_number}</p>
                           </div>
                           <div className="mb-4">
-                            <p className="font-semibold">Email:</p>
+                            <p className="font-semibold font-sans">Email:</p>
                             <p>{responsiblePersonInfo.email}</p>
                           </div>
                           <div className="mb-4">
-                            <p className="font-semibold">Chức vụ:</p>
+                            <p className="font-semibold font-sans">Chức vụ:</p>
                             <p>
                               {responsiblePersonInfo.position ? (
                                 responsiblePersonInfo.position

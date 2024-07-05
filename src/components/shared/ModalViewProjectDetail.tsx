@@ -57,6 +57,14 @@ export default function ModalViewProjectDetail({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   };
 
+  const businessUser = selectedProject?.user_projects?.find(
+    (up: any) => up.user.role_name === "Business"
+  )?.user;
+
+  const responsiblePersonList = selectedProject?.user_projects
+    .filter((up: any) => up.user.role_name === "ResponsiblePerson")
+    .map((up: any) => up.user);
+
   return (
     <>
       <Transition appear show={open} as={Fragment}>

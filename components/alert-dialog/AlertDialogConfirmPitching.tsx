@@ -124,7 +124,7 @@ export const AlertDialogConfirmPitching: React.FC<
   const fetchData = async () => {
     try {
       const response = await axios.get<any>(
-        `${process.env.NEXT_PUBLIC_MOCK_API_URL}/subject_code`
+        `${process.env.NEXT_PUBLIC_MOCK_API_URL_1}/subject_code`
       );
 
       const convertedData = response.data.map((item: any) => ({

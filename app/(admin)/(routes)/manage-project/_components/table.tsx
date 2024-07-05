@@ -78,6 +78,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
     null
   );
 
+  console.log("dataTable: ", dataTable);
   const [openModalConfirmProject, setOpenModalConfirmProject] =
     React.useState(false);
 
@@ -273,6 +274,16 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
           </thead>
           {Array.isArray(dataTable) &&
             dataTable?.map((business: any, index) => {
+              const businessUser = business?.user_projects?.find(
+                (up: any) => up.user.role_name === "Business"
+              )?.user;
+
+              const responsiblePersonList = business?.user_projects
+                .filter((up: any) => up.user.role_name === "ResponsiblePerson")
+                .map((up: any) => up.user);
+
+              console.log("responsiblePersonList: ", responsiblePersonList);
+
               const isLast = index === dataTable.length - 1;
 
               const classes = isLast
@@ -308,21 +319,19 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                       <div className="flex items-center gap-3">
                         <Avatar
                           src={
-                            !business?.business?.avatar_url ||
-                            business?.business?.avatar_url === null
-                              ? generateFallbackAvatar(
-                                  business?.business?.fullname
-                                )
-                              : business?.business?.avatar_url
+                            !businessUser?.avatar_url ||
+                            businessUser?.avatar_url === null
+                              ? generateFallbackAvatar(businessUser?.fullname)
+                              : businessUser?.avatar_url
                           }
-                          alt={business?.business?.fullname}
+                          alt={businessUser?.fullname}
                           size="sm"
                         />
                         <div className="flex flex-col">
-                          <InfoText>{business?.business?.fullname}</InfoText>
+                          <InfoText>{businessUser?.fullname}</InfoText>
 
                           <InfoText className="opacity-70">
-                            {truncateString(business?.business?.email, 20)}
+                            {truncateString(businessUser?.email, 20)}
                           </InfoText>
                         </div>
                       </div>
@@ -332,13 +341,18 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                     </td>
                     <td className={classes}>
                       <div className="flex flex-col">
-                        <InfoText>
-                          {business?.responsible_person?.fullname}
-                        </InfoText>
-
-                        <InfoText className="opacity-70">
-                          {business?.responsible_person?.position}
-                        </InfoText>
+                        {responsiblePersonList?.map(
+                          (responsiblePerson: any, index: number) => (
+                            <p className="text-sm" key={index}>
+                              {responsiblePerson?.fullname}{" "}
+                              <span className="italic text-xs">
+                                {responsiblePerson?.position
+                                  ? `(${responsiblePerson.position})`
+                                  : null}
+                              </span>
+                            </p>
+                          )
+                        )}
                       </div>
                     </td>
 

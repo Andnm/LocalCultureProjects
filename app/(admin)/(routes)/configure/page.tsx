@@ -1,53 +1,120 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card } from "@material-tailwind/react";
-import { Button, Input, Modal, Table, Switch, TimePicker } from "antd";
-import ModalConfigSubjectCode from "./_components/ModalConfigSubjectCode";
+import { Button } from "antd";
+
 import axios from "axios";
+import ModalConfigData from "./_components/ModalConfigData";
 
-const Configure = () => {
-  const [openModalManageModel, setOpenModalManageModel] =
-    useState<boolean>(false);
-  const [dataSubjectCode, setDataSubjectCode] = useState<any>([]);
+interface ConfigureProps {}
 
-  React.useEffect(() => {
+const Configure: React.FC<ConfigureProps> = () => {
+  const [openModal, setOpenModal] = useState({
+    subjectCode: false,
+    implementTime: false,
+    businessSector: false,
+  });
+
+  const [data, setData] = useState({
+    subjectCode: [] as any[],
+    implementTime: [] as any[],
+    businessSector: [] as any[],
+  });
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get<any>(
-        `${process.env.NEXT_PUBLIC_MOCK_API_URL}/subject_code`
-      );
+      const [
+        responseSubjectCode,
+        responseImplementTime,
+        responseBusinessSector,
+      ] = await Promise.all([
+        axios.get<any>(
+          `${process.env.NEXT_PUBLIC_MOCK_API_URL_1}/subject_code`
+        ),
+        axios.get<any>(
+          `${process.env.NEXT_PUBLIC_MOCK_API_URL_1}/project_implement_time`
+        ),
+        axios.get<any>(
+          `${process.env.NEXT_PUBLIC_MOCK_API_URL_2}/business_sector`
+        ),
+      ]);
 
-      setDataSubjectCode(response.data);
+      setData({
+        subjectCode: responseSubjectCode.data,
+        implementTime: responseImplementTime.data,
+        businessSector: responseBusinessSector.data,
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
+  const renderModalConfigData = (
+    key: keyof typeof openModal,
+    text: string,
+    linkApi: string,
+    tagApi: string
+  ) =>
+    openModal[key] && (
+      <ModalConfigData
+        open={openModal[key]}
+        onClose={() => setOpenModal({ ...openModal, [key]: false })}
+        dataConfig={data[key]}
+        setDataConfig={(updatedData: any) =>
+          setData({ ...data, [key]: updatedData })
+        }
+        tagApi={tagApi}
+        linkApi={linkApi}
+        text={text}
+        onSubmit={() => {}}
+      />
+    );
+
   return (
     <Card className="p-4 manager-project h-full">
       <div className="mx-1 my-4 flex gap-4">
         <Button
-          key="btn-model"
-          onClick={() => {
-            setOpenModalManageModel(true);
-          }}
+          key="btn-subject-code"
+          onClick={() => setOpenModal({ ...openModal, subjectCode: true })}
         >
-          Các mã môn học hiện có
+          Mã môn học
+        </Button>
+        <Button
+          key="btn-implement-time"
+          onClick={() => setOpenModal({ ...openModal, implementTime: true })}
+        >
+          Mốc thời gian diễn ra
+        </Button>
+        <Button
+          key="btn-business-sector"
+          onClick={() => setOpenModal({ ...openModal, businessSector: true })}
+        >
+          Lĩnh vực kinh doanh
         </Button>
       </div>
-      {openModalManageModel && (
-        <ModalConfigSubjectCode
-          open={openModalManageModel}
-          onClose={() => {
-            setOpenModalManageModel(false);
-          }}
-          dataSubjectCode={dataSubjectCode}
-          setDataSubjectCode={setDataSubjectCode}
-          onSubmit={() => {}}
-        />
+
+      {renderModalConfigData(
+        "subjectCode",
+        "mã môn học",
+        process.env.NEXT_PUBLIC_MOCK_API_URL_1 || "",
+        "subject_code"
+      )}
+      {renderModalConfigData(
+        "implementTime",
+        "mốc thời gian",
+        process.env.NEXT_PUBLIC_MOCK_API_URL_1 || "",
+        "project_implement_time"
+      )}
+      {renderModalConfigData(
+        "businessSector",
+        "lĩnh vực kinh doanh",
+        process.env.NEXT_PUBLIC_MOCK_API_URL_2 || "",
+        "business_sector"
       )}
     </Card>
   );

@@ -61,12 +61,20 @@ const ModalEditProject: React.FC<Props> = (props) => {
   const formRef = useRef(null);
   const [form] = Form.useForm();
 
+  const businessUser = selectedProject?.user_projects?.find(
+    (up: any) => up.user.role_name === "Business"
+  )?.user;
+
+  const responsiblePersonList = selectedProject?.user_projects
+    .filter((up: any) => up.user.role_name === "ResponsiblePerson")
+    .map((up: any) => up.user);
+
   useEffect(() => {
     if (selectedProject) {
       form.setFieldsValue({
         ...selectedProject,
-        business_id: selectedProject.business.id,
-        responsible_person_id: selectedProject.responsible_person.id,
+        business_id: businessUser?.id,
+        responsible_person_id: responsiblePersonList[0]?.id,
       });
 
       if (selectedProject.document_related_link) {
@@ -308,33 +316,27 @@ const ModalEditProject: React.FC<Props> = (props) => {
         </div> */}
 
         <div>
-          <h3 className="ml-3 font-bold">Người phụ trách</h3>
-          <div className="grid grid-cols-3 px-4 ">
-            <Form.Item label="Họ và tên" className="mx-3">
-              <Input
-                disabled
-                value={selectedProject?.responsible_person?.fullname}
-              />
-            </Form.Item>
-            <Form.Item label="Địa chỉ email" className="mx-3">
-              <Input
-                disabled
-                value={selectedProject?.responsible_person?.email}
-              />
-            </Form.Item>
-            <Form.Item label="Số điện thoại" className="mx-3">
-              <Input
-                disabled
-                value={selectedProject?.responsible_person?.phone_number}
-              />
-            </Form.Item>
-            <Form.Item label="Chức vụ" className="mx-3">
-              <Input
-                disabled
-                value={selectedProject?.responsible_person?.position}
-              />
-            </Form.Item>
-          </div>
+          {responsiblePersonList.map(
+            (responsiblePerson: any, index: number) => (
+              <>
+                <h3 className=" font-bold">Người phụ trách {index + 1}</h3>
+                <div className="grid grid-cols-3 px-4 ">
+                  <Form.Item label="Họ và tên" className="mx-3">
+                    <Input disabled value={responsiblePerson?.fullname} />
+                  </Form.Item>
+                  <Form.Item label="Địa chỉ email" className="mx-3">
+                    <Input disabled value={responsiblePerson?.email} />
+                  </Form.Item>
+                  <Form.Item label="Số điện thoại" className="mx-3">
+                    <Input disabled value={responsiblePerson?.phone_number} />
+                  </Form.Item>
+                  <Form.Item label="Chức vụ" className="mx-3">
+                    <Input disabled value={responsiblePerson?.position} />
+                  </Form.Item>
+                </div>
+              </>
+            )
+          )}
 
           <Button
             icon={<BiPlus />}
