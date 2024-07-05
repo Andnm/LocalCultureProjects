@@ -73,6 +73,9 @@ export default function ModalCreateProject({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   };
 
+  const [shouldCallCreateProject, setShouldCallCreateProject] =
+    useState<boolean>(false);
+
   const [userLogin, setUserLogin] = useUserLogin();
   // XỬ LÝ STATE CREATE
   // business
@@ -432,6 +435,7 @@ export default function ModalCreateProject({
   const [isChangeResponsibleInfo, setIsChangeResponsibleInfo] =
     useState<boolean>(false);
 
+  //lưu response của check business hoặc responsible
   const [resultData, setResultData] = useState<any>(null);
 
   const [resultCase, setResultCase] = useState<number>(0);
@@ -446,6 +450,8 @@ export default function ModalCreateProject({
   // 4. res check business mà khác [] -> res check responsible mà khác [] ->  open modal confirm update business ->
   //-> open modal confirm update responsible -> truyền handle api create project vào button update ở modal responsible
   // 5. có lỗi xảy
+  //=> chốt là thay vì truyền api trực tiếp sẽ chỉ set state là should call api create
+  // bắt useEffect cái state đó và gọi hàm create
 
   const handleProcessConfirmCreateProject = async () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -454,13 +460,8 @@ export default function ModalCreateProject({
 
     //nếu không login thì gọi hàm create ngay không cần thông qua bước check
     if (userLogin?.role_name === null || userLogin?.role_name === undefined) {
-      try {
-        await handleCallApiToCreateProject();
-      } catch (error) {
-        console.error("Error creating project:", error);
-      } finally {
-        return; 
-      }
+      setShouldCallCreateProject(true);
+      return;
     }
 
     const businessInfo = {
@@ -481,9 +482,11 @@ export default function ModalCreateProject({
 
     try {
       setIsLoading(true);
+
       const businessResponseCheck = await dispatch(
         checkBusinessInfo(businessInfo)
       ).unwrap();
+
       const responsibleResponseCheck = await dispatch(
         checkResponsibleInfo(responsiblePersonInfo)
       ).unwrap();
@@ -497,7 +500,7 @@ export default function ModalCreateProject({
         case businessResponseCheck.length === 0 &&
           responsibleResponseCheck.length === 0:
           setResultCase(1);
-          await handleCallApiToCreateProject();
+          setShouldCallCreateProject(true);
           break;
         case businessResponseCheck.length === 0 &&
           responsibleResponseCheck.length > 0:
@@ -545,26 +548,23 @@ export default function ModalCreateProject({
 
       let juridicalFilesURLs: any = [];
 
-      if (
-        // juridicalFilesOrigin.length > 0
-        true
-      ) {
-        // const uploadPromises: any[] = [];
-        // const uploadedFiles: any[] = [];
+      if (juridicalFilesOrigin.length > 0) {
+        const uploadPromises: any[] = [];
+        const uploadedFiles: any[] = [];
 
-        // const juridicalFilesDownload = juridicalFilesOrigin.map((file: any) => {
-        //   // const randomFileName = generateRandomString();
-        //   const randomFileName = juridicalFilesOrigin[0]?.name;
-        //   const storageRef = ref(storage, `khoduan/${randomFileName}`);
-        //   const uploadTask = uploadBytes(storageRef, file);
-        //   uploadPromises.push(uploadTask);
-        //   uploadedFiles.push({ path: `khoduan/${randomFileName}`, file });
-        //   return uploadTask.then(() => getDownloadURL(storageRef));
-        // });
+        const juridicalFilesDownload = juridicalFilesOrigin.map((file: any) => {
+          // const randomFileName = generateRandomString();
+          const randomFileName = juridicalFilesOrigin[0]?.name;
+          const storageRef = ref(storage, `khoduan/${randomFileName}`);
+          const uploadTask = uploadBytes(storageRef, file);
+          uploadPromises.push(uploadTask);
+          uploadedFiles.push({ path: `khoduan/${randomFileName}`, file });
+          return uploadTask.then(() => getDownloadURL(storageRef));
+        });
 
-        // await Promise.all(uploadPromises);
+        await Promise.all(uploadPromises);
 
-        // juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
+        juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
 
         //kiểm tra business đã tồn tại chưa để lấy first project
         const resCheckBusinessEmailExist = await dispatch(
@@ -602,69 +602,76 @@ export default function ModalCreateProject({
 
         console.log("dataBody: ", dataBody);
 
-        // const resCreateProject = await dispatch(
-        //   createNewProjectWithAuthentication(dataBody)
-        // );
+        const resCreateProject = await dispatch(
+          createNewProjectWithAuthentication(dataBody)
+        );
 
-        // if (
-        //   createNewProjectWithAuthentication.rejected.match(resCreateProject)
-        // ) {
-        //   toast.error(`${resCreateProject.payload}`);
-        //   return;
-        // } else {
-        //   try {
-        //     const resGetAllAdmin = await dispatch(getAllAdmin());
+        if (
+          createNewProjectWithAuthentication.rejected.match(resCreateProject)
+        ) {
+          toast.error(`${resCreateProject.payload}`);
+          return;
+        } else {
+          try {
+            const resGetAllAdmin = await dispatch(getAllAdmin());
 
-        //     await Promise.all(
-        //       resGetAllAdmin.payload.map(async (email: any) => {
-        //         const dataBodyNoti = {
-        //           notification_type: dataIsFirstProject
-        //             ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
-        //             : NOTIFICATION_TYPE.CREATE_PROJECT,
-        //           information: dataIsFirstProject
-        //             ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
-        //             : "Có một dự án mới cần được duyệt",
-        //           sender_email: businessData.businessEmail,
-        //           receiver_email: email,
-        //         };
+            await Promise.all(
+              resGetAllAdmin.payload.map(async (email: any) => {
+                const dataBodyNoti = {
+                  notification_type: dataIsFirstProject
+                    ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
+                    : NOTIFICATION_TYPE.CREATE_PROJECT,
+                  information: dataIsFirstProject
+                    ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
+                    : "Có một dự án mới cần được duyệt",
+                  sender_email: businessData.businessEmail,
+                  receiver_email: email,
+                };
 
-        //         const resNoti = await dispatch(
-        //           createNewNotification(dataBodyNoti)
-        //         );
-        //         console.log(resNoti);
-        //       })
-        //     );
+                const resNoti = await dispatch(
+                  createNewNotification(dataBodyNoti)
+                );
+                console.log(resNoti);
+              })
+            );
 
-        //     toast.success(
-        //       `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
-        //     );
+            toast.success(
+              `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
+            );
 
-        //     if (setDataTable) {
-        //       if (dataTable) {
-        //         setDataTable([resCreateProject.payload, ...dataTable]);
-        //       }
-        //     }
+            if (setDataTable) {
+              if (dataTable) {
+                setDataTable([resCreateProject.payload, ...dataTable]);
+              }
+            }
 
-        //     if (setDataTableOrigin) {
-        //       if (dataTableOrigin) {
-        //         setDataTable([resCreateProject.payload, ...dataTableOrigin]);
-        //       }
-        //     }
+            if (setDataTableOrigin) {
+              if (dataTableOrigin) {
+                setDataTable([resCreateProject.payload, ...dataTableOrigin]);
+              }
+            }
 
-        //     if (actionClose) {
-        //       actionClose();
-        //     }
-        //   } catch (error) {
-        //     console.error(error);
-        //   }
-        // }
+            if (actionClose) {
+              actionClose();
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
       }
     } catch (error) {
       console.log("error create project: ", error);
     } finally {
+      setShouldCallCreateProject(false);
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (shouldCallCreateProject) {
+      handleCallApiToCreateProject();
+    }
+  }, [shouldCallCreateProject]);
 
   return (
     <>
@@ -792,7 +799,9 @@ export default function ModalCreateProject({
                           setIsChangeResponsibleInfo={
                             setIsChangeResponsibleInfo
                           }
-                          handleCreateProject={handleCallApiToCreateProject}
+                          setShouldCallCreateProject={
+                            setShouldCallCreateProject
+                          }
                         />
                       )}
 
@@ -805,7 +814,9 @@ export default function ModalCreateProject({
                           data={resultData?.business}
                           resultCase={resultCase}
                           setIsChangeBusinessInfo={setIsChangeBusinessInfo}
-                          handleCreateProject={handleCallApiToCreateProject}
+                          setShouldCallCreateProject={
+                            setShouldCallCreateProject
+                          }
                         />
                       )}
 

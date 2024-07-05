@@ -30,7 +30,7 @@ interface Props {
   resultCase: number; //dùng để xét trường hợp và click button chạy function cho đúng
   onSubmit?: () => void;
   setIsChangeResponsibleInfo: React.Dispatch<React.SetStateAction<boolean>>;
-  handleCreateProject: () => Promise<void>;
+  setShouldCallCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
@@ -41,7 +41,7 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
     data,
     setIsChangeResponsibleInfo,
     resultCase,
-    handleCreateProject,
+    setShouldCallCreateProject,
   } = props;
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -54,7 +54,7 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
       open={open}
       confirmLoading={confirmLoading}
       onCancel={() => {
-        onClose()
+        onClose();
       }}
       closable
       footer={[
@@ -74,9 +74,10 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
             className="btn-submit btn-continue-with-new-info"
             key="submit"
             onClick={async () => {
+              setIsChangeResponsibleInfo(false);
               onClose();
               if (resultCase === 2 || resultCase === 4) {
-                await handleCreateProject();
+                setShouldCallCreateProject(true);
               }
             }}
           >
@@ -92,7 +93,7 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
               setIsChangeResponsibleInfo(true);
               onClose();
               if (resultCase === 2 || resultCase === 4) {
-                await handleCreateProject();
+                setShouldCallCreateProject(true);
               }
             }}
           >

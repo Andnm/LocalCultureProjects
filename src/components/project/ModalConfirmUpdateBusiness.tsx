@@ -32,7 +32,7 @@ interface Props {
   resultCase: number; //dùng để xét trường hợp và click button chạy function cho đúng
   onSubmit?: () => void;
   setIsChangeBusinessInfo: React.Dispatch<React.SetStateAction<boolean>>;
-  handleCreateProject: () => Promise<void>;
+  setShouldCallCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
@@ -43,7 +43,7 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
     data,
     setIsChangeBusinessInfo,
     resultCase,
-    handleCreateProject,
+    setShouldCallCreateProject,
   } = props;
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -76,9 +76,10 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
             className="btn-submit btn-continue-with-new-info"
             key="submit"
             onClick={async () => {
+              setIsChangeBusinessInfo(false);
               onClose();
               if (resultCase === 3) {
-                await handleCreateProject();
+                setShouldCallCreateProject(true);
               }
             }}
           >
@@ -94,7 +95,7 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
               setIsChangeBusinessInfo(true);
               onClose();
               if (resultCase === 3) {
-                await handleCreateProject();
+                setShouldCallCreateProject(true);
               }
             }}
           >
