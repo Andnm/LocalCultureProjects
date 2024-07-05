@@ -9,8 +9,8 @@ import Image from "next/image";
 import "../../src/styles/maintenance.css";
 import Link from "next/link";
 
-// const IS_MAINTENANCE = true;
-const IS_MAINTENANCE = false;
+const IS_MAINTENANCE = true;
+// const IS_MAINTENANCE = false;
 
 const HomeLayout = (props: { children: React.ReactNode }) => {
   //trang maintenance
