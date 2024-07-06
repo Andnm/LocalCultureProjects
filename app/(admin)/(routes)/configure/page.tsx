@@ -14,12 +14,14 @@ const Configure: React.FC<ConfigureProps> = () => {
     subjectCode: false,
     implementTime: false,
     businessSector: false,
+    expectedBudget: false,
   });
 
   const [data, setData] = useState({
     subjectCode: [] as any[],
     implementTime: [] as any[],
     businessSector: [] as any[],
+    expectedBudget: [] as any[],
   });
 
   useEffect(() => {
@@ -32,6 +34,7 @@ const Configure: React.FC<ConfigureProps> = () => {
         responseSubjectCode,
         responseImplementTime,
         responseBusinessSector,
+        responseExpectedBudget,
       ] = await Promise.all([
         axios.get<any>(
           `${process.env.NEXT_PUBLIC_MOCK_API_URL_1}/subject_code`
@@ -42,12 +45,16 @@ const Configure: React.FC<ConfigureProps> = () => {
         axios.get<any>(
           `${process.env.NEXT_PUBLIC_MOCK_API_URL_2}/business_sector`
         ),
+        axios.get<any>(
+          `${process.env.NEXT_PUBLIC_MOCK_API_URL_2}/expected_budget`
+        ),
       ]);
 
       setData({
         subjectCode: responseSubjectCode.data,
         implementTime: responseImplementTime.data,
         businessSector: responseBusinessSector.data,
+        expectedBudget: responseExpectedBudget.data,
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -96,6 +103,12 @@ const Configure: React.FC<ConfigureProps> = () => {
         >
           Lĩnh vực kinh doanh
         </Button>
+        <Button
+          key="btn-expected-budget"
+          onClick={() => setOpenModal({ ...openModal, expectedBudget: true })}
+        >
+          Ngân sách dự kiến
+        </Button>
       </div>
 
       {renderModalConfigData(
@@ -115,6 +128,12 @@ const Configure: React.FC<ConfigureProps> = () => {
         "lĩnh vực kinh doanh",
         process.env.NEXT_PUBLIC_MOCK_API_URL_2 || "",
         "business_sector"
+      )}
+      {renderModalConfigData(
+        "expectedBudget",
+        "ngân sách dự kiến",
+        process.env.NEXT_PUBLIC_MOCK_API_URL_2 || "",
+        "expected_budget"
       )}
     </Card>
   );
