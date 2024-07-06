@@ -26,6 +26,7 @@ const ProjectDetail = () => {
   const [dataProject, setDataProject] = React.useState<ProjectType | undefined>(
     undefined
   );
+  
   const [businessUser, setBusinessUser] = React.useState<any>();
   const [responsiblePersonList, setResponsiblePersonList] = React.useState<
     any[]

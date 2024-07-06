@@ -607,9 +607,9 @@ export default function ModalCreateProject({
           is_first_project: dataIsFirstProject,
         };
 
-        console.log("dataBody: ", dataBody);
-
         const resCreateProject = await dispatch(createProjectActionAPI(dataBody));
+
+        console.log("resCreateProject: ", resCreateProject);
 
         if (
           createProjectActionAPI.rejected.match(resCreateProject)

@@ -35,8 +35,8 @@ import vn from "date-fns/locale/vi";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 import ModalViewProjectDetail from "@/src/components/shared/ModalViewProjectDetail";
-import ModalEditProject from "./ModalEditProject";
 import { CiEdit } from "react-icons/ci";
+import ModalDetailProject from "./ModalDetailProject";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 
@@ -78,12 +78,8 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
     null
   );
 
-  console.log("dataTable: ", dataTable);
   const [openModalConfirmProject, setOpenModalConfirmProject] =
     React.useState(false);
-
-  const [openModalEditProject, setOpenModalEditProject] =
-    React.useState<boolean>(false);
 
   const handleOpenModalDetails = (business: any) => {
     // console.log(business);
@@ -98,11 +94,16 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
     dispatch(confirmProjectByAdmin(id)).then((result) => {
       if (confirmProjectByAdmin.fulfilled.match(result)) {
         // console.log(result.payload);
+
+        const businessUser = selectedProject?.user_projects?.find(
+          (up: any) => up.user.role_name === "Business"
+        )?.user;
+
         const dataBodyNoti = {
           notification_type: NOTIFICATION_TYPE.CONFIRM_PROJECT,
           information: `Dự án ${selectedProject?.name_project} đã được phê duyệt`,
           sender_email: `${userLogin?.email}`,
-          receiver_email: `${selectedProject?.business?.email}`,
+          receiver_email: `${businessUser?.email}`,
         };
 
         dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
@@ -282,8 +283,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                 .filter((up: any) => up.user.role_name === "ResponsiblePerson")
                 .map((up: any) => up.user);
 
-              console.log("responsiblePersonList: ", responsiblePersonList);
-
               const isLast = index === dataTable.length - 1;
 
               const classes = isLast
@@ -295,15 +294,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                   name: "Chi tiết",
                   icon: <BiDetail />,
                   onClick: () => handleOpenModalDetails(business),
-                },
-
-                {
-                  name: "Sửa thông tin",
-                  icon: <CiEdit />,
-                  onClick: () => {
-                    setSelectedProject(business);
-                    setOpenModalEditProject(true);
-                  },
                 },
                 {
                   name: "Xóa dự án",
@@ -414,7 +404,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
             })}
         </table>
 
-        {isOpenModalDetail && selectedProject && (
+        {/* {isOpenModalDetail && selectedProject && (
           <ModalViewProjectDetail
             open={isOpenModalDetail}
             title={"Thông tin dự án"}
@@ -431,18 +421,22 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
             status={selectedProject.project_status}
             selectedProject={selectedProject}
           />
-        )}
+        )} */}
 
-        {openModalEditProject && (
-          <ModalEditProject
-            open={openModalEditProject}
+        {isOpenModalDetail && selectedProject && (
+          <ModalDetailProject
+            open={isOpenModalDetail}
             onClose={() => {
-              setOpenModalEditProject(false);
+              setIsOpenModalDetail(false);
             }}
             setSelectedProject={setSelectedProject}
             selectedProject={selectedProject}
             dataTable={dataTable}
             setDataTable={setDataTable}
+            status={selectedProject.project_status}
+            actionConfirm={() =>
+              handleCallApiConfirmProject(selectedProject.id)
+            }
           />
         )}
 
