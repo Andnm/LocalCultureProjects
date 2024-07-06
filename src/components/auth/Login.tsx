@@ -105,42 +105,43 @@ const Login: React.FC<LoginProps> = ({
     });
   };
 
-  const handleLoginWithGoogle = () => {
-    signInWithPopup(auth, googleAuthProvider).then(async (data: any) => {
-      dispatch(loginWithGoogle(data?.user?.accessToken) as any).then(
-        (result: any) => {
-          const user = result.payload;
+  const handleLoginWithGoogle = async () => {
+    try {
+      const data = await signInWithPopup(auth, googleAuthProvider);
+      const user = data.user;
+      const accessToken = await user.getIdToken();
+      const result = await dispatch(loginWithGoogle(accessToken) as any);
+      const userData  = result.payload;
 
-          if (loginWithGoogle.fulfilled.match(result)) {
-            if (user.status === true && user.role_name !== null) {
-              switch (user?.role_name) {
-                case "Admin":
-                  router.push("/dashboard");
-                  break;
-                case "Business":
-                  router.push("/business-board");
-                  break;
-                case "Student":
-                  router.push("/student-board");
-                  break;
-                case "Lecturer":
-                  router.push("/lecturer-board");
-                  break;
-                default:
-                  router.push("/");
-                  break;
-              }
-            } else {
-              router.push("/register");
-            }
-            actionClose();
-          } else {
-            toast.error(`${result.payload}`);
-            
+      if (loginWithGoogle.fulfilled.match(result)) {
+        if (userData.status === true && userData.role_name !== null) {
+          switch (userData?.role_name) {
+            case "Admin":
+              router.push("/dashboard");
+              break;
+            case "Business":
+              router.push("/business-board");
+              break;
+            case "Student":
+              router.push("/student-board");
+              break;
+            case "Lecturer":
+              router.push("/lecturer-board");
+              break;
+            default:
+              router.push("/");
+              break;
           }
+        } else {
+          router.push("/register");
         }
-      );
-    });
+        actionClose();
+      } else {
+        toast.error(`${result.payload}`);
+      }
+    } catch (error) {
+      console.error("Error during Google login:", error);
+    }
   };
 
   return (
