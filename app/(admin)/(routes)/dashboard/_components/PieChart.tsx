@@ -9,7 +9,7 @@ interface PieChartProps {
 }
 
 const PieChart: React.FC<PieChartProps> = ({ projectData }) => {
-  console.log("projectData", projectData);
+  // console.log("projectData", projectData);
 
   const labels = projectData.map(
     (dataItem: any) => `${dataItem.key}: ${dataItem.value}`

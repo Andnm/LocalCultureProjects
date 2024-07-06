@@ -86,7 +86,7 @@ const Dashboard = () => {
 
         dispatch(statisticsAccount()).then((result) => {
           setAccountData(result.payload);
-          console.log("acc", result.payload);
+          // console.log("acc", result.payload);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
