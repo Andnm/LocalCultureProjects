@@ -23,27 +23,25 @@ const { confirm } = Modal;
 const { TextArea } = Input;
 const { Option } = Select;
 
-import "@/src/styles/button-style.scss";
-
 interface Props {
   open: boolean;
   onClose: () => void;
   data: any; //dùng để phát hiện những field thay đôi
   resultCase: number; //dùng để xét trường hợp và click button chạy function cho đúng
   onSubmit?: () => void;
-  setIsChangeBusinessInfo: React.Dispatch<React.SetStateAction<boolean>>;
-  setShouldCallCreateProject: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsChangeResponsibleInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  setShouldCallAddResponsiblePerson: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
+const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
   const {
     onSubmit,
     open,
     onClose,
     data,
-    setIsChangeBusinessInfo,
+    setIsChangeResponsibleInfo,
     resultCase,
-    setShouldCallCreateProject,
+    setShouldCallAddResponsiblePerson,
   } = props;
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -76,10 +74,10 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
             className="btn-submit btn-continue-with-new-info"
             key="submit"
             onClick={async () => {
-              setIsChangeBusinessInfo(false);
+              setIsChangeResponsibleInfo(false);
               onClose();
-              if (resultCase === 3) {
-                setShouldCallCreateProject(true);
+              if ( resultCase === 4) {
+                setShouldCallAddResponsiblePerson(true);
               }
             }}
           >
@@ -92,10 +90,10 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
             key="submit"
             type="text"
             onClick={async () => {
-              setIsChangeBusinessInfo(true);
+              setIsChangeResponsibleInfo(true);
               onClose();
-              if (resultCase === 3) {
-                setShouldCallCreateProject(true);
+              if ( resultCase === 4) {
+                setShouldCallAddResponsiblePerson(true);
               }
             }}
           >
@@ -105,8 +103,8 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
       ]}
     >
       <p>
-       Hệ thống ghi nhận có sự thay đổi thông tin của{" "}
-        <span className="font-bold">Doanh nghiệp</span> ở các ô:
+        Hệ thống ghi nhận có sự thay đổi thông tin của{" "}
+        <span className="font-bold">Người phụ trách</span> ở các ô:
         {data.length > 0 ? (
           <ul>
             {data.map((changedField: string, index: number) => (
@@ -122,4 +120,4 @@ const ModalConfirmUpdateBusiness: React.FC<Props> = (props) => {
   );
 };
 
-export default ModalConfirmUpdateBusiness;
+export default ModalConfirmUpdateResponsible;

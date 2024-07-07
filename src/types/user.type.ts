@@ -34,3 +34,20 @@ export interface CheckResponsibleInfoType {
   email_responsible_person: string
 }
 
+export interface AddResponsiblePersonType {
+  projectId: number
+  fullname: string
+  phone_number: string
+  position: string
+  email_responsible_person: string
+  other_contact: string
+  is_create_account: boolean
+  is_change_responsible_info: boolean
+  user_project_status: string
+}
+export interface UpdateResponsibleStatusType {
+  userId: number
+  projectId: number
+  status: string
+  is_create_account: boolean
+}

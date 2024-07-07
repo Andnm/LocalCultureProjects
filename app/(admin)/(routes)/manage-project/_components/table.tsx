@@ -36,7 +36,7 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useUserLogin } from "@/src/hook/useUserLogin";
 import ModalViewProjectDetail from "@/src/components/shared/ModalViewProjectDetail";
 import { CiEdit } from "react-icons/ci";
-import ModalDetailProject from "./ModalDetailProject";
+import ModalDetailProject from "./modal/ModalDetailProject";
 registerLocale("vi", vn);
 setDefaultLocale("vi");
 

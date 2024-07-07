@@ -103,7 +103,7 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
       ]}
     >
       <p>
-        Có sự thay đổi thông tin của{" "}
+        Hệ thống ghi nhận có sự thay đổi thông tin của{" "}
         <span className="font-bold">Người phụ trách</span> ở các ô:
         {data.length > 0 ? (
           <ul>
@@ -115,6 +115,7 @@ const ModalConfirmUpdateResponsible: React.FC<Props> = (props) => {
           <span></span>
         )}
       </p>
+      <p>Hãy lựa chọn mong muốn của bạn:</p>
     </Modal>
   );
 };
