@@ -3,6 +3,7 @@ import http from "../utils/https";
 import {
   CheckBusinessInfoType,
   CheckResponsibleInfoType,
+  ProviderAccountType,
   UserType,
 } from "@/src/types/user.type";
 import {
@@ -187,6 +188,25 @@ export const updateUserProfile = createAsyncThunk(
       const response = await http.patch<any>(
         `/users/update-profile`,
         data,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const providerAccount = createAsyncThunk(
+  "user/providerAccount",
+  async (dataBody: ProviderAccountType, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `/auth/providerAccount/admin`,
+        dataBody, 
         getConfigHeader()
       );
 
@@ -456,6 +476,21 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(updateProfileNotAuth.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //providerAccount
+    builder.addCase(providerAccount.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(providerAccount.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(providerAccount.rejected, (state, action) => {
       // state.loadingUser = false;
       state.error = action.payload as string;
     });

@@ -98,13 +98,6 @@ const ModalDetailProject: React.FC<Props> = (props) => {
         )?.user
       );
 
-      console.log(
-        "business data: ",
-        selectedProject?.user_projects?.find(
-          (up: any) => up.user.role_name === "Business"
-        )?.user
-      );
-
       setResponsiblePersonList(
         selectedProject.user_projects
           .filter((up: any) => up.user.role_name === "ResponsiblePerson")

@@ -51,3 +51,9 @@ export interface UpdateResponsibleStatusType {
   status: string
   is_create_account: boolean
 }
+
+export interface ProviderAccountType {
+  fullname: string
+  email: string
+  roleName: string
+}

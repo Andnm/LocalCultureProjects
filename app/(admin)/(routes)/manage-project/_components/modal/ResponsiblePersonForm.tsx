@@ -8,9 +8,15 @@ import {
   addMoreResponsiblePersonByAdmin,
   removeResponsiblePerson,
 } from "@/src/redux/features/responsiblePersonSlice";
-import { AddResponsiblePersonType } from "@/src/types/user.type";
+import {
+  AddResponsiblePersonType,
+  ProviderAccountType,
+} from "@/src/types/user.type";
 import toast from "react-hot-toast";
-import { checkResponsibleInfo } from "@/src/redux/features/userSlice";
+import {
+  checkResponsibleInfo,
+  providerAccount,
+} from "@/src/redux/features/userSlice";
 import ModalConfirmUpdateResponsible from "./ModalConfirmUpdateResponsible";
 import ModalCheckConfirmCreateResponsible from "./ModalCheckConfirmCreateResponsible";
 
@@ -260,8 +266,27 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
                       okText: "Xác nhận",
                       title:
                         "Bạn có chắc là muốn kích hoạt tài khoản cho người này? ",
-                      onOk() {
-                        //xử lý để kích tài khoản
+                      async onOk() {
+                        try {
+                          const dataBody: ProviderAccountType = {
+                            email: responsiblePerson.user.email,
+                            fullname: responsiblePerson.user.fullname,
+                            roleName: "ResponsiblePerson",
+                          };
+                          const resProviderAccount = await dispatch(
+                            providerAccount(dataBody)
+                          );
+                          console.log("res: ", resProviderAccount);
+                          if (
+                            providerAccount.fulfilled.match(resProviderAccount)
+                          ) {
+                            message.success("Kích hoạt tài khoản thành công");
+                          }else {
+                            toast.error(`${resProviderAccount.payload}`)
+                          }
+                        } catch (error) {
+                          message.error("Có lỗi xảy ra");
+                        }
                       },
                       onCancel() {},
                     });
