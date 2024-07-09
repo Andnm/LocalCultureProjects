@@ -111,7 +111,7 @@ const Login: React.FC<LoginProps> = ({
       const user = data.user;
       const accessToken = await user.getIdToken();
       const result = await dispatch(loginWithGoogle(accessToken) as any);
-      const userData  = result.payload;
+      const userData = result.payload;
 
       if (loginWithGoogle.fulfilled.match(result)) {
         if (userData.status === true && userData.role_name !== null) {
@@ -225,9 +225,15 @@ const Login: React.FC<LoginProps> = ({
                   </span>
                 )}
 
-                <Link href="#" className="forgot-pass">
-                  Quên mật khẩu?
-                </Link>
+                <div
+                  className="forgot-pass underline"
+                  onClick={() => {
+                    router.push("/forgot-password");
+                    actionClose();
+                  }}
+                >
+                  <p> Quên mật khẩu?</p>
+                </div>
 
                 <br />
 

@@ -242,6 +242,46 @@ export const changePassword = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `auth/forgot-password`,
+        dataBody,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `auth/reset-password`,
+        dataBody,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -379,6 +419,32 @@ export const authSlice = createSlice({
       state.error = "";
     });
     builder.addCase(changePassword.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    //forgot password
+    builder.addCase(forgotPassword.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(forgotPassword.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(forgotPassword.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    //resetPassword
+    builder.addCase(resetPassword.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(resetPassword.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(resetPassword.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });

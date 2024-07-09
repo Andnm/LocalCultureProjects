@@ -144,6 +144,17 @@ const ModalChangePassword: React.FC<Props> = (props) => {
         >
           <Input.Password placeholder="Nhập lại mật khẩu mới" />
         </Form.Item>
+
+        <span
+          className="forgot-pass underline cursor-pointer"
+          style={{ color: "#00bcd4" }}
+          onClick={() => {
+            router.push("/forgot-password");
+            onClose();
+          }}
+        >
+          Quên mật khẩu?
+        </span>
       </Form>
     </Modal>
   );
