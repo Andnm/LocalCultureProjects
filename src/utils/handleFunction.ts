@@ -56,7 +56,7 @@ export const convertTimestampToDate = (
 
 export const formatDate = (inputDate: string | undefined) => {
   if (!inputDate) {
-    return "N/A";
+    return "";
   }
 
   const date = new Date(inputDate);

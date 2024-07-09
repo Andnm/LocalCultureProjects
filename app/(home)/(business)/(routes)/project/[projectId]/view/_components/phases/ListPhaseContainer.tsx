@@ -21,7 +21,7 @@ const ListPhaseContainer = ({
   phaseData,
   setPhaseData,
 }: ListPhaseContainerProps) => {
-  // console.log("phasedata", phaseData);
+  console.log("phasedata: ", phaseData);
   const [userLogin, setUserLogin] = useUserLogin();
 
   return (

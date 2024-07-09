@@ -30,6 +30,8 @@ export const ListHeader = ({
         return "border-red-500";
       case "Done":
         return "border-green-500";
+      case "Pending":
+        return "border-gray-500";
       default:
         return "";
     }
@@ -56,7 +58,7 @@ export const ListHeader = ({
         ></div>
       </Hint>
 
-      {data.phase_status === "Done" && userLogin?.role_name === "Student" ? (
+      {/* {data.phase_status === "Done" && userLogin?.role_name === "Student" ? (
         <></>
       ) : (
         <ListOptions
@@ -65,7 +67,14 @@ export const ListHeader = ({
           data={data}
           setPhaseData={setPhaseData}
         />
-      )}
+      )} */}
+
+      <ListOptions
+        project={project}
+        onAddCategory={onAddCategory}
+        data={data}
+        setPhaseData={setPhaseData}
+      />
     </div>
   );
 };

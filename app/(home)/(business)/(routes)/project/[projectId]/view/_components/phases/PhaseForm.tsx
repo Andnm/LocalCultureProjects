@@ -46,7 +46,7 @@ const ListForm = ({
   phaseData,
   setPhaseData,
 }: ListFormProp) => {
-  // console.log("project", project);
+  // console.log("project: ", project);
   // console.log("phaseData", phaseData);
 
   const [isEditing, setIsEditing] = React.useState(false);
@@ -54,7 +54,7 @@ const ListForm = ({
   const inputRef = React.useRef<React.ElementRef<"input">>(null);
   // const [startInputValue, setStartInputValue] = React.useState<string>("");
   const [endInputValue, setEndInputValue] = React.useState<string>("");
-  const [loading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [formDate, setFormDate] = React.useState<any>({
     phase_start_date: null,
@@ -93,6 +93,15 @@ const ListForm = ({
   const handleSubmitCreatePhase = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formDate.phase_start_date) {
+      toast.error("Vui lòng chọn ngày bắt đầu giai đoạn");
+      return;
+    }
+    if (!formDate.phase_expected_end_date) {
+      toast.error("Vui lòng chọn ngày kết thúc giai đoạn");
+      return;
+    }
+
     setIsLoading(true);
     const dataBody = {
       phase_start_date: formDate.phase_start_date,
@@ -100,7 +109,7 @@ const ListForm = ({
       projectId: projectId,
       groupId: groupId,
     };
-    console.log("dataBody", dataBody);
+    // console.log("dataBody", dataBody);
 
     dispatch(createPhase(dataBody)).then((result: any) => {
       if (createPhase.fulfilled.match(result)) {
@@ -119,7 +128,7 @@ const ListForm = ({
   const getHintDescription = (fieldName: string) => {
     switch (fieldName) {
       case "phase_start_date":
-        return "1 số rule gì đó";
+        return "Ngày bắt đầu giai đoạn này phải lớn hơn hoặc bằng ngày kết thúc của giai đoạn trước";
       case "phase_expected_end_date":
         return "Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày";
       default:
@@ -135,12 +144,12 @@ const ListForm = ({
   };
 
   const handleMinDate = (name: any): Date => {
-    console.log(project);
+    // console.log(project);
 
     const projectStartDateString = `01/${project.project_start_date}`;
     const projectStartDate = new Date(projectStartDateString);
 
-    console.log(projectStartDate);
+    // console.log(projectStartDate);
     switch (name) {
       case "phase_start_date":
         if (!phaseData || phaseData.length === 0) {
@@ -160,6 +169,13 @@ const ListForm = ({
   };
 
   const handleMaxDate = (name: any): Date => {
+    //đoạn code xử lý đúng thì đang được ẩn
+    // const [month, year] = project.project_expected_end_date
+    //   .split("/")
+    //   .map(Number);
+    // const projectEndDate = new Date(year, month, 1);
+    // return projectEndDate;
+
     const projectEndDate = new Date(project.project_expected_end_date);
     return projectEndDate;
   };
@@ -255,7 +271,7 @@ const ListForm = ({
         </button>
       )}
 
-      {loading && <SpinnerLoading />}
+      {isLoading && <SpinnerLoading />}
     </ListWrapper>
   );
 };

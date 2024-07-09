@@ -19,12 +19,16 @@ import { Plus, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { forwardRef } from "react";
 import toast from "react-hot-toast";
+import { useEventListener, useOnClickOutside } from "usehooks-ts";
 
 interface CategoryFormProps {
-  phaseData: any;
+  phaseData: any; //cái này chỉ có 1 object
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; //cái này set cho data list
   phaseId: number;
   dataCategory: CategoryType[];
   setDataCategory: React.Dispatch<React.SetStateAction<any[]>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isEditing: boolean;
   enableEditing: () => void;
   disableEditing: () => void;
@@ -34,23 +38,33 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
   (
     {
       phaseData,
+      setPhaseData,
       phaseId,
       isEditing,
       setDataCategory,
       dataCategory,
+      isLoading,
+      setIsLoading,
       enableEditing,
       disableEditing,
     },
     ref
   ) => {
     const dispatch = useAppDispatch();
-    const [loading, setIsLoading] = React.useState(false);
     const [formData, setFormData] = React.useState<CategoryType>({
       category_name: "",
       detail: "",
       result_expected: "",
       phaseId: phaseId,
       groupId: 0,
+    });
+    const formRef = React.useRef<React.ElementRef<"form">>(null);
+
+    const [errors, setErrors] = React.useState({
+      category_name: "",
+      detail: "",
+      costEstimates: "",
+      result_expected: "",
     });
 
     const [costEstimates, setCostEstimates] = React.useState<any>();
@@ -61,47 +75,84 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
         ...prevData,
         [field]: value,
       }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field]: "",
+      }));
     };
 
-    const handleCreateCategory = (e: React.FormEvent) => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        disableEditing();
+        setErrors({
+          category_name: "",
+          detail: "",
+          costEstimates: "",
+          result_expected: "",
+        });
+      }
+    };
+
+    useEventListener("keydown", onKeyDown);
+    useOnClickOutside(formRef, () => {
+      disableEditing();
+      setErrors({
+        category_name: "",
+        detail: "",
+        costEstimates: "",
+        result_expected: "",
+      });
+    });
+
+    const handleCreateCategory = async (e: React.FormEvent) => {
       e.preventDefault();
+
+      const newErrors = {
+        category_name: formData.category_name
+          ? ""
+          : "Tên hạng mục là bắt buộc!",
+        detail: formData.detail ? "" : "Chi tiết là bắt buộc!",
+        costEstimates: costEstimates ? "" : "Dự trù chi phí là bắt buộc!",
+        result_expected: formData.result_expected
+          ? ""
+          : "Kết quả mong muốn là bắt buộc!",
+      };
+
+      if (Object.values(newErrors).some((error) => error)) {
+        setErrors(newErrors);
+        return;
+      }
 
       setIsLoading(true);
 
-      dispatch(createCategory(formData)).then((result) => {
-        if (createCategory.fulfilled.match(result)) {
-          // setDataCategory((prevDataTable) => [
-          //   ...prevDataTable,
-          //   result.payload,
-          // ]);
-          // console.log(result.payload);
+      try {
+        const result = await dispatch(createCategory(formData)).unwrap();
 
-          const dataBody = {
-            expected_cost: convertCommaStringToNumber(costEstimates),
-            categoryId: result.payload.id,
-            phaseId: result.payload.phase.id,
-          };
+        const dataBody = {
+          expected_cost: convertCommaStringToNumber(costEstimates),
+          categoryId: result.id,
+          phaseId: result.phase.id,
+        };
 
-          dispatch(createCost(dataBody)).then((resCreateCost) => {
-            if (createCost.fulfilled.match(resCreateCost)) {
-              toast.success("Tạo hạng mục thành công!");
-              setFormData((prevData) => ({
-                ...prevData,
-                category_name: "",
-                detail: "",
-                result_expected: "",
-                phaseId: phaseId,
-              }));
-
-              setCostEstimates(null);
-            }
-          });
-        } else {
-          toast.error(`${result.payload}`);
-        }
+        const resCreateCost = await dispatch(createCost(dataBody)).unwrap();
+        console.log("resCreateCost: ", resCreateCost);
+        toast.success("Tạo hạng mục thành công!");
+        setFormData({
+          category_name: "",
+          detail: "",
+          result_expected: "",
+          phaseId: phaseId,
+          groupId: formData.groupId,
+        });
+        setPhaseData((prev) => [...prev, resCreateCost.payload]);
+        setCostEstimates("");
         disableEditing();
+      } catch (error) {
+        toast.error("Tạo hạng mục thất bại!");
+        console.log(error);
+      } finally {
         setIsLoading(false);
-      });
+      }
     };
 
     const handleCancelCreateCategory = () => {
@@ -111,7 +162,7 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
         detail: "",
         result_expected: "",
       }));
-      setCostEstimates(null);
+      setCostEstimates("");
       disableEditing();
     };
 
@@ -142,6 +193,7 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
     if (isEditing) {
       return (
         <form
+          ref={formRef}
           onSubmit={handleCreateCategory}
           className="m-1 py-0.5 px-1 space-y-4 mt-3"
         >
@@ -153,6 +205,14 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
             value={formData.category_name}
             onChange={(e) => handleChange("category_name", e.target.value)}
           />
+          {errors.category_name && (
+            <div
+              className="text-red-500 text-xs ml-1"
+              style={{ marginTop: "0px" }}
+            >
+              {errors.category_name}
+            </div>
+          )}
 
           <FormTextArea
             id="title"
@@ -162,6 +222,14 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
             value={formData.detail}
             onChange={(e) => handleChange("detail", e.target.value)}
           />
+          {errors.detail && (
+            <div
+              className="text-red-500 text-xs ml-1"
+              style={{ marginTop: "0px" }}
+            >
+              {errors.detail}
+            </div>
+          )}
 
           <FormInput
             type="text"
@@ -176,6 +244,14 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
               setCostEstimates(formattedValue);
             }}
           />
+          {errors.costEstimates && (
+            <div
+              className="text-red-500 text-xs ml-1"
+              style={{ marginTop: "0px" }}
+            >
+              {errors.costEstimates}
+            </div>
+          )}
 
           <FormTextArea
             id="result_expected"
@@ -185,6 +261,14 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
             value={formData.result_expected}
             onChange={(e) => handleChange("result_expected", e.target.value)}
           />
+          {errors.result_expected && (
+            <div
+              className="text-red-500 text-xs ml-1"
+              style={{ marginTop: "0px" }}
+            >
+              {errors.result_expected}
+            </div>
+          )}
 
           <input hidden id="phaseId" name="phaseId" value={phaseId} />
 
@@ -225,7 +309,7 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
             </Button>
           )}
 
-        {loading && <SpinnerLoading />}
+        {isLoading && <SpinnerLoading />}
       </div>
     );
   }

@@ -32,9 +32,11 @@ const ListCategory = ({
     switch (status) {
       case "Todo":
         return "border-gray-500";
-      case "Doing":
+      case "Processing":
+        case "Doing":
         return "border-yellow-500";
       case "Done":
+      case "Complete":
         return "border-green-500";
       default:
         return "";

@@ -9,6 +9,7 @@ import { getAllCategoryOfPhase } from "@/src/redux/features/categorySlice";
 import ListCategory from "../category/ListCategory";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
 import NewProgressLoading from "@/src/components/loading/NewProgressLoading";
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 
 interface ListItemProps {
   project: any;
@@ -28,6 +29,7 @@ const ListItem = ({
   const [dataCategory, setDataCategory] = React.useState<any>([]);
   const textareaRef = React.useRef<React.ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -47,8 +49,13 @@ const ListItem = ({
   React.useEffect(() => {
     dispatch(getAllCategoryOfPhase(data.id)).then((result: any) => {
       socketInstance.on(`getCategories-${data.id}`, (dataResponse: any) => {
-        // console.log("data.categories", dataResponse.categories);
-        setDataCategory(dataResponse.categories);
+        const sortedCategories = dataResponse.categories.sort(
+          (a: any, b: any) => {
+            return a?.id - b?.id;
+          }
+        );
+        // console.log("sortedCategories: ", sortedCategories);
+        setDataCategory(sortedCategories);
       });
 
       // setDataCategory(result.payload);
@@ -85,15 +92,20 @@ const ListItem = ({
 
         <CategoryForm
           phaseData={data}
+          setPhaseData={setPhaseData}
           phaseId={data.id}
           dataCategory={dataCategory}
           setDataCategory={setDataCategory}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
           ref={textareaRef}
           isEditing={isEditing}
           enableEditing={enableEditing}
           disableEditing={disableEditing}
         />
       </div>
+
+      {isLoading && <SpinnerLoading />}
     </li>
   );
 };

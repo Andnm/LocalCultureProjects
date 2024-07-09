@@ -1,8 +1,14 @@
 .layout-view {
-    height: calc(100vh - 91px);
-    width: 100%;
+  height: calc(100vh - 91px);
+  width: 100%;
 }
 
 .bg-black-header-board {
-    width: calc(100% - 256px);
+  width: calc(100% - 256px);
+}
+
+.phase_label {
+  .ant-descriptions-item-label {
+    color: black;
+  }
 }

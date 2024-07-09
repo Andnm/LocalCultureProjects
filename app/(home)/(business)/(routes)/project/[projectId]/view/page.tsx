@@ -29,12 +29,15 @@ const ProjectIdPage = () => {
     });
 
     dispatch(getPhaseByProjectId(projectId)).then((result) => {
-      // console.log("phase", result);
       socketInstance.on(`getPhases-${projectId}`, (data: any) => {
-        // console.log("phase", data.phases)
-        // const sortedPhaseData = [...data.phases]?.sort((a, b) => a.id - b.id);
+        const sortedPhaseData = [...data.phases]?.sort(
+          (a, b) => a?.phase_number - b?.phase_number
+        );
+        console.log("phase: ", sortedPhaseData);
+
         // console.log("data.phases", data.phases);
-        setPhaseData(data.phases);
+        setPhaseData(sortedPhaseData);
+        // setPhaseData(data.phases);
       });
       // console.log("api", result)
       // const sortedPhaseData = [...result?.payload]?.sort((a, b) => a.id - b.id);
@@ -44,7 +47,7 @@ const ProjectIdPage = () => {
 
     dispatch(getAllRegisterPitchingByBusiness(projectId)).then((result) => {
       if (getAllRegisterPitchingByBusiness.fulfilled.match(result)) {
-        console.log("group", result.payload);
+        // console.log("group", result.payload);
         const selectedGroup = result.payload.find(
           (item: any) => item.register_pitching_status === "Selected"
         );

@@ -18,9 +18,11 @@ import {
 } from "@/src/redux/features/phaseSlice";
 import { useAppDispatch } from "@/src/redux/store";
 import toast from "react-hot-toast";
-import { BiDetail } from "react-icons/bi";
+import { BiAddToQueue, BiCheck, BiDetail, BiTrash } from "react-icons/bi";
 import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
+import { FcStart } from "react-icons/fc";
+import ModalPhaseDetail from "./phases/phases_detail/ModalPhaseDetail";
 
 interface ListOptionsProps {
   project: any;
@@ -31,14 +33,19 @@ interface ListOptionsProps {
 
 const ListOptions = ({
   project,
-  data,
+  data, //data của từng phase, ko truyền set được vì data này lấy từ map phase list truyền vào
   onAddCategory,
-  setPhaseData,
+  setPhaseData, //set phase data của 1 list phase
 }: ListOptionsProps) => {
-  // console.log('data phase', data)
+  //data là 1 phase
+  // console.log("data phase: ", data);
   // console.log('project', project)
   const [userLogin, setUserLogin] = useUserLogin();
   const dispatch = useAppDispatch();
+
+  //state open modal
+  const [isOpenModalPhaseDetail, setIsOpenModalPhaseDetail] =
+    React.useState(false);
 
   const handleChangeStatus = (status: string) => {
     const phaseId: number = data.id;
@@ -90,7 +97,7 @@ const ListOptions = ({
           });
           toast.success("Bắt đầu giai đoạn thành công");
         } else {
-          console.log(result.payload)
+          console.log(result.payload);
           toast.error(`${result.payload}`);
         }
       }
@@ -103,15 +110,14 @@ const ListOptions = ({
     dispatch(changeStatusPhaseByBusiness({ phaseId, phaseStatus })).then(
       (result: any) => {
         if (changeStatusPhaseByBusiness.fulfilled.match(result)) {
-
           const dataBodyNoti = {
             notification_type: NOTIFICATION_TYPE.DONE_PHASE_BUSINESS,
             information: `Giai đoạn ${data.phase_number} của dự án ${project?.name_project} đã hoàn thành`,
             sender_email: userLogin?.email,
             receiver_email: project?.business?.email,
-            note: project.id
+            note: project.id,
           };
-  
+
           dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
             console.log(resNoti);
           });
@@ -121,12 +127,14 @@ const ListOptions = ({
             information: `Giai đoạn ${data.phase_number} của dự án ${project?.name_project} đã hoàn thành`,
             sender_email: userLogin?.email,
             receiver_email: "lecturer@gmail.com",
-            note: project.id
+            note: project.id,
           };
-  
-          dispatch(createNewNotification(dataBodyNotiLecturer)).then((resNoti) => {
-            console.log(resNoti);
-          });
+
+          dispatch(createNewNotification(dataBodyNotiLecturer)).then(
+            (resNoti) => {
+              console.log(resNoti);
+            }
+          );
 
           setPhaseData((prevDataTable) => {
             const updatedIndex = prevDataTable.findIndex(
@@ -143,7 +151,7 @@ const ListOptions = ({
           });
           toast.success("Hoàn thành giai đoạn thành công");
         } else {
-          console.log(result.payload)
+          console.log(result.payload);
           toast.error(`${result.payload}`);
         }
       }
@@ -166,81 +174,113 @@ const ListOptions = ({
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button className="h-auto w-auto p-2" variant={"ghost"}>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="px-0 pt-3 pb-3 bg-white"
-        side="bottom"
-        align="start"
-        style={{ borderRadius: "7px" }}
-      >
-        <div className="text-sm font-medium text-center text-neutral-600 pb-4">
-          Các chức năng khác
-        </div>
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button className="h-auto w-auto p-2" variant={"ghost"}>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="px-0 pt-3 pb-3 bg-white"
+          side="bottom"
+          align="start"
+          style={{ borderRadius: "7px" }}
+        >
+          <div className="text-sm font-medium text-center text-neutral-600 pb-4">
+            Các chức năng khác
+          </div>
 
-        {userLogin?.role_name === "Student" && (
-          <>
-            <Button
-              onClick={onAddCategory}
-              className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
-              variant={"ghost"}
-            >
-              Thêm hạng mục
-            </Button>
-
-            {data.phase_status === "Pending" ? (
+          {userLogin?.role_name === "Student" && (
+            <>
               <Button
-                onClick={startPhase}
+                className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                variant={"ghost"}
+                onClick={() => setIsOpenModalPhaseDetail(true)}
+              >
+                <BiDetail className="w-3 h-3 mr-1" /> Chi tiết giai đoạn
+              </Button>
+
+              {data?.phase_status !== "Done" && (
+                <Button
+                  onClick={onAddCategory}
+                  className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                  variant={"ghost"}
+                >
+                  <BiAddToQueue className="w-3 h-3 mr-1" /> Thêm hạng mục
+                </Button>
+              )}
+
+              {data.phase_status !== "Done" &&
+                (data.phase_status === "Pending" ? (
+                  <Button
+                    onClick={startPhase}
+                    className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                    variant={"ghost"}
+                  >
+                    <FcStart className="w-3 h-3 mr-1" /> Bắt đầu giai đoạn
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={donePhase}
+                    className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                    variant={"ghost"}
+                  >
+                    <BiCheck className="w-3 h-3 mr-1" />
+                    Hoàn thành giai đoạn
+                  </Button>
+                ))}
+
+              {data?.phase_status !== "Done" && (
+                <>
+                  <Separator className="bg-gray-200/100" />
+
+                  <Button
+                    onClick={onAddCategory}
+                    className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                    variant={"ghost"}
+                  >
+                    <BiTrash className="w-3 h-3 mr-1" />
+                    Xóa giai đoạn
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+
+          {(userLogin?.role_name === "Lecturer" ||
+            userLogin?.role_name === "Business") && (
+            <>
+              <Button
+                className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
+                variant={"ghost"}
+                onClick={() => setIsOpenModalPhaseDetail(true)}
+              >
+                <BiDetail className="w-3 h-3 mr-1" /> Chi tiết giai đoạn
+              </Button>
+              <Button
+                onClick={handleAddFeedback}
                 className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
                 variant={"ghost"}
               >
-                Bắt đầu giai đoạn
+                <Plus className="w-3 h-3 mr-1" /> Thêm feedback
               </Button>
-            ) : (
-              <Button
-                onClick={donePhase}
-                className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
-                variant={"ghost"}
-              >
-                Hoàn thành giai đoạn
-              </Button>
-            )}
+            </>
+          )}
+        </PopoverContent>
+      </Popover>
 
-            <Separator className="bg-gray-200/100" />
-            <Button
-              onClick={onAddCategory}
-              className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
-              variant={"ghost"}
-            >
-              Xóa giai đoạn
-            </Button>
-          </>
-        )}
-
-        {(userLogin?.role_name === "Lecturer" ||
-          userLogin?.role_name === "Business") && (
-          <>
-            <Button
-              className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
-              variant={"ghost"}
-            >
-              <BiDetail className="w-3 h-3 mr-1" /> Chi tiết giai đoạn
-            </Button>
-            <Button
-              onClick={handleAddFeedback}
-              className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
-              variant={"ghost"}
-            >
-              <Plus className="w-3 h-3 mr-1" /> Thêm feedback
-            </Button>
-          </>
-        )}
-      </PopoverContent>
-    </Popover>
+      {isOpenModalPhaseDetail && (
+        <ModalPhaseDetail
+          open={isOpenModalPhaseDetail}
+          onClose={() => {
+            setIsOpenModalPhaseDetail(false);
+          }}
+          dataPhase={data}
+          setPhaseData={setPhaseData}
+        />
+      )}
+    </>
   );
 };
 

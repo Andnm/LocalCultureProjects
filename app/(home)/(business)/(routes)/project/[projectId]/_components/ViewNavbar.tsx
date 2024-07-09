@@ -61,7 +61,7 @@ export const ViewNavbar = ({
   const [userLogin, setUserLogin] = useUserLogin();
   const [open, setOpen] = React.useState(false);
   const [summaryReport, setSummaryReport] = React.useState<any>([]);
-  console.log("summaryReport", summaryReport);
+  // console.log("summaryReport", summaryReport);
   const pathName = usePathname();
   const dispatch = useAppDispatch();
 
@@ -260,12 +260,14 @@ export const ViewNavbar = ({
     handleCheckProjectCanDone();
 
     // Thiết lập interval để gọi checkProjectCanDone mỗi 3 giây
-    const intervalId = setInterval(() => {
-      handleCheckProjectCanDone();
-    }, 3000);
+    //tạm thời ẩn
+    // const intervalId = setInterval(() => {
+    //   handleCheckProjectCanDone();
+    // }, 3000);
 
     // Cleanup khi component bị unmount
-    return () => clearInterval(intervalId);
+    //tạm thời ẩn
+    // return () => clearInterval(intervalId);
   }, []);
 
   // React.useEffect(() => {
@@ -311,9 +313,10 @@ export const ViewNavbar = ({
         } else {
         }
       });
-    }, 3000);
+    }, 1000000); //3000
 
-    return () => clearInterval(intervalId);
+    //tạm thời ẩn
+    // return () => clearInterval(intervalId);
   }, []);
 
   return (
