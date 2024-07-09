@@ -22,6 +22,7 @@ export const createPaymentUrl = createAsyncThunk(
     try {
       const response = await http.post<any>(
         `/payment/${paymentMethod}/${phaseId}`,
+        [],
         getConfigHeader()
       );
 

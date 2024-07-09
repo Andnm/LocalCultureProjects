@@ -23,6 +23,8 @@ import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 import { FcStart } from "react-icons/fc";
 import ModalPhaseDetail from "./phases/phases_detail/ModalPhaseDetail";
+import ModalChoosePaymentMethod from "./phases/phases_detail/ModalChoosePaymentMethod";
+import ModalAddFeedback from "./phases/ModalAddFeedback";
 
 interface ListOptionsProps {
   project: any;
@@ -46,6 +48,10 @@ const ListOptions = ({
   //state open modal
   const [isOpenModalPhaseDetail, setIsOpenModalPhaseDetail] =
     React.useState(false);
+  const [isOpenModalChoosePaymentMethod, setIsOpenModalChoosePaymentMethod] =
+    React.useState<boolean>(false);
+  const [isOpenModalAddFeedback, setIsOpenModalAddFeedback] =
+    React.useState<boolean>(false);
 
   const handleChangeStatus = (status: string) => {
     const phaseId: number = data.id;
@@ -158,19 +164,15 @@ const ListOptions = ({
     );
   };
 
-  const handleAddFeedback = () => {
-    const dataBody = {
-      phaseId: data.id,
-      feedback: "hmmm",
-    };
+  //xử lý open modal payment method
+  const handleOpenModalChoosePaymentMethod = () => {
+    setIsOpenModalPhaseDetail(false);
+    setIsOpenModalChoosePaymentMethod(true);
+  };
 
-    dispatch(uploadFeedback(dataBody)).then((result) => {
-      if (uploadFeedback.fulfilled.match(result)) {
-        toast.success("Tạo feedback thành công!");
-      } else {
-        toast.error(`${result.payload}`);
-      }
-    });
+  const handleCloseModalChoosePaymentMethod = () => {
+    setIsOpenModalChoosePaymentMethod(false);
+    setIsOpenModalPhaseDetail(true);
   };
 
   return (
@@ -259,7 +261,7 @@ const ListOptions = ({
                 <BiDetail className="w-3 h-3 mr-1" /> Chi tiết giai đoạn
               </Button>
               <Button
-                onClick={handleAddFeedback}
+                onClick={() => setIsOpenModalAddFeedback(true)}
                 className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
                 variant={"ghost"}
               >
@@ -276,6 +278,27 @@ const ListOptions = ({
           onClose={() => {
             setIsOpenModalPhaseDetail(false);
           }}
+          dataPhase={data}
+          setPhaseData={setPhaseData}
+          handleOpenModalChoosePaymentMethod={
+            handleOpenModalChoosePaymentMethod
+          }
+        />
+      )}
+
+      {isOpenModalChoosePaymentMethod && (
+        <ModalChoosePaymentMethod
+          open={isOpenModalChoosePaymentMethod}
+          onClose={handleCloseModalChoosePaymentMethod}
+          dataPhase={data}
+          setPhaseData={setPhaseData}
+        />
+      )}
+
+      {isOpenModalAddFeedback && (
+        <ModalAddFeedback
+          open={isOpenModalAddFeedback}
+          onClose={() => setIsOpenModalAddFeedback(false)}
           dataPhase={data}
           setPhaseData={setPhaseData}
         />

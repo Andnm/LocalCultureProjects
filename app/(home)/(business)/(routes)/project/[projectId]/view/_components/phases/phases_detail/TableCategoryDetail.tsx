@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Spin, Table, type TableColumnsType } from "antd";
+import {
+  Avatar,
+  Button,
+  Modal,
+  Radio,
+  Spin,
+  Table,
+  type TableColumnsType,
+} from "antd";
 import TextNotUpdate from "@/src/components/shared/TextNotUpdate";
 import { formatCurrency, formatDate } from "@/src/utils/handleFunction";
 import { useAppDispatch } from "@/src/redux/store";
 import { getCostInCategory } from "@/src/redux/features/costSlice";
 import { useUserLogin } from "@/src/hook/useUserLogin";
+import { PaymentMethodEnum } from "@/src/utils/enum/payment.enum";
 
 const { confirm } = Modal;
 
@@ -13,10 +22,21 @@ interface Props {
   getStatusColor: (status: string) => string;
   onClose: () => void;
   setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; //cái này set cho data list
+  selectedPaymentMethod: string | null;
+  setSelectedPaymentMethod: React.Dispatch<React.SetStateAction<string | null>>;
+  handleOpenModalChoosePaymentMethod: () => void;
 }
 
 const TableCategoryDetail: React.FC<Props> = (props) => {
-  const { dataPhase, getStatusColor, onClose, setPhaseData } = props;
+  const {
+    dataPhase,
+    getStatusColor,
+    onClose,
+    setPhaseData,
+    selectedPaymentMethod,
+    setSelectedPaymentMethod,
+    handleOpenModalChoosePaymentMethod,
+  } = props;
   const dispatch = useAppDispatch();
   const [userLogin, setUserLogin] = useUserLogin();
 
@@ -99,6 +119,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
       title: "Chi phí dự trù",
       dataIndex: "expected_cost",
       key: "expected_cost",
+      width: "150px",
       render: (expected_cost: number) => (
         <TextNotUpdate data={formatCurrency(expected_cost)} />
       ),
@@ -108,6 +129,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
       title: "Chi phí thực tế",
       dataIndex: "actual_cost",
       key: "actual_cost",
+      width: "150px",
       render: (actual_cost: number) => (
         <TextNotUpdate data={formatCurrency(actual_cost)} />
       ),
@@ -117,19 +139,14 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
       title: "Bằng chứng",
       dataIndex: "evidence",
       key: "evidence",
+      width: "150px",
       render: (evidence: string) => <TextNotUpdate data={evidence} />,
       fixed: "right",
     },
   ];
 
-  const handlePaymentClick = async () => {
-    // Implement the payment process logic here
-    console.log("Proceeding to phase payment");
-  };
-
   return (
     <div>
-      <h3 className="font-bold">Các hạng mục</h3>
       <Spin spinning={loading}>
         <Table
           columns={columns}
@@ -138,24 +155,38 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
           rowKey="id"
           className="custom-table webkit-scrollbar"
           pagination={false}
+          footer={() => (
+            <div className="flex justify-end">
+              <span>
+                <strong className="font-bold relative right-3">TỔNG:</strong>
+              </span>
+              <span
+                style={{ width: "150px" }}
+                className="font-bold relative left-8"
+              >
+                <TextNotUpdate
+                  data={formatCurrency(dataPhase.expected_cost_total)}
+                />
+              </span>
+              <span
+                style={{ width: "150px" }}
+                className="font-bold relative left-8"
+              >
+                <TextNotUpdate
+                  data={formatCurrency(dataPhase.actual_cost_total)}
+                />
+              </span>
+              <span style={{ width: "150px", textAlign: "right" }}></span>
+            </div>
+          )}
         />
-        {userLogin?.role_name !== "Business" &&
-          dataPhase?.phase_status !== "Transferred" && (
+        {userLogin?.role_name === "Business" &&
+          dataPhase?.phase_status === "Done" &&
+          dataPhase?.cost_status !== "Transferred" && (
             <div className="flex justify-end mt-4">
               <Button
                 type="primary"
-                onClick={async () => {
-                  confirm({
-                    cancelText: "Quay lại",
-                    okText: "Xác nhận",
-                    title:
-                      "Bạn có chắc là muốn thực hiện thanh toán cho giai đoạn này?",
-                    async onOk() {
-                      await handlePaymentClick();
-                    },
-                    onCancel() {},
-                  });
-                }}
+                onClick={handleOpenModalChoosePaymentMethod}
                 className="mt-4"
               >
                 Tiến hành thanh toán giai đoạn

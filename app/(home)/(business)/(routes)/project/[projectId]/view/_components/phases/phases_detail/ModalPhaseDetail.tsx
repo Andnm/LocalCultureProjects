@@ -22,12 +22,24 @@ interface Props {
   actionConfirm?: any;
   dataPhase: any;
   setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; //cái này set cho data list
+  handleOpenModalChoosePaymentMethod: () => void;
 }
 
 const ModalPhaseDetail: React.FC<Props> = (props) => {
-  const { onSubmit, open, onClose, actionConfirm, dataPhase, setPhaseData } =
-    props;
-  console.log("dataPhase: ", dataPhase);
+  const {
+    onSubmit,
+    open,
+    onClose,
+    actionConfirm,
+    dataPhase,
+    setPhaseData,
+    handleOpenModalChoosePaymentMethod,
+  } = props;
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    string | null
+  >(null);
+
   const dispatch = useAppDispatch();
 
   const getStatusColor = (status: string): string => {
@@ -52,16 +64,18 @@ const ModalPhaseDetail: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      style={{ top: 10 }}
+      centered
       width={"max-w-full"}
       open={open}
       onCancel={() => {
         onClose();
+        setSelectedPaymentMethod(null);
       }}
       footer={false}
+      maskClosable={false}
     >
       <div>
-        <h3 className="font-bold">
+        <h3 className="font-bold text-lg">
           Chi tiết giai đoạn {dataPhase?.phase_number}
         </h3>
         <Descriptions className="px-5" layout="horizontal">
@@ -141,7 +155,9 @@ const ModalPhaseDetail: React.FC<Props> = (props) => {
               label="Feedback từ doanh nghiệp"
               className="phase_label"
             >
-              {dataPhase?.business_feeback}
+              <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
+                {dataPhase?.business_feeback}
+              </pre>
             </Descriptions.Item>
           )}
 
@@ -161,6 +177,9 @@ const ModalPhaseDetail: React.FC<Props> = (props) => {
         getStatusColor={getStatusColor}
         onClose={onClose}
         setPhaseData={setPhaseData}
+        selectedPaymentMethod={selectedPaymentMethod}
+        setSelectedPaymentMethod={setSelectedPaymentMethod}
+        handleOpenModalChoosePaymentMethod={handleOpenModalChoosePaymentMethod}
       />
     </Modal>
   );
