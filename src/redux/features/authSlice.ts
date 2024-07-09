@@ -222,6 +222,26 @@ export const createNewBusinessByBusinessName = createAsyncThunk(
   }
 );
 
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `auth/changePassword`,
+        dataBody,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -349,6 +369,19 @@ export const authSlice = createSlice({
         state.error = action.payload as string;
       }
     );
+    //changePassword
+    builder.addCase(changePassword.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(changePassword.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(changePassword.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
   },
 });
 
