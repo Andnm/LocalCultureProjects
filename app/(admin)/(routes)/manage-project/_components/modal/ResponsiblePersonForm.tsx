@@ -299,25 +299,25 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
           <div className="grid grid-cols-3 px-4 ">
             <Form.Item label="Họ và tên" className="mx-3">
               <Input
-                disabled={!editMode}
+                disabled={true}
                 value={responsiblePerson?.user?.fullname}
               />
             </Form.Item>
             <Form.Item label="Địa chỉ email" className="mx-3">
               <Input
-                disabled={!editMode}
+                disabled={true}
                 value={responsiblePerson?.user?.email}
               />
             </Form.Item>
             <Form.Item label="Số điện thoại" className="mx-3">
               <Input
-                disabled={!editMode}
+                disabled={true}
                 value={responsiblePerson?.user?.phone_number}
               />
             </Form.Item>
             <Form.Item label="Chức vụ" className="mx-3">
               <Input
-                disabled={!editMode}
+                disabled={true}
                 value={responsiblePerson?.user?.position}
               />
             </Form.Item>

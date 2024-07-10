@@ -23,11 +23,14 @@ import {
 import { storage } from "@/src/utils/configFirebase";
 import { Check, Trash } from "lucide-react";
 import StatusCell from "../StatusCell";
-import { formatDate } from "@/src/utils/handleFunction";
+import { extractProjectDates, formatDate } from "@/src/utils/handleFunction";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 import BusinessInfoForm from "./BusinessInfoForm";
 import ProjectDetailsForm from "./ProjectDetailForm";
 import ResponsiblePersonForm from "./ResponsiblePersonForm";
+import { useAppDispatch } from "@/src/redux/store";
+import { updateProjectByAdmin } from "@/src/redux/features/projectSlice";
+import toast from "react-hot-toast";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -57,12 +60,13 @@ const ModalDetailProject: React.FC<Props> = (props) => {
     status,
     actionConfirm,
   } = props;
+  const formRef = useRef(null);
+  const [form] = Form.useForm();
+  const dispatch = useAppDispatch();
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const formRef = useRef(null);
-  const [form] = Form.useForm();
   const [businessUser, setBusinessUser] = React.useState<any>();
   const [responsiblePersonList, setResponsiblePersonList] = React.useState<
     any[]
@@ -77,17 +81,17 @@ const ModalDetailProject: React.FC<Props> = (props) => {
     if (selectedProject) {
       form.setFieldsValue({
         ...selectedProject,
-        // business_id: businessUser?.id,
+        business_id: businessUser?.id,
         // responsible_person_id: responsiblePersonList[0]?.id,
       });
 
-      if (selectedProject.document_related_link) {
+      if (selectedProject?.document_related_link) {
         setFileList([
           {
             uid: "-1",
             name: "document",
             status: "done",
-            url: selectedProject.document_related_link[0],
+            url: selectedProject?.document_related_link[0],
           },
         ]);
       }
@@ -106,13 +110,13 @@ const ModalDetailProject: React.FC<Props> = (props) => {
     }
   }, [selectedProject]);
 
-  const handleFormSubmit = async (values: any) => {
+  const handleFormUpdateProjectSubmit = async () => {
     setConfirmLoading(true);
-    let documentLink = selectedProject.document_related_link;
+    let documentLink = selectedProject.document_related_link[0];
 
-    if (fileList.length > 0 && fileList[0].originFileObj) {
-      const file = fileList[0].originFileObj;
-      const storageRef = ref(storage, `documents/${file.name}`);
+    if (fileList.length > 0 && fileList[0]?.originFileObj) {
+      const file = fileList[0]?.originFileObj;
+      const storageRef = ref(storage, `khoduan/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       try {
@@ -125,18 +129,45 @@ const ModalDetailProject: React.FC<Props> = (props) => {
       }
     }
 
+    const projectTimeline = extractProjectDates(
+      form.getFieldValue("project_implement_time")
+    );
+
     const updatedProject = {
-      ...selectedProject,
-      ...values,
-      document_related_link: documentLink,
+      is_created_by_admin: true,
+      businessName: businessUser.fullname,
+      businessEmail: businessUser.email,
+      name_project: form.getFieldValue("name_project"),
+      business_type: form.getFieldValue("business_type"),
+      purpose: form.getFieldValue("purpose"),
+      target_object: form.getFieldValue("target_object"),
+      note: form.getFieldValue("note"),
+      document_related_link: [documentLink],
+      request: form.getFieldValue("request"),
+      project_implement_time: form.getFieldValue("project_implement_time"),
+      project_start_date: projectTimeline.project_start_date,
+      is_extent: false,
+      project_expected_end_date: projectTimeline.project_expected_end_date,
+      expected_budget: form.getFieldValue("expected_budget"),
+      is_first_project: selectedProject.is_first_project,
+      id: selectedProject?.id,
     };
 
-    const updatedDataTable = dataTable.map((project: any) =>
-      project.id === updatedProject.id ? updatedProject : project
+    const resUpdate = await dispatch(
+      updateProjectByAdmin({ id: selectedProject?.id, data: updatedProject })
     );
-    setDataTable(updatedDataTable);
-    setSelectedProject(updatedProject);
-    onClose();
+
+    if (updateProjectByAdmin.fulfilled.match(resUpdate)) {
+      const updatedDataTable = dataTable.map((project: any) =>
+        project.id === updatedProject.id ? resUpdate.payload : project
+      );
+      setDataTable(updatedDataTable);
+      setSelectedProject(updatedProject);
+      onClose();
+      toast.success("Cập nhập dự ánthành công!");
+    } else {
+      toast.error(`${resUpdate.payload}`);
+    }
     setConfirmLoading(false);
   };
 
@@ -177,37 +208,6 @@ const ModalDetailProject: React.FC<Props> = (props) => {
         setIsAdding(false);
       }}
       footer={[
-        editMode && [
-          <>
-            <Button
-              className="btn-submit"
-              key="cancel"
-              type="text"
-              onClick={() => {
-                setEditMode((prev) => !prev);
-                setIsAdding(false);
-              }}
-            >
-              Huỷ
-            </Button>
-            <Button
-              className="btn-submit btn-continue-with-new-info"
-              key="update"
-              onClick={async () => {
-                confirm({
-                  cancelText: "Quay lại",
-                  okText: "Xác nhận",
-                  title:
-                    "Bạn có chắc là muốn thay đổi những nội dung đã chỉnh sửa?",
-                  async onOk() {},
-                  onCancel() {},
-                });
-              }}
-            >
-              Thay đổi
-            </Button>
-          </>,
-        ],
         status === "Pending" && (
           <Button
             danger
@@ -232,7 +232,7 @@ const ModalDetailProject: React.FC<Props> = (props) => {
         form={form}
         layout="vertical"
         ref={formRef}
-        onFinish={handleFormSubmit}
+        onFinish={handleFormUpdateProjectSubmit}
       >
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Thông tin doanh nghiệp" key="1">
@@ -254,6 +254,40 @@ const ModalDetailProject: React.FC<Props> = (props) => {
               handleUploadChange={handleUploadChange}
               selectedProject={selectedProject}
             />
+
+            {editMode && [
+              <div className="flex justify-end">
+                <Button
+                  className="btn-submit"
+                  key="cancel"
+                  type="text"
+                  onClick={() => {
+                    setEditMode((prev) => !prev);
+                    setIsAdding(false);
+                  }}
+                >
+                  Huỷ
+                </Button>
+                <Button
+                  className="btn-submit btn-continue-with-new-info"
+                  key="update"
+                  onClick={async () => {
+                    confirm({
+                      cancelText: "Quay lại",
+                      okText: "Xác nhận",
+                      title:
+                        "Bạn có chắc là muốn thay đổi những nội dung đã chỉnh sửa?",
+                      async onOk() {
+                        await handleFormUpdateProjectSubmit();
+                      },
+                      onCancel() {},
+                    });
+                  }}
+                >
+                  Thay đổi
+                </Button>
+              </div>,
+            ]}
           </Tabs.TabPane>
 
           <Tabs.TabPane tab="Người phụ trách" key="3">

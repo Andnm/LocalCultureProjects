@@ -29,6 +29,11 @@ const ProjectIdPage = () => {
     });
 
     dispatch(getPhaseByProjectId(projectId)).then((result) => {
+      const sortedPhaseData = [...result.payload]?.sort(
+        (a, b) => a?.phase_number - b?.phase_number
+      );
+      setPhaseData(sortedPhaseData);
+
       socketInstance.on(`getPhases-${projectId}`, (data: any) => {
         const sortedPhaseData = [...data.phases]?.sort(
           (a, b) => a?.phase_number - b?.phase_number

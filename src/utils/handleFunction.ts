@@ -246,7 +246,7 @@ export const extractNumberAtIndex = (
 };
 
 export const extractLastName = (fullName: string): string => {
-  const nameArray: string[] = fullName.split(" ");
+  const nameArray: string[] = fullName?.split(" ");
 
   const lastName: string = nameArray[0];
 

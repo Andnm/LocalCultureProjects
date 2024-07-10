@@ -222,19 +222,11 @@ export const updateProjectByAdmin = createAsyncThunk(
   async (dataResponse: any, thunkAPI) => {
     const { id, data } = dataResponse;
     const token = getTokenFromSessionStorage();
-    const configHeader = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
     try {
       const response = await http.patch<any>(
         `/projects/${id}`,
         data,
-        configHeader
+        getConfigHeader()
       );
       // console.log("response");
       return response.data;
