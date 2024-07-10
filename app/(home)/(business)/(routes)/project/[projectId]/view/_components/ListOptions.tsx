@@ -95,7 +95,10 @@ const ListOptions = ({
 
             if (updatedIndex !== -1) {
               const newDataTable = [...prevDataTable];
-              newDataTable[updatedIndex] = result.payload;
+              newDataTable[updatedIndex] = {
+                ...newDataTable[updatedIndex],
+                phase_status: phaseStatus,
+              };
               return newDataTable;
             }
 
@@ -149,7 +152,10 @@ const ListOptions = ({
 
             if (updatedIndex !== -1) {
               const newDataTable = [...prevDataTable];
-              newDataTable[updatedIndex] = result.payload;
+              newDataTable[updatedIndex] = {
+                ...newDataTable[updatedIndex],
+                phase_status: phaseStatus,
+              };
               return newDataTable;
             }
 

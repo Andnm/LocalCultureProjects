@@ -72,9 +72,19 @@ const ModalChoosePaymentMethod: React.FC<Props> = (props) => {
                 phaseId: dataPhase?.id,
               })
             );
+
             console.log("resCreatePaymentUrl: ", resCreatePaymentUrl);
 
             if (createPaymentUrl.fulfilled.match(resCreatePaymentUrl)) {
+              const redirectUrl =
+                selectedPaymentMethod === PaymentMethodEnum.MOMO
+                  ? resCreatePaymentUrl.payload.payUrl
+                  : resCreatePaymentUrl.payload;
+
+              window.location.href = redirectUrl;
+              toast.success(
+                "Bạn sẽ được chuyển đến trang thanh toán trong chốc lát!"
+              );
             } else {
               toast.error(`${resCreatePaymentUrl.payload}`);
             }

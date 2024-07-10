@@ -6,6 +6,7 @@ import {
   Radio,
   Spin,
   Table,
+  Upload,
   type TableColumnsType,
 } from "antd";
 import TextNotUpdate from "@/src/components/shared/TextNotUpdate";
@@ -49,16 +50,30 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
       Promise.all(
         dataPhase.categories.map(async (category: any) => {
           const costData = await callApiGetCostInCategory(category.id);
+          const evidenceUrls =
+            category.cost?.evidences?.map(
+              (evidence: any) => evidence.evidence_url
+            ) || [];
+
+          const fileList = evidenceUrls.map((url: string, index: number) => ({
+            uid: `${category.id}-${index}`,
+            name: `Bằng chứng ${index + 1}`,
+            status: "done",
+            url: url,
+          }));
+
           return {
             ...category,
             expected_cost: costData.payload.expected_cost,
             actual_cost: costData.payload.actual_cost,
+            fileList: fileList,
           };
         })
       ).then((categoriesWithCosts) => {
         const sortedCategories = categoriesWithCosts.sort((a, b) => {
           return a.id - b.id;
         });
+        console.log("sortedCategories: ", sortedCategories);
         setCategoriesData(sortedCategories);
 
         setLoading(false);
@@ -137,10 +152,20 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
     },
     {
       title: "Bằng chứng",
-      dataIndex: "evidence",
-      key: "evidence",
+      dataIndex: "fileList",
+      key: "fileList",
       width: "150px",
-      render: (evidence: string) => <TextNotUpdate data={evidence} />,
+      render: (fileList: any[]) => (
+        fileList.length > 0 ? (
+          <Upload
+            fileList={fileList}
+            beforeUpload={() => false}
+            showUploadList={{ showRemoveIcon: false }}
+          />
+        ) : (
+          <TextNotUpdate data="(Chưa cập nhật)" />
+        )
+      ),
       fixed: "right",
     },
   ];

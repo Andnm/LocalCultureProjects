@@ -82,7 +82,6 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
     React.useState(false);
 
   const handleOpenModalDetails = (business: any) => {
-    console.log("business: ", business);
     setSelectedProject(business);
     setIsOpenModalDetail(true);
   };
