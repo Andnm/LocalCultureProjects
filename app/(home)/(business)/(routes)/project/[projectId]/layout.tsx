@@ -61,16 +61,15 @@ const ViewIdLayout = ({
         setDataProject(projectResult.payload);
       }
     };
-  
+
     fetchProjectData();
-  //tạm thời ẩn
-    // const fetchDataInterval = setInterval(fetchProjectData, 3000);
-  
-    // return () => clearInterval(fetchDataInterval);
+    const fetchDataInterval = setInterval(fetchProjectData, 3000);
+
+    return () => clearInterval(fetchDataInterval);
   }, []);
 
   React.useEffect(() => {
-    fetchData();   
+    fetchData();
   }, []);
 
   return (

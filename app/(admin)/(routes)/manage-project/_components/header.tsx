@@ -93,7 +93,6 @@ const ManageProjectHeader: React.FC<ManageProjectHeaderProps> = ({
       </div>
 
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        {/* tạm thời ẩn đi */}
         <Tabs value="all" className="filter w-full md:w-max">
           <TabsHeader>
             {TABS.map(({ label, value }) => (

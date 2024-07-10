@@ -42,6 +42,9 @@ import { NOTIFICATION_TYPE } from "@/src/constants/notification";
 import { createNewNotification } from "@/src/redux/features/notificationSlice";
 
 import "./style.scss";
+import { Modal } from "antd";
+
+const { confirm } = Modal;
 
 interface ViewNavbarProps {
   dataProject: any;
@@ -61,7 +64,6 @@ export const ViewNavbar = ({
   const [userLogin, setUserLogin] = useUserLogin();
   const [open, setOpen] = React.useState(false);
   const [summaryReport, setSummaryReport] = React.useState<any>([]);
-  // console.log("summaryReport", summaryReport);
   const pathName = usePathname();
   const dispatch = useAppDispatch();
 
@@ -125,6 +127,7 @@ export const ViewNavbar = ({
   };
 
   const handleClickConfirmSummaryReport = () => {
+    setLoadingUploadFile(true);
     const bodyData = {
       project_id: extractNumberFromPath(pathName),
       groupId: groupId,
@@ -138,6 +141,7 @@ export const ViewNavbar = ({
       } else {
         toast.error(`${result.payload}`);
       }
+      setLoadingUploadFile(false);
     });
   };
 
@@ -260,47 +264,45 @@ export const ViewNavbar = ({
     handleCheckProjectCanDone();
 
     // Thiết lập interval để gọi checkProjectCanDone mỗi 3 giây
-    //tạm thời ẩn
-    // const intervalId = setInterval(() => {
-    //   handleCheckProjectCanDone();
-    // }, 3000);
+    const intervalId = setInterval(() => {
+      handleCheckProjectCanDone();
+    }, 3000);
 
     // Cleanup khi component bị unmount
-    //tạm thời ẩn
-    // return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId);
   }, []);
 
-  // React.useEffect(() => {
-  //   dispatch(getSummaryReportByProjectId(extractNumberFromPath(pathName))).then(
-  //     (result) => {
-  //       if (getSummaryReportByProjectId.fulfilled.match(result)) {
-  //         // socketInstance.on(
-  //         //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
-  //         //   (data: any) => {
-  //         //     // console.log("ok socket");
-  //         //     setSummaryReport(data.summaryReport);
-  //         //     // console.log('data report', data.summaryReport)
-  //         //   }
-  //         // );
+  React.useEffect(() => {
+    dispatch(getSummaryReportByProjectId(extractNumberFromPath(pathName))).then(
+      (result) => {
+        if (getSummaryReportByProjectId.fulfilled.match(result)) {
+          socketInstance.on(
+            `getSummaryReports-${extractNumberFromPath(pathName)}`,
+            (data: any) => {
+              // console.log("ok socket");
+              setSummaryReport(data.summaryReport);
+              // console.log('data report', data.summaryReport)
+            }
+          );
 
-  //         // socketInstance.disconnect();
+          socketInstance.disconnect();
 
-  //         setSummaryReport(result.payload);
-  //         console.log("result.payload", result.payload);
-  //       } else {
-  //         // toast.error("Lỗi khi lấy dữ liệu");
-  //         // socketInstance.on(
-  //         //   `getSummaryReports-${extractNumberFromPath(pathName)}`,
-  //         //   (data: any) => {
-  //         //     // console.log("ok socket fail");
-  //         //     setSummaryReport(data.summaryReport);
-  //         //     console.log("fail", data.summaryReport);
-  //         //   }
-  //         // );
-  //       }
-  //     }
-  //   );
-  // }, []);
+          setSummaryReport(result.payload);
+          console.log("result.payload", result.payload);
+        } else {
+          // toast.error("Lỗi khi lấy dữ liệu");
+          socketInstance.on(
+            `getSummaryReports-${extractNumberFromPath(pathName)}`,
+            (data: any) => {
+              // console.log("ok socket fail");
+              setSummaryReport(data.summaryReport);
+              console.log("fail", data.summaryReport);
+            }
+          );
+        }
+      }
+    );
+  }, []);
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -313,10 +315,10 @@ export const ViewNavbar = ({
         } else {
         }
       });
-    }, 1000000); //3000
+    }, 3000);
 
     //tạm thời ẩn
-    // return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -458,7 +460,22 @@ export const ViewNavbar = ({
                           </Typography>
                         ) : (
                           <Button
-                            onClick={handleClickConfirmSummaryReport}
+                            onClick={async () => {
+                              closeDrawer();
+                              confirm({
+                                cancelText: "Quay lại",
+                                okText: "Xác nhận",
+                                title:
+                                  "Bạn có chắc là muốn xác nhận báo cáo tổng kết này? ",
+                                async onOk() {
+                                  openDrawer();
+                                  handleClickConfirmSummaryReport();
+                                },
+                                onCancel() {
+                                  openDrawer();
+                                },
+                              });
+                            }}
                             className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
                           >
                             Xác nhận
@@ -515,7 +532,22 @@ export const ViewNavbar = ({
                           </Typography>
                         ) : (
                           <Button
-                            onClick={handleClickConfirmSummaryReport}
+                            onClick={async () => {
+                              closeDrawer();
+                              confirm({
+                                cancelText: "Quay lại",
+                                okText: "Xác nhận",
+                                title:
+                                  "Bạn có chắc là muốn xác nhận báo cáo tổng kết này? ",
+                                async onOk() {
+                                  openDrawer();
+                                  handleClickConfirmSummaryReport();
+                                },
+                                onCancel() {
+                                  openDrawer();
+                                },
+                              });
+                            }}
                             className="font-normal transition text-white hover:text-red-600 border border-cyan-600 bg-cyan-600"
                           >
                             Xác nhận
