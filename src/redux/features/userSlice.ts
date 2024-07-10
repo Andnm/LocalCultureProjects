@@ -219,6 +219,25 @@ export const providerAccount = createAsyncThunk(
   }
 );
 
+export const provideAccountResponsible = createAsyncThunk(
+  "user/provideAccountResponsible",
+  async (dataBody: ProviderAccountType, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `/auth/provideAccountResponsible/admin`,
+        dataBody, 
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (email: any, thunkAPI) => {
@@ -491,6 +510,21 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(providerAccount.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //provideAccountResponsible
+    builder.addCase(provideAccountResponsible.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(provideAccountResponsible.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(provideAccountResponsible.rejected, (state, action) => {
       // state.loadingUser = false;
       state.error = action.payload as string;
     });

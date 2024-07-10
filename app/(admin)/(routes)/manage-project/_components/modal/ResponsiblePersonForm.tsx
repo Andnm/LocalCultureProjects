@@ -15,6 +15,7 @@ import {
 import toast from "react-hot-toast";
 import {
   checkResponsibleInfo,
+  provideAccountResponsible,
   providerAccount,
 } from "@/src/redux/features/userSlice";
 import ModalConfirmUpdateResponsible from "./ModalConfirmUpdateResponsible";
@@ -121,7 +122,7 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
         email_responsible_person:
           formAddResponsiblePerson.getFieldValue("email"),
         fullname: formAddResponsiblePerson.getFieldValue("fullname"),
-        other_contact: "",
+        other_contact: formAddResponsiblePerson.getFieldValue("other_contact"),
         phone_number: formAddResponsiblePerson.getFieldValue("phone_number"),
         position: formAddResponsiblePerson.getFieldValue("position"),
         projectId: selectedProject?.id,
@@ -271,18 +272,49 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
                           const dataBody: ProviderAccountType = {
                             email: responsiblePerson.user.email,
                             fullname: responsiblePerson.user.fullname,
-                            roleName: "ResponsiblePerson",
+                            position: responsiblePerson.user.position,
+                            phone_number: responsiblePerson.user.phone_number,
+                            other_contact: responsiblePerson.user.other_contact,
+                            projectId: selectedProject?.id,
+                            user_project_status:
+                              responsiblePerson?.user_project_status,
                           };
                           const resProviderAccount = await dispatch(
-                            providerAccount(dataBody)
+                            provideAccountResponsible(dataBody)
                           );
                           console.log("res: ", resProviderAccount);
                           if (
-                            providerAccount.fulfilled.match(resProviderAccount)
+                            provideAccountResponsible.fulfilled.match(
+                              resProviderAccount
+                            )
                           ) {
+                            setDataTable((prevDataTable: any[]) =>
+                              prevDataTable.map((item) => {
+                                if (item.id === selectedProject?.id) {
+                                  return {
+                                    ...item,
+                                    user_projects: item.user_projects.map(
+                                      (person: any) => {
+                                        if (
+                                          person.user.id ===
+                                          responsiblePerson.user.id
+                                        ) {
+                                          return {
+                                            ...person,
+                                            ...resProviderAccount.payload,
+                                          };
+                                        }
+                                        return person;
+                                      }
+                                    ),
+                                  };
+                                }
+                                return item;
+                              })
+                            );
                             message.success("Kích hoạt tài khoản thành công");
-                          }else {
-                            toast.error(`${resProviderAccount.payload}`)
+                          } else {
+                            toast.error(`${resProviderAccount.payload}`);
                           }
                         } catch (error) {
                           message.error("Có lỗi xảy ra");
@@ -304,10 +336,7 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
               />
             </Form.Item>
             <Form.Item label="Địa chỉ email" className="mx-3">
-              <Input
-                disabled={true}
-                value={responsiblePerson?.user?.email}
-              />
+              <Input disabled={true} value={responsiblePerson?.user?.email} />
             </Form.Item>
             <Form.Item label="Số điện thoại" className="mx-3">
               <Input
@@ -321,10 +350,16 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
                 value={responsiblePerson?.user?.position}
               />
             </Form.Item>
+            <Form.Item label="Thông tin liên lạc khác" className="mx-3">
+              <Input.TextArea
+                disabled={true}
+                value={responsiblePerson?.user?.other_contact}
+              />
+            </Form.Item>
 
             <Form.Item label="Phân quyền" className="mx-3">
               <Select
-                disabled={!editMode}
+                disabled={true}
                 value={responsiblePerson?.user_project_status}
               >
                 <Option value="Responsible_Person_View">Xem</Option>
@@ -411,6 +446,14 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
               >
                 <Input />
               </Form.Item>
+              <Form.Item
+                label="Thông tin liên lạc khác"
+                name="other_contact"
+                className="mx-3"
+              >
+                <Input.TextArea />
+              </Form.Item>
+
               <Form.Item
                 className="mx-3"
                 name="user_project_status"

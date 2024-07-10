@@ -54,6 +54,10 @@ export interface UpdateResponsibleStatusType {
 
 export interface ProviderAccountType {
   fullname: string
+  position: string
   email: string
-  roleName: string
+  phone_number: string
+  other_contact: string
+  projectId: number
+  user_project_status: string
 }
