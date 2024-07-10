@@ -14,7 +14,7 @@ import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 interface ListItemProps {
   project: any;
   data: PhaseType;
-  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; // này là nguyên 1 list
   index: number;
   groupId: number;
 }
@@ -47,8 +47,8 @@ const ListItem = ({
   // console.log("phase", data);
 
   React.useEffect(() => {
-    dispatch(getAllCategoryOfPhase(data.id)).then((result: any) => {
-      socketInstance.on(`getCategories-${data.id}`, (dataResponse: any) => {
+    dispatch(getAllCategoryOfPhase(data?.id)).then((result: any) => {
+      socketInstance.on(`getCategories-${data?.id}`, (dataResponse: any) => {
         const sortedCategories = dataResponse.categories.sort(
           (a: any, b: any) => {
             return a?.id - b?.id;
@@ -85,15 +85,17 @@ const ListItem = ({
           <ListCategory
             project={project}
             phaseData={data}
+            setPhaseData={setPhaseData}
             dataCategory={dataCategory}
             setDataCategory={setDataCategory}
+            groupId={groupId}
           />
         )}
 
         <CategoryForm
           phaseData={data}
           setPhaseData={setPhaseData}
-          phaseId={data.id}
+          phaseId={data?.id}
           dataCategory={dataCategory}
           setDataCategory={setDataCategory}
           isLoading={isLoading}

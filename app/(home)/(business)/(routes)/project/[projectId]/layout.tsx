@@ -63,7 +63,7 @@ const ViewIdLayout = ({
     };
 
     fetchProjectData();
-    const fetchDataInterval = setInterval(fetchProjectData, 3000);
+    const fetchDataInterval = setInterval(fetchProjectData, 10000);
 
     return () => clearInterval(fetchDataInterval);
   }, []);

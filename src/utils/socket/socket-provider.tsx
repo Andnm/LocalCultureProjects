@@ -24,30 +24,33 @@ let socketInstance: Socket;
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-
-  const [dataNotificationSocket, setDataNotificationSocket] = useState<any>([]);
+  const [dataNotificationSocket, setDataNotificationSocket] = useState<any>(null);
 
   useEffect(() => {
-    socketInstance = new (ClientIO as any)(
-      `${process.env.NEXT_PUBLIC_API_URL}`
-    );
+    const setupSocket = () => {
+      socketInstance = ClientIO(`${process.env.NEXT_PUBLIC_API_URL}`);
 
-    socketInstance.on("connect", () => {
-      setIsConnected(true);
-    });
+      socketInstance.on("connect", () => {
+        setIsConnected(true);
+      });
 
-    socketInstance.on("getNotifications", (data: any) => {
-      setDataNotificationSocket(data);
-    });
+      socketInstance.on("getNotifications", (data: any) => {
+        setDataNotificationSocket(data);
+      });
 
-    socketInstance.on("disconnect", () => {
-      setIsConnected(false);
-    });
+      socketInstance.on("disconnect", () => {
+        setIsConnected(false);
+      });
 
-    setSocket(socketInstance);
+      setSocket(socketInstance);
+    };
+
+    setupSocket();
 
     return () => {
-      socketInstance.disconnect();
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
     };
   }, []);
 

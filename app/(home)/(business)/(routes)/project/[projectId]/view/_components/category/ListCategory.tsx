@@ -2,22 +2,29 @@ import DialogViewCategory from "@/components/alert-dialog/DialogViewCategory";
 import { Hint } from "@/components/hint";
 import { changeStatusFromEnToVn } from "@/src/utils/handleFunction";
 import React from "react";
+import ModalCategoryDetail from "./category_detail/ModalCategoryDetail";
 
 interface ListCategoryProps {
   project: any;
   phaseData: any;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
   dataCategory: any;
   setDataCategory: React.Dispatch<React.SetStateAction<any[]>>;
+  groupId: any;
 }
 
 const ListCategory = ({
   project,
   phaseData,
+  setPhaseData,
   dataCategory,
   setDataCategory,
+  groupId,
 }: ListCategoryProps) => {
   // console.log("dataCategory", dataCategory);
   const [isOpenModalDetail, setIsOpenModalDetail] = React.useState(false);
+  const [isOpenModalCategoryDetail, setIsOpenModalCategoryDetail] =
+    React.useState<boolean>(false);
 
   const [selectedCategory, setSelectedCategory] = React.useState<any | null>(
     null
@@ -25,7 +32,8 @@ const ListCategory = ({
 
   const handleOpenModalDetail = (category: any) => {
     setSelectedCategory(category);
-    setIsOpenModalDetail(true);
+    // setIsOpenModalDetail(true);
+    setIsOpenModalCategoryDetail(true);
   };
 
   const getBorderColorClass = (status: string) => {
@@ -33,7 +41,7 @@ const ListCategory = ({
       case "Todo":
         return "border-gray-500";
       case "Processing":
-        case "Doing":
+      case "Doing":
         return "border-yellow-500";
       case "Done":
       case "Complete":
@@ -72,7 +80,8 @@ const ListCategory = ({
           </div>
         ))}
 
-      {isOpenModalDetail && selectedCategory && (
+      {/* tạm thời ẩn */}
+      {/* {isOpenModalDetail && selectedCategory && (
         <DialogViewCategory
           project={project}
           phaseData={phaseData}
@@ -80,6 +89,21 @@ const ListCategory = ({
           dataCategory={selectedCategory}
           setDataCategory={setDataCategory}
           actionClose={() => setIsOpenModalDetail(false)}
+        />
+      )} */}
+
+      {isOpenModalCategoryDetail && selectedCategory && (
+        <ModalCategoryDetail
+          groupId={groupId}
+          project={project}
+          phaseData={phaseData}
+          setPhaseData={setPhaseData}
+          dataCategory={selectedCategory}
+          setDataCategory={setDataCategory}
+          open={isOpenModalCategoryDetail}
+          onClose={() => {
+            setIsOpenModalCategoryDetail(false);
+          }}
         />
       )}
     </div>

@@ -52,6 +52,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
 
   // xử lý file
   const handleOnDrop = (acceptedFiles: any) => {
+    setErrorFile("");
     setJuridicalFilesOrigin([...juridicalFilesOrigin, ...acceptedFiles]);
     setSelectedJuridicalFiles([...selectedJuridicalFiles, ...acceptedFiles]);
 
@@ -318,7 +319,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
                 "Từ 5.000.000 tới dưới 15.000.000 VNĐ",
                 "Từ 15.000.000 tới dưới 25.000.000 VNĐ",
                 "Từ 25.000.000 VNĐ trở lên",
-                "Chưa xác định, tùy thuộc vào ý tưởng được đề xuất"
+                "Chưa xác định, tùy thuộc vào ý tưởng được đề xuất",
               ].map((option) => (
                 <label
                   key={option}

@@ -127,7 +127,8 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
 
       try {
         const result = await dispatch(createCategory(formData)).unwrap();
-
+        // setPhaseData((prev) => [...prev, result.payload]); //MỞ RA LÀ LỖI NGAY
+        
         const dataBody = {
           expected_cost: convertCommaStringToNumber(costEstimates),
           categoryId: result.id,
@@ -135,16 +136,15 @@ const CategoryForm = forwardRef<HTMLTextAreaElement, CategoryFormProps>(
         };
 
         const resCreateCost = await dispatch(createCost(dataBody)).unwrap();
-        console.log("resCreateCost: ", resCreateCost);
         toast.success("Tạo hạng mục thành công!");
-        setFormData({
+        setFormData((prevData) => ({
+          ...prevData,
           category_name: "",
           detail: "",
           result_expected: "",
           phaseId: phaseId,
-          groupId: formData.groupId,
-        });
-        setPhaseData((prev) => [...prev, resCreateCost.payload]);
+        }));
+
         setCostEstimates("");
         disableEditing();
       } catch (error) {

@@ -16,7 +16,7 @@ import PostIdea from "./_components/post_idea/PostIdea";
 const ProjectIdPage = () => {
   const params = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
-  const [phaseData, setPhaseData] = React.useState<any | null>();
+  const [phaseData, setPhaseData] = React.useState<any | null>(); //này là nguyên 1 list
   const [groupId, setGroupId] = React.useState<number>(0);
   const [project, setProject] = React.useState<any | null>();
   const [userLogin, setUserLogin] = useUserLogin();

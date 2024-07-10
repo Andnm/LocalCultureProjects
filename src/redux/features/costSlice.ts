@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { PhaseType } from "@/src/types/phase.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import {
+  getConfigHeader,
+  getTokenFromSessionStorage,
+} from "../utils/handleToken";
 import { CategoryType } from "@/src/types/category.type";
 import { CostType } from "@/src/types/cost.type";
 
@@ -94,6 +97,25 @@ export const updateCost = createAsyncThunk(
         `/cost/${id}`,
         dataBody,
         configHeader
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const updateActualCost = createAsyncThunk(
+  "cost/updateActualCost",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `/cost/update-actual-cost`,
+        dataBody,
+        getConfigHeader()
       );
 
       return response.data;
@@ -199,6 +221,21 @@ export const costSlice = createSlice({
       state.error = "";
     });
     builder.addCase(changeStatusCost.rejected, (state, action) => {
+      state.loadingCost = false;
+      state.error = action.payload as string;
+    });
+
+    //change updateActualCost
+    builder.addCase(updateActualCost.pending, (state) => {
+      state.loadingCost = true;
+      state.error = "";
+    });
+    builder.addCase(updateActualCost.fulfilled, (state, action) => {
+      state.loadingCost = false;
+      //   state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(updateActualCost.rejected, (state, action) => {
       state.loadingCost = false;
       state.error = action.payload as string;
     });

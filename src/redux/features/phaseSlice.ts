@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { PhaseType } from "@/src/types/phase.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
 
 export interface PhaseState {
   data: PhaseType | null;
@@ -142,6 +142,25 @@ export const uploadFeedback = createAsyncThunk(
   }
 );
 
+export const deletePhase = createAsyncThunk(
+  "phase/deletePhase",
+  async (phaseId: number, thunkAPI) => {
+    try {
+      const response = await http.delete<any>(
+        `/phases/${phaseId}`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(error)
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const phaseSlice = createSlice({
   name: "phase",
   initialState,
@@ -202,6 +221,20 @@ export const phaseSlice = createSlice({
       state.error = "";
     });
     builder.addCase(uploadFeedback.rejected, (state, action) => {
+      state.loadingPhase = false;
+      state.error = action.payload as string;
+    });
+    //deletePhase
+    builder.addCase(deletePhase.pending, (state) => {
+      state.loadingPhase = true;
+      state.error = "";
+    });
+    builder.addCase(deletePhase.fulfilled, (state, action) => {
+      state.loadingPhase = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(deletePhase.rejected, (state, action) => {
       state.loadingPhase = false;
       state.error = action.payload as string;
     });

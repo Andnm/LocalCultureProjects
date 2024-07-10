@@ -42,11 +42,15 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
   const [userLogin, setUserLogin] = useUserLogin();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);//dùng để kiểm soát việc setIsLoading làm 1 lần
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
 
   useEffect(() => {
     if (dataPhase && dataPhase.categories) {
-      setLoading(true);
+      if (initialLoad) {
+        setLoading(true);
+        setInitialLoad(false);
+      }
       Promise.all(
         dataPhase.categories.map(async (category: any) => {
           const costData = await callApiGetCostInCategory(category.id);
@@ -73,7 +77,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
         const sortedCategories = categoriesWithCosts.sort((a, b) => {
           return a.id - b.id;
         });
-        console.log("sortedCategories: ", sortedCategories);
+        // console.log("sortedCategories: ", sortedCategories);
         setCategoriesData(sortedCategories);
 
         setLoading(false);

@@ -90,7 +90,7 @@ const ListForm = ({
   useEventListener("keydown", onKeyDown);
   useOnClickOutside(formRef, disableEditing);
 
-  const handleSubmitCreatePhase = (e: React.FormEvent) => {
+  const handleSubmitCreatePhase = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formDate.phase_start_date) {

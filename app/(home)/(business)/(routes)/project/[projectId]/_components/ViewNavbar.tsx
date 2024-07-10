@@ -370,12 +370,13 @@ export const ViewNavbar = ({
                     Các chức năng khác
                   </div>
 
-                  <Button
+                  {/* tạm thời ẩn */}
+                  {/* <Button
                     className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
                     variant={"ghost"}
                   >
                     <BiDetail className="w-3 h-3 mr-1" /> Chi tiết dự án
-                  </Button>
+                  </Button> */}
 
                   {userLogin?.role_name === "Lecturer" &&
                     dataProject?.project_status === "Processing" && (

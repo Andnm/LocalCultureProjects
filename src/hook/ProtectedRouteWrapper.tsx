@@ -19,7 +19,7 @@ const ProtectedRouteWrapper: React.FC<Props> = ({ children }) => {
   const [isDataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       const userFromSessionStorage = getUserFromSessionStorage();
       if (userFromSessionStorage) {
         setUserLogin(userFromSessionStorage);

@@ -1,7 +1,7 @@
 "use client";
 
 import { PhaseType } from "@/src/types/phase.type";
-import React from "react";
+import React, { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -14,6 +14,7 @@ import { useUserLogin } from "@/src/hook/useUserLogin";
 import { IoMdWarning } from "react-icons/io";
 import {
   changeStatusPhaseByBusiness,
+  deletePhase,
   uploadFeedback,
 } from "@/src/redux/features/phaseSlice";
 import { useAppDispatch } from "@/src/redux/store";
@@ -25,11 +26,13 @@ import { FcStart } from "react-icons/fc";
 import ModalPhaseDetail from "./phases/phases_detail/ModalPhaseDetail";
 import ModalChoosePaymentMethod from "./phases/phases_detail/ModalChoosePaymentMethod";
 import ModalAddFeedback from "./phases/ModalAddFeedback";
+import { message, Modal } from "antd";
+const { confirm } = Modal;
 
 interface ListOptionsProps {
   project: any;
   data: PhaseType;
-  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; // này là nguyên 1 list
   onAddCategory: () => void;
 }
 
@@ -219,8 +222,8 @@ const ListOptions = ({
                 </Button>
               )}
 
-              {data.phase_status !== "Done" &&
-                (data.phase_status === "Pending" ? (
+              {data?.phase_status !== "Done" &&
+                (data?.phase_status === "Pending" ? (
                   <Button
                     onClick={startPhase}
                     className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
@@ -244,7 +247,36 @@ const ListOptions = ({
                   <Separator className="bg-gray-200/100" />
 
                   <Button
-                    onClick={onAddCategory}
+                    onClick={() => {
+                      confirm({
+                        centered: true,
+                        cancelText: "Quay lại",
+                        okText: "Xác nhận",
+                        title: `Bạn có chắc muốn xóa giai đoạn ${data.phase_number} của dự án này? `,
+                        async onOk() {
+                          try {
+                            const resDeletePhase = await dispatch(
+                              deletePhase(data.id)
+                            );
+
+                            if (deletePhase.fulfilled.match(resDeletePhase)) {
+                              toast.success("Xóa giai đoạn thành công!");
+                              setPhaseData((prevPhaseData) => {
+                                const updatedPhaseDataList = prevPhaseData.filter(
+                                  (phase) => phase.id !== data.id
+                                );
+                                return updatedPhaseDataList;
+                              });
+                            } else {
+                              toast.error(`${resDeletePhase.payload}`);
+                            }
+                          } catch (error) {
+                            message.error("Có lỗi xảy ra");
+                          }
+                        },
+                        onCancel() {},
+                      });
+                    }}
                     className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"
                     variant={"ghost"}
                   >

@@ -11,7 +11,7 @@ interface ListPhaseContainerProps {
   projectId: number;
   groupId: number;
   phaseData: PhaseType[];
-  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; // này là nguyên 1 list
 }
 
 const ListPhaseContainer = ({
@@ -21,9 +21,8 @@ const ListPhaseContainer = ({
   phaseData,
   setPhaseData,
 }: ListPhaseContainerProps) => {
-  console.log("phasedata: ", phaseData);
   const [userLogin, setUserLogin] = useUserLogin();
-
+  console.log("phaseData list: ", phaseData);
   return (
     <div className="flex gap-x-6 h-full flex-wrap">
       {(phaseData === undefined ||

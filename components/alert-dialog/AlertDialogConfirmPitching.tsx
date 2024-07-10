@@ -222,11 +222,6 @@ export const AlertDialogConfirmPitching: React.FC<
       hasError = true;
     }
 
-    if (memberList.length !== 2) {
-      newErrors.memberList = "Vui lòng chọn đủ 2 giảng viên";
-      hasError = true;
-    }
-
     if (!file) {
       newErrors.file = "Vui lòng đăng file giới thiệu nhóm";
       hasError = true;

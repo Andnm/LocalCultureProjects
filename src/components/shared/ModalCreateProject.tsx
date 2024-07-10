@@ -410,6 +410,11 @@ export default function ModalCreateProject({
       }
     });
 
+    if(juridicalFilesOrigin.length === 0 ) {
+      setErrorFile("Vui lòng chọn file để đăng!")
+      hasError = true;
+    }
+
     if (hasError) {
       setErrorFirstProject((prevErrorFirstProject) => ({
         ...prevErrorFirstProject,

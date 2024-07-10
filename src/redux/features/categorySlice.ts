@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { PhaseType } from "@/src/types/phase.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
 import { CategoryType } from "@/src/types/category.type";
 
 export interface CategoryStatus {
@@ -114,20 +114,30 @@ interface ChangeStatusProps {
 export const changeStatusCategory = createAsyncThunk(
   "category/changeStatusCategory",
   async ({ categoryId, categoryStatus }: ChangeStatusProps, thunkAPI) => {
-    const token = getTokenFromSessionStorage();
-    const configHeader = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
     try {
       const response = await http.patch<any>(
         `/categories/changeStatus/${categoryId}/${categoryStatus}`,
         [],
-        configHeader
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const updateActualResult = createAsyncThunk(
+  "category/updateActualResult",
+  async (dataBody: any, thunkAPI) => {
+    try {
+      const response = await http.patch<any>(
+        `/categories/updateActualResult`,
+        dataBody,
+        getConfigHeader()
       );
 
       return response.data;
@@ -185,6 +195,21 @@ export const categorySlice = createSlice({
       state.error = "";
     });
     builder.addCase(updateCategoryInformation.rejected, (state, action) => {
+      state.loadingCategory = false;
+      state.error = action.payload as string;
+    });
+
+    //updateActualResult
+    builder.addCase(updateActualResult.pending, (state) => {
+      state.loadingCategory = true;
+      state.error = "";
+    });
+    builder.addCase(updateActualResult.fulfilled, (state, action) => {
+      state.loadingCategory = false;
+      //   state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(updateActualResult.rejected, (state, action) => {
       state.loadingCategory = false;
       state.error = action.payload as string;
     });

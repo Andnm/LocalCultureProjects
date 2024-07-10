@@ -76,11 +76,11 @@ const BusinessSidebar: React.FC<SidebarProps> = ({
       icon: <IoChatboxEllipsesOutline className="w-5 h-5" />,
       href: "/chat",
     },
-    // {
-    //   label: "Thông tin dự án",
-    //   icon: <IoSettingsOutline className="w-5 h-5" />,
-    //   href: "/setting",
-    // },
+    {
+      label: "Thông tin dự án",
+      icon: <IoSettingsOutline className="w-5 h-5" />,
+      href: "/setting",
+    },
   ];
 
   const handleNavigate = (href: string, id?: number) => {

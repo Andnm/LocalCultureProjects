@@ -51,11 +51,11 @@ const ViewSidebar = ({ dataProject }: BoardTitleFormProps) => {
       icon: <IoChatboxEllipsesOutline className="w-5 h-5" />,
       href: `${currentPath}chat`,
     },
-    // {
-    //   label: "Thông tin dự án",
-    //   icon: <IoSettingsOutline className="w-5 h-5" />,
-    //   href: `${currentPath}setting`,
-    // },
+    {
+      label: "Thông tin dự án",
+      icon: <IoSettingsOutline className="w-5 h-5" />,
+      href: `${currentPath}setting`,
+    },
   ];
 
   const routesInProject =

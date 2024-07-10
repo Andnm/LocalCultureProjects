@@ -9,7 +9,7 @@ import { changeStatusFromEnToVn } from "@/src/utils/handleFunction";
 interface ListHeaderProps {
   project: any;
   data: PhaseType;
-  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>; // này là nguyên 1 list
   onAddCategory: () => void;
 }
 
@@ -23,7 +23,7 @@ export const ListHeader = ({
   // console.log("data", data);
 
   const getBorderColorClass = () => {
-    switch (data.phase_status) {
+    switch (data?.phase_status) {
       case "Processing":
         return "border-yellow-500";
       case "Warning":
@@ -43,13 +43,13 @@ export const ListHeader = ({
   justify-between items-start gap-x-2 relative"
     >
       <div className="w-full text-sm px-2.5 py-1 h-7 font-medium border-transparent">
-        Giai đoạn {data.phase_number}
+        Giai đoạn {data?.phase_number}
       </div>
 
       <Hint
         sideOffset={100}
         description={`Giai đoạn ${changeStatusFromEnToVn(
-          data.phase_status
+          data?.phase_status
         ).toLowerCase()}`}
         side={"left"}
       >
