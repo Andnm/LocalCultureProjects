@@ -22,7 +22,6 @@ const ListPhaseContainer = ({
   setPhaseData,
 }: ListPhaseContainerProps) => {
   const [userLogin, setUserLogin] = useUserLogin();
-  console.log("phaseData list: ", phaseData);
   return (
     <div className="flex gap-x-6 h-full flex-wrap">
       {(phaseData === undefined ||

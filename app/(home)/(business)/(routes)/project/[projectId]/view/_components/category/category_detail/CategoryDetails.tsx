@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Descriptions, Button, Modal, message } from "antd";
 import { CheckCircleIcon, ClockIcon, Trash } from "lucide-react";
 import { Hint } from "@/components/hint";
@@ -8,7 +8,7 @@ const { TextArea } = Input;
 const { confirm } = Modal;
 
 interface Props {
-  dataCategory: any;
+  selectedCategory: any;
   setDataCategory: React.Dispatch<React.SetStateAction<any>>;
   editCategoryMode: boolean;
   setEditCategoryMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const CategoryDetails: React.FC<Props> = ({
-  dataCategory,
+  selectedCategory,
   editCategoryMode,
   setEditCategoryMode,
   formCategoryRef,
@@ -29,36 +29,45 @@ const CategoryDetails: React.FC<Props> = ({
   onEditCategory,
   handleChangeStatusCategory,
 }) => {
-  const renderIconAndHint = () => {
-    switch (dataCategory.category_status) {
-      case "Todo":
-        return {
-          icon: <ClockIcon className="w-4 h-4" />,
-          hint: "Chuyển hạng mục sang tiến hành",
-          action: () => handleChangeStatusCategory("Doing"),
-        };
-      case "Doing":
-        return {
-          icon: <CheckCircleIcon className="w-4 h-4" />,
-          hint: "Đánh dấu hoàn thành hạng mục",
-          action: () => handleChangeStatusCategory("Done"),
-        };
-      case "Done":
-        return {
-          icon: null,
-          hint: "",
-          action: undefined,
-        };
-      default:
-        return {
-          icon: null,
-          hint: "",
-          action: undefined,
-        };
-    }
-  };
+  const [icon, setIcon] = useState<React.ReactNode>(null);
+  const [hint, setHint] = useState<string>("");
+  const [action, setAction] = useState<(() => void) | undefined>(undefined);
 
-  const { icon, hint, action } = renderIconAndHint();
+  useEffect(() => {
+    const renderIconAndHint = () => {
+      switch (selectedCategory.category_status) {
+        case "Todo":
+          return {
+            icon: <ClockIcon className="w-4 h-4" />,
+            hint: "Chuyển hạng mục sang tiến hành",
+            action: () => handleChangeStatusCategory("Doing"),
+          };
+        case "Doing":
+          return {
+            icon: <CheckCircleIcon className="w-4 h-4" />,
+            hint: "Đánh dấu hoàn thành hạng mục",
+            action: () => handleChangeStatusCategory("Done"),
+          };
+        case "Done":
+          return {
+            icon: null,
+            hint: "",
+            action: undefined,
+          };
+        default:
+          return {
+            icon: null,
+            hint: "",
+            action: undefined,
+          };
+      }
+    };
+
+    const { icon, hint, action } = renderIconAndHint();
+    setIcon(icon);
+    setHint(hint);
+    setAction(() => action);
+  }, [selectedCategory]);
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -125,17 +134,17 @@ const CategoryDetails: React.FC<Props> = ({
       </div>
       <Descriptions className="px-5 mt-5">
         <Descriptions.Item label="Tên hạng mục">
-          <strong>{dataCategory.category_name}</strong>
+          <strong>{selectedCategory.category_name}</strong>
         </Descriptions.Item>
 
         <Descriptions.Item label="Trạng thái">
           <div className="flex flex-row gap-2 items-center">
             <span
               className={`text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full ${getStatusColor(
-                dataCategory.category_status
+                selectedCategory.category_status
               )}`}
             >
-              {dataCategory.category_status}
+              {selectedCategory.category_status}
             </span>
             {icon && (
               <Hint sideOffset={10} description={hint} side="right">
@@ -146,10 +155,12 @@ const CategoryDetails: React.FC<Props> = ({
                       centered: true,
                       cancelText: "Hủy",
                       okText: "Xác nhận",
-                      title: `Bạn có chắc muốn chuẩn trạng thái cho hạng mục này?`,
+                      title: `Bạn có chắc muốn chuyển trạng thái cho hạng mục này?`,
                       onOk: async () => {
                         try {
-                          await action();
+                          if (action) {
+                            await action();
+                          }
                         } catch (error) {
                           message.error("Có lỗi xảy ra khi chuyển trạng thái!");
                         }

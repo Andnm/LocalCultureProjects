@@ -47,8 +47,9 @@ interface Props {
   project: any;
   phaseData: any;
   setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
-  dataCategory: any;
-  setDataCategory: React.Dispatch<React.SetStateAction<any[]>>;
+  selectedCategory: any; //này chỉ là 1 category
+  setSelectedCategory: React.Dispatch<React.SetStateAction<any>>;
+  setDataCategory: React.Dispatch<React.SetStateAction<any[]>>; //cái là 1 list category
 }
 
 const ModalCategoryDetail: React.FC<Props> = ({
@@ -58,11 +59,11 @@ const ModalCategoryDetail: React.FC<Props> = ({
   groupId,
   phaseData,
   setPhaseData,
-  dataCategory,
+  selectedCategory,
+  setSelectedCategory,
   setDataCategory,
 }) => {
-  console.log("dataCategory: ", dataCategory);
-  console.log("phaseData: ", phaseData);
+  console.log("selectedCategory: ", selectedCategory);
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //form quản lý
@@ -81,10 +82,10 @@ const ModalCategoryDetail: React.FC<Props> = ({
   useEffect(() => {
     setIsLoading(true);
     formCategory.setFieldsValue({
-      ...dataCategory,
+      ...selectedCategory,
     });
 
-    dispatch(getCostInCategory(dataCategory.id))
+    dispatch(getCostInCategory(selectedCategory.id))
       .then((result) => {
         if (getCostInCategory.fulfilled.match(result)) {
           formCost.setFieldsValue({
@@ -109,7 +110,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
       .finally(() => {
         setIsLoading(false);
       });
-  }, [dataCategory.id]);
+  }, [selectedCategory.id]);
 
   useEffect(() => {
     const files: UploadFile[] = evidenceList.map((evidence, index) => ({
@@ -129,7 +130,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
     const values = await formCategory.validateFields();
     const resEditCategory = await dispatch(
       updateActualResult({
-        categoryId: dataCategory?.id,
+        categoryId: selectedCategory?.id,
         groupId: groupId,
         actual_result: formCategory.getFieldValue("result_actual"),
       })
@@ -168,7 +169,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
   const handleChangeStatusCategory = async (status: string) => {
     const resChangeStatusCategory = await dispatch(
       changeStatusCategory({
-        categoryId: dataCategory?.id,
+        categoryId: selectedCategory?.id,
         categoryStatus: status,
       })
     );
@@ -178,10 +179,31 @@ const ModalCategoryDetail: React.FC<Props> = ({
 
       formCategory.setFieldValue("category_status", status);
 
-      setDataCategory((prevDataCategory) => ({
+      setSelectedCategory((prevDataCategory: any) => ({
         ...prevDataCategory,
         category_status: status,
-      }));
+      }))
+      
+      setPhaseData((prevPhaseData) => {
+        const updatedPhaseData = prevPhaseData.map((phase) => {
+          const updatedCategories = phase.categories.map((category: any) => {
+            if (category.id === selectedCategory?.id) {
+              return {
+                ...category,
+                category_status: status,
+              };
+            }
+            return category;
+          });
+
+          return {
+            ...phase,
+            categories: updatedCategories,
+          };
+        });
+
+        return updatedPhaseData;
+      });
     } else {
       toast.error(`${resChangeStatusCategory.payload}`);
     }
@@ -194,7 +216,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
       updateActualCost({
         costId: formCost.getFieldValue("costId"),
         phaseId: phaseData?.id,
-        categoryId: dataCategory?.id,
+        categoryId: selectedCategory?.id,
         actual_cost: formCost.getFieldValue("actual_cost"),
       })
     );
@@ -242,7 +264,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
         <div>
           <CategoryDetails
             formCategoryRef={formCategoryRef}
-            dataCategory={dataCategory}
+            selectedCategory={selectedCategory}
             setDataCategory={setDataCategory}
             editCategoryMode={editCategoryMode}
             setEditCategoryMode={setEditCategoryMode}

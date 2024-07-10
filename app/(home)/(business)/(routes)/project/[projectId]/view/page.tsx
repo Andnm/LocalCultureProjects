@@ -38,7 +38,7 @@ const ProjectIdPage = () => {
         const sortedPhaseData = [...data.phases]?.sort(
           (a, b) => a?.phase_number - b?.phase_number
         );
-        console.log("phase: ", sortedPhaseData);
+        // console.log("phase: ", sortedPhaseData);
 
         // console.log("data.phases", data.phases);
         setPhaseData(sortedPhaseData);

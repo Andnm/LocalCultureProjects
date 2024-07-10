@@ -54,7 +54,7 @@ const ListItem = ({
             return a?.id - b?.id;
           }
         );
-        // console.log("sortedCategories: ", sortedCategories);
+        console.log("sortedCategories: ", sortedCategories);
         setDataCategory(sortedCategories);
       });
 

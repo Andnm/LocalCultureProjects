@@ -98,7 +98,8 @@ const ListCategory = ({
           project={project}
           phaseData={phaseData}
           setPhaseData={setPhaseData}
-          dataCategory={selectedCategory}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
           setDataCategory={setDataCategory}
           open={isOpenModalCategoryDetail}
           onClose={() => {
