@@ -4,3 +4,9 @@ export interface EvidenceType {
   evidence_url: string;
   costId: number;
 }
+
+export interface CreateEvidenceType {
+  description: string;
+  evidence_url: string;
+  costId: number;
+}

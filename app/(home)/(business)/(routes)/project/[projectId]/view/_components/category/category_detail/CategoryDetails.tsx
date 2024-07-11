@@ -8,6 +8,7 @@ const { TextArea } = Input;
 const { confirm } = Modal;
 
 interface Props {
+  userLogin: any;
   selectedCategory: any;
   setDataCategory: React.Dispatch<React.SetStateAction<any>>;
   editCategoryMode: boolean;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const CategoryDetails: React.FC<Props> = ({
+  userLogin,
   selectedCategory,
   editCategoryMode,
   setEditCategoryMode,
@@ -91,46 +93,47 @@ const CategoryDetails: React.FC<Props> = ({
 
   return (
     <>
-      {" "}
       <div className="flex flex-row gap-3">
         <p className="font-bold text-lg"> Chi tiết hạng mục </p>
-        <div className="flex flex-row gap-3">
-          {editCategoryMode ? (
-            <>
-              <Button onClick={onCancelEditCategory}>Hủy</Button>
-              <Button
-                type="primary"
-                onClick={async () => {
-                  confirm({
-                    centered: true,
-                    cancelText: "Hủy",
-                    okText: "Xác nhận",
-                    title: `Bạn có chắc muốn cập nhập kết quả thực tế?`,
-                    onOk: async () => {
-                      try {
-                        await onEditCategory();
-                      } catch (error) {
-                        console.log("error: ", error);
-                        message.error("Có lỗi xảy ra khi cập nhập!");
-                      }
-                    },
-                  });
-                }}
-              >
-                Cập nhập
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button onClick={() => setEditCategoryMode(true)}>
-                <BiEdit className="h-3 w-3" /> Sửa
-              </Button>
-              <Button danger onClick={() => {}}>
-                <Trash className="h-3 w-3" /> Xóa
-              </Button>
-            </>
-          )}
-        </div>
+        {userLogin?.role_name === "Student" && (
+          <div className="flex flex-row gap-3">
+            {editCategoryMode ? (
+              <>
+                <Button onClick={onCancelEditCategory}>Hủy</Button>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    confirm({
+                      centered: true,
+                      cancelText: "Hủy",
+                      okText: "Xác nhận",
+                      title: `Bạn có chắc muốn cập nhập kết quả thực tế?`,
+                      onOk: async () => {
+                        try {
+                          await onEditCategory();
+                        } catch (error) {
+                          console.log("error: ", error);
+                          message.error("Có lỗi xảy ra khi cập nhập!");
+                        }
+                      },
+                    });
+                  }}
+                >
+                  Cập nhập
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => setEditCategoryMode(true)}>
+                  <BiEdit className="h-3 w-3" /> Sửa
+                </Button>
+                <Button danger onClick={() => {}}>
+                  <Trash className="h-3 w-3" /> Xóa
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <Descriptions className="px-5 mt-5">
         <Descriptions.Item label="Tên hạng mục">

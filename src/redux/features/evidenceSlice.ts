@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import { PhaseType } from "@/src/types/phase.type";
 import { ErrorType } from "@/src/types/error.type";
-import { getTokenFromSessionStorage } from "../utils/handleToken";
-import { EvidenceType } from "@/src/types/evidence.type";
+import { getConfigHeader, getTokenFromSessionStorage } from "../utils/handleToken";
+import { CreateEvidenceType, EvidenceType } from "@/src/types/evidence.type";
 
 export interface EvidenceStatus {
   data: EvidenceType | null;
@@ -17,28 +17,13 @@ const initialState: EvidenceStatus = {
   error: "",
 };
 
-interface CreateEvidenceBody {
-    description: string,
-    evidence_url: string,
-    costId: number
-}
 
 export const createEvidence = createAsyncThunk(
   "evidence/createEvidence",
-  async (dataBody: CreateEvidenceBody, thunkAPI) => {
-    const token = getTokenFromSessionStorage();
-    const configHeader = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
+  async (dataBody: CreateEvidenceType, thunkAPI) => {
     try {
-      const response = await http.post<any>(`/evidences`, dataBody, configHeader);
+      const response = await http.post<any>(`/evidences`, dataBody, getConfigHeader());
 
-      console.log("dataBody", dataBody)
       return response.data;
     } catch (error) {
       console.log(error)

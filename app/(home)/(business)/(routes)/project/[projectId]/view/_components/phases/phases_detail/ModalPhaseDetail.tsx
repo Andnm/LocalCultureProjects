@@ -64,7 +64,7 @@ const ModalPhaseDetail: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      centered
+      style={{ top: 10 }}
       width={"max-w-full"}
       open={open}
       onCancel={() => {

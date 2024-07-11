@@ -6,6 +6,7 @@ import { BiEdit } from "react-icons/bi";
 const { confirm } = Modal;
 
 interface Props {
+  userLogin: any;
   editCostMode: boolean;
   setEditCostMode: React.Dispatch<React.SetStateAction<boolean>>;
   formCost: any; // Form Instance
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const CostDetails: React.FC<Props> = ({
+  userLogin,
   editCostMode,
   setEditCostMode,
   formCost,
@@ -26,39 +28,41 @@ const CostDetails: React.FC<Props> = ({
     <>
       <div className="flex flex-row gap-3">
         <p className="font-bold text-lg"> Chi phí </p>
-        <div className="flex flex-row gap-3">
-          {editCostMode ? (
-            <>
-              <Button onClick={onCancelEditCost}>Hủy</Button>
-              <Button
-                type="primary"
-                onClick={async () => {
-                  confirm({
-                    centered: true,
-                    cancelText: "Hủy",
-                    okText: "Xác nhận",
-                    title: `Bạn có chắc muốn cập nhập chi phí thực tế?`,
-                    onOk: async () => {
-                      try {
-                        await onEditCost();
-                      } catch (error) {
-                        message.error("Có lỗi xảy ra khi cập nhập!");
-                      }
-                    },
-                  });
-                }}
-              >
-                Cập nhập
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button onClick={() => setEditCostMode(true)}>
-                <BiEdit className="h-3 w-3" /> Sửa
-              </Button>
-            </>
-          )}
-        </div>
+        {userLogin?.role_name === "Student" && (
+          <div className="flex flex-row gap-3">
+            {editCostMode ? (
+              <>
+                <Button onClick={onCancelEditCost}>Hủy</Button>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    confirm({
+                      centered: true,
+                      cancelText: "Hủy",
+                      okText: "Xác nhận",
+                      title: `Bạn có chắc muốn cập nhập chi phí thực tế?`,
+                      onOk: async () => {
+                        try {
+                          await onEditCost();
+                        } catch (error) {
+                          message.error("Có lỗi xảy ra khi cập nhập!");
+                        }
+                      },
+                    });
+                  }}
+                >
+                  Cập nhập
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => setEditCostMode(true)}>
+                  <BiEdit className="h-3 w-3" /> Sửa
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <Form
         form={formCost}

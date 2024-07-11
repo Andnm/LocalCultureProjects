@@ -19,16 +19,7 @@ import {
   updateActualCost,
 } from "@/src/redux/features/costSlice";
 import { getEvidenceInCost } from "@/src/redux/features/evidenceSlice";
-import {
-  changeStatusFromEnToVn,
-  formatCurrency,
-  formatDate,
-} from "@/src/utils/handleFunction";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { BiEdit } from "react-icons/bi";
-import { CheckCircleIcon, ClockIcon, Trash } from "lucide-react";
-import { RcFile } from "antd/es/upload";
-import { Hint } from "@/components/hint";
+
 import CategoryDetails from "./CategoryDetails";
 import CostDetails from "./CostDetails";
 import EvidenceDetails from "./EvidenceDetails";
@@ -38,6 +29,7 @@ import {
   updateCategoryInformation,
 } from "@/src/redux/features/categorySlice";
 import toast from "react-hot-toast";
+import { useUserLogin } from "@/src/hook/useUserLogin";
 const { TextArea } = Input;
 
 interface Props {
@@ -63,7 +55,6 @@ const ModalCategoryDetail: React.FC<Props> = ({
   setSelectedCategory,
   setDataCategory,
 }) => {
-  console.log("selectedCategory: ", selectedCategory);
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //form quản lý
@@ -77,7 +68,11 @@ const ModalCategoryDetail: React.FC<Props> = ({
 
   //evidence
   const [evidenceList, setEvidenceList] = useState<any[]>([]);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileListOrigin, setFileListOrigin] = useState<string[]>([]);
+  const [fileUpdateList, setFileUpdateList] = useState<UploadFile[]>([]);
+
+  //
+  const [userLogin, setUserLogin] = useUserLogin();
 
   useEffect(() => {
     setIsLoading(true);
@@ -95,6 +90,11 @@ const ModalCategoryDetail: React.FC<Props> = ({
           dispatch(getEvidenceInCost(result.payload.id)).then((res) => {
             if (getEvidenceInCost.fulfilled.match(res)) {
               setEvidenceList(res.payload);
+
+              const filesOrigin: string[] = res.payload.map(
+                (evidence: any) => evidence.evidence_url
+              );
+              setFileListOrigin(filesOrigin);
             } else {
               message.error("Lỗi khi tải bằng chứng");
             }
@@ -112,18 +112,8 @@ const ModalCategoryDetail: React.FC<Props> = ({
       });
   }, [selectedCategory.id]);
 
-  useEffect(() => {
-    const files: UploadFile[] = evidenceList.map((evidence, index) => ({
-      uid: String(index),
-      name: evidence.name,
-      status: "done",
-      url: evidence.url,
-    }));
-    setFileList(files);
-  }, [evidenceList]);
-
   const handleUploadChange: UploadProps["onChange"] = ({ fileList }) => {
-    setFileList(fileList);
+    setFileUpdateList(fileList);
   };
 
   const handleEditCategory = async () => {
@@ -182,8 +172,8 @@ const ModalCategoryDetail: React.FC<Props> = ({
       setSelectedCategory((prevDataCategory: any) => ({
         ...prevDataCategory,
         category_status: status,
-      }))
-      
+      }));
+
       setPhaseData((prevPhaseData) => {
         const updatedPhaseData = prevPhaseData.map((phase) => {
           const updatedCategories = phase.categories.map((category: any) => {
@@ -228,12 +218,9 @@ const ModalCategoryDetail: React.FC<Props> = ({
       setEditCostMode(false);
       setPhaseData((prevPhaseData) => {
         const updatedPhaseData = prevPhaseData.map((phase) => {
-          const newActualCostTotal =
-            phase.actual_cost_total + formCost.getFieldValue("actual_cost");
-
           return {
             ...phase,
-            actual_cost_total: newActualCostTotal,
+            actual_cost_total: resEditCost.payload.actualCostOfPhase,
           };
         });
 
@@ -254,7 +241,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
 
   return (
     <Modal
-      centered
+      style={{ top: 10 }}
       width={"80%"}
       visible={open}
       onCancel={onClose}
@@ -263,6 +250,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
       <Spin spinning={isLoading}>
         <div>
           <CategoryDetails
+            userLogin={userLogin}
             formCategoryRef={formCategoryRef}
             selectedCategory={selectedCategory}
             setDataCategory={setDataCategory}
@@ -275,6 +263,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
           />
 
           <CostDetails
+            userLogin={userLogin}
             editCostMode={editCostMode}
             formCostRef={formCostRef}
             formCost={formCost}
@@ -284,8 +273,12 @@ const ModalCategoryDetail: React.FC<Props> = ({
           />
 
           <EvidenceDetails
-            fileList={fileList}
-            setFileList={setFileList}
+            userLogin={userLogin}
+            costId={formCost.getFieldValue("costId")}
+            fileListOrigin={fileListOrigin}
+            setFileListOrigin={setFileListOrigin}
+            fileUpdateList={fileUpdateList}
+            setFileUpdateList={setFileUpdateList}
             handleUploadChange={handleUploadChange}
           />
         </div>
