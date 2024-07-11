@@ -29,7 +29,7 @@ const AccountProfile = () => {
     dispatch(getProfileUser(userLogin?.email)).then((result) => {
       if (getProfileUser.fulfilled.match(result)) {
         setUserData(result.payload);
-        console.log("data", result.payload);
+        // console.log("data", result.payload);
       }
     });
   }, [userLogin]);

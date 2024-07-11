@@ -75,7 +75,7 @@ const Messages: React.FC<MessagesProps> = ({ arrayGroupId, projectId }) => {
       socketInstance.on(
         `getAllMessage-${compareIdentifierUserChat}`,
         (data: any) => {
-          console.log("data", data.messages);
+          // console.log("data", data.messages);
           setMessages(data.messages);
         }
       );

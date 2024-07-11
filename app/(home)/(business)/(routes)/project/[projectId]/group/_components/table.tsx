@@ -45,7 +45,7 @@ const TableMemberInGroup: React.FC<TableProps> = ({
   const [memberInGroup, setMemberInGroup] = React.useState<any>([]);
   const dispatch = useAppDispatch();
 
-  console.log("dataGroupPitching", dataGroupPitching);
+  // console.log("dataGroupPitching", dataGroupPitching);
 
   React.useEffect(() => {
     dispatch(getAllMemberByGroupId(group?.group?.id)).then((result: any) => {

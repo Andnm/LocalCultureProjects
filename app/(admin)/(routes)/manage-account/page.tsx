@@ -100,7 +100,7 @@ const ManageAccount = () => {
   React.useEffect(() => {
     dispatch(getAllUser(currentPage)).then((result) => {
       if (getAllUser.rejected.match(result)) {
-        console.log(result.payload);
+        // console.log(result.payload);
         toast.error(`${result.payload}`);
       } else if (getAllUser.fulfilled.match(result)) {
         setTotalObject(result.payload[0]?.totalUsers);

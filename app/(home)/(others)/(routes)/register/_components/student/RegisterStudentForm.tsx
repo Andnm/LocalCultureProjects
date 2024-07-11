@@ -129,7 +129,7 @@ const RegisterStudentForm: React.FC<RegisterStudentFormProps> = ({
     };
 
     dispatch(updateUserProfile(data)).then((resUpdate) => {
-      console.log("resUpdate", resUpdate);
+      // console.log("resUpdate", resUpdate);
       if (updateUserProfile.fulfilled.match(resUpdate)) {
         const user = getUserFromSessionStorage();
 

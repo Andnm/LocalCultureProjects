@@ -233,7 +233,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         }
       });
 
-      console.log("updatedErrorBusinessData", updatedErrorBusinessData);
+      // console.log("updatedErrorBusinessData", updatedErrorBusinessData);
 
       if (hasError) {
         setErrorBusinessData((prevErrorBusinessData) => ({
@@ -321,9 +321,9 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       }
     });
 
-    console.log("updatedErrorFirstProject", updatedErrorFirstProject);
+    // console.log("updatedErrorFirstProject", updatedErrorFirstProject);
 
-    console.log("firstProject", firstProject);
+    // console.log("firstProject", firstProject);
 
     if (hasError) {
       setErrorFirstProject((prevErrorFirstProject) => ({
@@ -358,7 +358,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
       };
 
       const resUpdate = await dispatch(updateUserProfile(dataUpdateProfile));
-      console.log("resUpdate", resUpdate);
+      // console.log("resUpdate", resUpdate);
 
       if (updateUserProfile.fulfilled.match(resUpdate)) {
         const user = getUserFromSessionStorage();
@@ -381,7 +381,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         checkExistResponsiblePersonByEmail(responsiblePerson.email)
       );
 
-      console.log("resCheckResEmailExist", resCheckResEmailExist);
+      // console.log("resCheckResEmailExist", resCheckResEmailExist);
 
       // check nếu tồn tại thì sẽ thêm vào, còn nếu chưa tồn tại thì tạo mới
 
@@ -398,7 +398,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
             })
           );
 
-          console.log("resCreateResponsiblePerson", resCreateResponsiblePerson);
+          // console.log("resCreateResponsiblePerson", resCreateResponsiblePerson);
 
           if (
             createResponsiblePerson.rejected.match(resCreateResponsiblePerson)
@@ -456,7 +456,7 @@ const RegisterBusinessForm: React.FC<RegisterBusinessFormProps> = ({
         createNewProject(dataFirstProject)
       );
 
-      console.log("resCreateProject", resCreateProject);
+      // console.log("resCreateProject", resCreateProject);
 
       if (createNewProject.rejected.match(resCreateProject)) {
         toast.error(`Có lỗi xảy ra ở bước 3!`);

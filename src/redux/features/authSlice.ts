@@ -60,7 +60,7 @@ export const login = createAsyncThunk(
         configHeader
       );
 
-      console.log("resGetProfile", resGetProfile);
+      // console.log("resGetProfile", resGetProfile);
 
       saveTokenToSessionStorage(response.data.accessToken);
 

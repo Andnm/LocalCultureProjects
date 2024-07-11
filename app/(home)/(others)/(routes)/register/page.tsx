@@ -54,11 +54,11 @@ const RegisterPage = () => {
       email: userLogin?.email,
     };
 
-    console.log("data", data);
+    // console.log("data", data);
     // setOpenOtpForm(false);
 
     dispatch(verifyOtp(data)).then((resOtp) => {
-      console.log("result", resOtp.payload);
+      // console.log("result", resOtp.payload);
       if (verifyOtp.rejected.match(resOtp)) {
         setErrorOtp(resOtp.payload as string);
       } else if (verifyOtp.fulfilled.match(resOtp)) {
@@ -80,7 +80,7 @@ const RegisterPage = () => {
     setLoadingData(true);
     dispatch(sendOtpRegister({ email: userLogin?.email })).then(
       (resSendOtp: any) => {
-        console.log("resSendOtp", resSendOtp.payload);
+        // console.log("resSendOtp", resSendOtp.payload);
 
         if (sendOtpRegister.rejected.match(resSendOtp)) {
           //do something
@@ -112,7 +112,7 @@ const RegisterPage = () => {
             //do something
             // console.log("resSendOtp", resSendOtp);
           } else if (sendOtpRegister.fulfilled.match(resSendOtp)) {
-            console.log("resSendOtp", resSendOtp.payload);
+            // console.log("resSendOtp", resSendOtp.payload);
             setOpenOtpForm(true);
           }
         }

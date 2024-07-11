@@ -288,7 +288,7 @@ export const AlertDialogConfirmPitching: React.FC<
                   createNewNotification(dataBodyNoti)
                 );
 
-                console.log("resNoti", resNoti);
+                // console.log("resNoti", resNoti);
                 const compareIdentifierUserChat = `${dataProject?.id}-${selected?.group?.id}`;
 
                 const dataBody = {
@@ -300,11 +300,11 @@ export const AlertDialogConfirmPitching: React.FC<
 
                 dispatch(createUserChat(dataBody)).then((result) => {
                   if (createUserChat.fulfilled.match(result)) {
-                    console.log("tạo userChat thành công");
-                    console.log("create userchat SUCCESS", result.payload);
+                    // console.log("tạo userChat thành công");
+                    // console.log("create userchat SUCCESS", result.payload);
                   } else {
-                    console.log("create userchat FAIL", result.payload);
-                    console.log("tạo userchat thất bại");
+                    // console.log("create userchat FAIL", result.payload);
+                    // console.log("tạo userchat thất bại");
                   }
                 });
 

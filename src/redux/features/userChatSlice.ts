@@ -29,8 +29,8 @@ export const createUserChat = createAsyncThunk(
       },
     };
 
-    console.log("dataBody", dataBody);
-    console.log("configHeader", configHeader);
+    // console.log("dataBody", dataBody);
+    // console.log("configHeader", configHeader);
 
     try {
       const response = await http.post<any>(

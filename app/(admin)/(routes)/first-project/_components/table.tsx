@@ -108,7 +108,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         };
 
         dispatch(createNewNotification(dataBodyNoti)).then((resNoti) => {
-          console.log(resNoti);
+          // console.log(resNoti);
         });
 
         setDataTable((prevDataTable) => {
@@ -127,7 +127,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
         toast.success("Phê duyệt thành công!");
       } else if (confirmProjectByAdmin.rejected.match(result)) {
         toast.error(`${result.payload}`);
-        console.log(result);
+        // console.log(result);
       }
       setDataTable((prevDataTable) =>
         prevDataTable.filter((project) => project.id !== selectedProject.id)

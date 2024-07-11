@@ -95,7 +95,7 @@ const ProjectList = () => {
   React.useEffect(() => {
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        console.log("result", result.payload);
+        // console.log("result", result.payload);
         // getProjects
         const newListProjects = result.payload[1]?.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt);

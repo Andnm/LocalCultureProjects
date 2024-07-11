@@ -288,7 +288,7 @@ export const ViewNavbar = ({
           socketInstance.disconnect();
 
           setSummaryReport(result.payload);
-          console.log("result.payload", result.payload);
+          // console.log("result.payload", result.payload);
         } else {
           // toast.error("Lỗi khi lấy dữ liệu");
           socketInstance.on(
@@ -296,7 +296,7 @@ export const ViewNavbar = ({
             (data: any) => {
               // console.log("ok socket fail");
               setSummaryReport(data.summaryReport);
-              console.log("fail", data.summaryReport);
+              // console.log("fail", data.summaryReport);
             }
           );
         }
@@ -311,7 +311,7 @@ export const ViewNavbar = ({
       ).then((result) => {
         if (getSummaryReportByProjectId.fulfilled.match(result)) {
           setSummaryReport(result.payload);
-          console.log("result.payload", result.payload);
+          // console.log("result.payload", result.payload);
         } else {
         }
       });

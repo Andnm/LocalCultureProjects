@@ -73,7 +73,7 @@ const SelectedProvince: React.FC<SelectedProvinceProps> = ({
   };
 
   const handleProvinceChange = (selectedOption: any) => {
-    console.log("se: ", selectedOption?.value);
+    // console.log("se: ", selectedOption?.value);
     setSelectedProvince(selectedOption?.value);
     setErrorBusinessData((prevErrorBusinessData: any) => ({
       ...prevErrorBusinessData,

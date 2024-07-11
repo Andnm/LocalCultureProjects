@@ -140,7 +140,7 @@ export const AlertDialogCreateProject = ({
   };
 
   const handleDateChange = (name: any, value: any) => {
-    console.log("selected date", value);
+    // console.log("selected date", value);
     setFormDate((prevData: any) => ({
       ...prevData,
       [name]: value,

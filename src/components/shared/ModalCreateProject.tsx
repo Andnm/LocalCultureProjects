@@ -322,7 +322,7 @@ export default function ModalCreateProject({
         }
       });
 
-      console.log("updatedErrorBusinessData", updatedErrorBusinessData);
+      // console.log("updatedErrorBusinessData", updatedErrorBusinessData);
 
       if (hasError) {
         setErrorBusinessData((prevErrorBusinessData) => ({
@@ -530,7 +530,7 @@ export default function ModalCreateProject({
           break;
       }
     } catch (error) {
-      console.log("error check: ", error);
+      // console.log("error check: ", error);
       setResultCase(5);
     } finally {
       setIsLoading(false);
@@ -614,7 +614,7 @@ export default function ModalCreateProject({
 
         const resCreateProject = await dispatch(createProjectActionAPI(dataBody));
 
-        console.log("resCreateProject: ", resCreateProject);
+        // console.log("resCreateProject: ", resCreateProject);
 
         if (
           createProjectActionAPI.rejected.match(resCreateProject)
@@ -670,7 +670,7 @@ export default function ModalCreateProject({
         }
       }
     } catch (error) {
-      console.log("error create project: ", error);
+      // console.log("error create project: ", error);
     } finally {
       setShouldCallCreateProject(false);
       setIsLoading(false);

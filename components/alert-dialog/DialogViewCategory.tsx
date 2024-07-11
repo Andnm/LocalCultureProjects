@@ -60,7 +60,7 @@ const DialogViewCategory = ({
     setIsCreatingCost(true);
   };
 
-  console.log("cost", cost);
+  // console.log("cost", cost);
 
   const handleCloseCreateCost = () => {
     setIsCreatingCost(false);

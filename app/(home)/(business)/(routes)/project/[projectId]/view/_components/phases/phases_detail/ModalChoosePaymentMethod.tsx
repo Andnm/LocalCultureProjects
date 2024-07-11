@@ -73,7 +73,7 @@ const ModalChoosePaymentMethod: React.FC<Props> = (props) => {
               })
             );
 
-            console.log("resCreatePaymentUrl: ", resCreatePaymentUrl);
+            // console.log("resCreatePaymentUrl: ", resCreatePaymentUrl);
 
             if (createPaymentUrl.fulfilled.match(resCreatePaymentUrl)) {
               const redirectUrl =

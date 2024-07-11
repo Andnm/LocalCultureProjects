@@ -24,7 +24,7 @@ const SecondStage: React.FC<SecondStageProps> = ({
 
     //xử lý search field
     if (field === "email" && value && userLogin?.role_name === "Admin") {
-      console.log("come");
+      // console.log("come");
       setErrorResponsiblePerson((prevErrorResponsiblePerson: any) => ({
         ...prevErrorResponsiblePerson,
         email: "",

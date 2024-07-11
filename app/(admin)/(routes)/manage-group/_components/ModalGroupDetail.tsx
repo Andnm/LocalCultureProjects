@@ -99,7 +99,7 @@ const ModalGroupDetail: React.FC<Props> = (props) => {
                   dataGroup.members = filteredMembers;
                   setDataTable([...dataGroup]);
                 } else {
-                  console.log("error:", res.payload);
+                  // console.log("error:", res.payload);
                   toast.error(`${res.payload}`);
                 }
               })

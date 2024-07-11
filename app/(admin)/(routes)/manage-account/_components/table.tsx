@@ -112,8 +112,8 @@ const AccountTable: React.FC<ProjectTableProps> = ({
     dispatch(deleteUser(selectedAccount.email)).then((resDelete) => {
       if (deleteUser.fulfilled.match(resDelete)) {
         toast.success("Xóa thành công!");
-        console.log("selectedAccount.email", selectedAccount.email);
-        console.log("datatable", dataTable);
+        // console.log("selectedAccount.email", selectedAccount.email);
+        // console.log("datatable", dataTable);
         setDataTable((prevDataTable) =>
           prevDataTable.filter(
             (account) => account.email !== selectedAccount.email
@@ -145,7 +145,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
 
     if (selectedAccount.is_ban) {
       dispatch(unBanAccount(selectedAccount.email)).then((resUnBan) => {
-        console.log("resUnBan", resUnBan);
+        // console.log("resUnBan", resUnBan);
         if (unBanAccount.fulfilled.match(resUnBan)) {
           toast.success("Mở lại tài khoản thành công!");
 
@@ -174,7 +174,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
       });
     } else {
       dispatch(banAccount(selectedAccount.email)).then((resBan) => {
-        console.log("resBan", resBan);
+        // console.log("resBan", resBan);
         if (banAccount.fulfilled.match(resBan)) {
           toast.success("Ban thành công!");
           setDataTable((prevDataTable) =>

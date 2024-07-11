@@ -16,7 +16,7 @@ const ModalSupportDetail: React.FC<Props> = (props) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const formRef = useRef(null);
   const [form] = Form.useForm();
-  console.log("dataSupport: ", dataSupport);
+  // console.log("dataSupport: ", dataSupport);
 
   return (
     <>

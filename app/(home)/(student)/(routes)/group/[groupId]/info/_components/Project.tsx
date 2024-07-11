@@ -40,7 +40,7 @@ const Project = ({ projectId }: { projectId: number }) => {
     dispatch(getAllGroupAreMembers()).then((result) => {
       if (getAllGroupAreMembers.fulfilled.match(result)) {
         setGroupList(result.payload);
-        console.log("group", result.payload);
+        // console.log("group", result.payload);
       }
     });
   }, [projectId]);

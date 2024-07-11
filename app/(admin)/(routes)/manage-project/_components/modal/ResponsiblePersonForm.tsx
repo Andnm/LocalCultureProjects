@@ -131,11 +131,11 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
           "Responsible_Person_View",
       };
 
-      console.log("dataBody:");
+      // console.log("dataBody:");
 
       const res = await dispatch(addMoreResponsiblePersonByAdmin(dataBody));
 
-      console.log("res: ", res);
+      // console.log("res: ", res);
       if (addMoreResponsiblePersonByAdmin.fulfilled.match(res)) {
         setResponsiblePersonList((prevList: any[]) => [
           ...prevList,
@@ -282,7 +282,7 @@ const ResponsiblePersonForm: React.FC<ResponsiblePersonFormProps> = ({
                           const resProviderAccount = await dispatch(
                             provideAccountResponsible(dataBody)
                           );
-                          console.log("res: ", resProviderAccount);
+                          // console.log("res: ", resProviderAccount);
                           if (
                             provideAccountResponsible.fulfilled.match(
                               resProviderAccount

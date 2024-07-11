@@ -73,7 +73,7 @@ export const AlertDialogCreateGroupAndInviteMember: React.FC<
         searchEmail: event.target.value,
       })
     ).then((result) => {
-      console.log("result", result)
+      // console.log("result", result)
       setMemberResultSearch(result.payload);
       setLoadingSearchResult(false);
     });

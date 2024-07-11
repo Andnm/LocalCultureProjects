@@ -32,7 +32,7 @@ const Page: React.FC = () => {
 
       const resForgotPassword = await dispatch(forgotPassword(dataBody));
 
-      console.log("resForgotPassword: ", resForgotPassword);
+      // console.log("resForgotPassword: ", resForgotPassword);
 
       if (forgotPassword.fulfilled.match(resForgotPassword)) {
         setResEmailForm({
@@ -82,7 +82,7 @@ const Page: React.FC = () => {
     setLoadingData(true);
     dispatch(forgotPassword({ email: form.getFieldValue("email") })).then(
       (resSendOtp: any) => {
-        console.log("resSendOtp: ", resSendOtp.payload);
+        // console.log("resSendOtp: ", resSendOtp.payload);
 
         if (forgotPassword.rejected.match(resSendOtp)) {
           //do something

@@ -57,12 +57,12 @@ export const AlertDialogConfirmChoose: React.FC<
       //     console.log(result.payload);
       //   }
       // );
-      console.log("dataGroupPitching", dataGroupPitching);
-      console.log("groupId", groupId);
+      // console.log("dataGroupPitching", dataGroupPitching);
+      // console.log("groupId", groupId);
 
       // TẠM THỜI ẨN
       if (chooseGroupByBusiness.fulfilled.match(result)) {
-        console.log("suc", result.payload);
+        // console.log("suc", result.payload);
         const updatedDataGroupPitching = dataGroupPitching.map((item: any) => {
           if (item.group.id === groupId) {
             return { ...item, register_pitching_status: "Selected" };

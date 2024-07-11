@@ -297,7 +297,7 @@ export const unBanAccount = createAsyncThunk(
 export const updateProfileNotAuth = createAsyncThunk(
   "user/updateProfileNotAuth",
   async (data: any, thunkAPI) => {
-    console.log("data update", data);
+    // console.log("data update", data);
     try {
       const response = await http.patch<any>(
         `users/update-profile-not-auth`,

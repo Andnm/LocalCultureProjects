@@ -33,7 +33,7 @@ export const createMessage = createAsyncThunk(
     try {
       const response = await http.post<any>(`/message`, dataBody, configHeader);
 
-      console.log("dataBody", dataBody)
+      // console.log("dataBody", dataBody)
       return response.data;
     } catch (error) {
       console.log(error)

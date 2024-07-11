@@ -201,7 +201,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
 
   const handleEditCost = async () => {
     const values = await formCost.validateFields();
-    console.log("cost: ", formCost.getFieldValue("actual_cost"));
+    // console.log("cost: ", formCost.getFieldValue("actual_cost"));
     const resEditCost = await dispatch(
       updateActualCost({
         costId: formCost.getFieldValue("costId"),
@@ -211,7 +211,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
       })
     );
 
-    console.log("resEditCost: ", resEditCost);
+    // console.log("resEditCost: ", resEditCost);
 
     if (updateActualCost.fulfilled.match(resEditCost)) {
       toast.success(`${"Cập nhập giá tiền thực tế thành công!"}`);

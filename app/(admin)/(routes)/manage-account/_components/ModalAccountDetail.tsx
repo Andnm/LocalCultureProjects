@@ -18,7 +18,7 @@ const ModalAccountDetail: React.FC<Props> = (props) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const formRef = useRef(null);
   const [form] = Form.useForm();
-  console.log("dataAccount: ", dataAccount);
+  // console.log("dataAccount: ", dataAccount);
 
   return (
     <>

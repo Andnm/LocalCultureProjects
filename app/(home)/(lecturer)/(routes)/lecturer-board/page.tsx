@@ -24,7 +24,7 @@ const LecturerBoard = () => {
     dispatch(getAllGroupAreMembers()).then((result) => {
       if (getAllGroupAreMembers.fulfilled.match(result)) {
         setLectureData(result.payload);
-        console.log("lecture", result.payload);
+        // console.log("lecture", result.payload);
       }
     });
 
@@ -91,7 +91,7 @@ const LecturerBoard = () => {
   // hàm filter
   React.useEffect(() => {
     const filteredData = mergeDataOrigin.filter((item) => {
-      console.log("item", item);
+      // console.log("item", item);
       if (
         filterOption.subject_code.length > 0 &&
         !filterOption.subject_code.includes(item.subject_code)

@@ -34,7 +34,7 @@ const InfoGroup = ({ params }: { params: { groupId: number } }) => {
   const [isLoadingHandle, setIsLoadingHandle] = useState(false);
 
   const projectId = selectedProjectContext?.project?.id;
-  console.log("selectedProjectContext", selectedProjectContext);
+  // console.log("selectedProjectContext", selectedProjectContext);
 
   const router = useRouter();
   const dispatch = useAppDispatch();

@@ -93,10 +93,10 @@ const FirstProjectManagement = () => {
   React.useEffect(() => {
     dispatch(getAllFirstProjectByAdmin()).then((resGetAll: any) => {
       if (getAllFirstProjectByAdmin.rejected.match(resGetAll)) {
-        console.log(resGetAll.payload);
+        // console.log(resGetAll.payload);
         toast.error(`${resGetAll.payload}`);
       } else if (getAllFirstProjectByAdmin.fulfilled.match(resGetAll)) {
-        console.log("resGetAll", resGetAll);
+        // console.log("resGetAll", resGetAll);
         const sortedData = resGetAll.payload.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt);
           const dateB = new Date(b.createdAt);
