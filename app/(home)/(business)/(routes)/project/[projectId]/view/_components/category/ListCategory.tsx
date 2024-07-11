@@ -1,4 +1,3 @@
-import DialogViewCategory from "@/components/alert-dialog/DialogViewCategory";
 import { Hint } from "@/components/hint";
 import { changeStatusFromEnToVn } from "@/src/utils/handleFunction";
 import React from "react";
@@ -79,18 +78,6 @@ const ListCategory = ({
             </Hint>
           </div>
         ))}
-
-      {/* tạm thời ẩn */}
-      {/* {isOpenModalDetail && selectedCategory && (
-        <DialogViewCategory
-          project={project}
-          phaseData={phaseData}
-          open={isOpenModalDetail}
-          dataCategory={selectedCategory}
-          setDataCategory={setDataCategory}
-          actionClose={() => setIsOpenModalDetail(false)}
-        />
-      )} */}
 
       {isOpenModalCategoryDetail && selectedCategory && (
         <ModalCategoryDetail
