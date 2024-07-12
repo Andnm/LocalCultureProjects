@@ -29,7 +29,8 @@ export default async function RootLayout({
         <body suppressHydrationWarning={true} className={inter.className}>
           <AuthProvider>
             <SocketProvider>
-              <ProtectedRouteWrapper>{children}</ProtectedRouteWrapper>
+              {/* <ProtectedRouteWrapper>{children}</ProtectedRouteWrapper> */}
+              {children}
               <Toaster position="top-right" />
             </SocketProvider>
           </AuthProvider>
