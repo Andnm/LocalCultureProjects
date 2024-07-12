@@ -1,6 +1,7 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { Button, Image, Modal, Upload, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
 import {
   getStorage,
@@ -13,6 +14,7 @@ import { useAppDispatch } from "@/src/redux/store";
 import { createEvidence } from "@/src/redux/features/evidenceSlice";
 import { CreateEvidenceType } from "@/src/types/evidence.type";
 import toast from "react-hot-toast";
+import { BiEdit } from "react-icons/bi";
 
 const { confirm } = Modal;
 
@@ -36,6 +38,9 @@ const EvidenceDetails: React.FC<Props> = ({
   handleUploadChange,
 }) => {
   const dispatch = useAppDispatch();
+
+  const [editEvidenceMode, setEditEvidenceMode] = useState<boolean>(false);
+  const [fileListTmp, setFileListTmp] = useState<any[]>(fileListOrigin);
 
   const handleUpdateEvidence = async () => {
     toast(
@@ -97,10 +102,19 @@ const EvidenceDetails: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    setFileListTmp(fileListOrigin);
+  }, [fileListOrigin]);
+
+  const handleRemoveImage = (index: number) => {
+    setFileListTmp((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       <div className="flex flex-row gap-3">
         <p className="font-bold text-lg">Bằng chứng</p>
+        {/* button đăng bằng chứng */}
         {userLogin?.role_name === "Student" && (
           <div className="flex flex-row gap-3">
             {fileUpdateList.length >= 1 && (
@@ -110,6 +124,9 @@ const EvidenceDetails: React.FC<Props> = ({
                   confirm({
                     centered: true,
                     cancelText: "Hủy",
+                    onCancel: () => {
+                      setFileUpdateList([]);
+                    },
                     okText: "Xác nhận",
                     title: `Bạn có chắc muốn cập nhập bằng chứng cho giai đoạn này?`,
                     onOk: async () => {
@@ -127,18 +144,73 @@ const EvidenceDetails: React.FC<Props> = ({
             )}
           </div>
         )}
+        {/* button sửa bằng chứng */}
+        {userLogin?.role_name === "Student" && (
+          <div className="flex flex-row gap-3">
+            {editEvidenceMode ? (
+              <>
+                <Button
+                  onClick={() => {
+                    setFileListTmp(fileListOrigin);
+                    setEditEvidenceMode(false);
+                  }}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    confirm({
+                      centered: true,
+                      cancelText: "Quay lại",
+                      okText: "Xác nhận",
+                      title: `Bạn có chắc muốn cập nhập lại bằng chứng?`,
+                      onOk: async () => {
+                        try {
+                          //CALL API
+                          setFileListOrigin(fileListTmp);
+                          setEditEvidenceMode(false);
+                        } catch (error) {
+                          console.log("error: ", error);
+                          message.error("Có lỗi xảy ra khi cập nhập!");
+                        }
+                      },
+                    });
+                  }}
+                >
+                  Cập nhập
+                </Button>
+              </>
+            ) : fileListOrigin.length > 0 ? (
+              <Button onClick={() => setEditEvidenceMode(true)}>
+                <BiEdit className="h-3 w-3" /> Sửa
+              </Button>
+            ) : (
+              <></>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mx-4 mt-3">
-        {fileListOrigin.length > 0 ? (
+        {fileListTmp.length > 0 ? (
           <>
             <p className="mb-3">Hiện có</p>
             <div className="flex gap-2">
-              {fileListOrigin.map((imageUrl, index) => (
+              {fileListTmp.map((imageUrl, index) => (
                 <div
-                  className="border-2 rounded-lg border-dashed w-[102px] h-[102px] flex items-center justify-center p-2"
+                  className="relative border-2 rounded-lg border-dashed w-[102px] h-[102px] flex items-center justify-center p-2"
                   key={index}
                 >
+                  {editEvidenceMode && (
+                    <Button
+                      type="dashed"
+                      className="absolute -top-3 -right-1 p-1 cursor-pointer w-5 h-5 bg-white"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      <DeleteOutlined className="text-red-500" />
+                    </Button>
+                  )}
                   <Image
                     key={index}
                     className="block object-cover"

@@ -25,6 +25,7 @@ import CostDetails from "./CostDetails";
 import EvidenceDetails from "./EvidenceDetails";
 import {
   changeStatusCategory,
+  deleteCategory,
   updateActualResult,
   updateCategoryInformation,
 } from "@/src/redux/features/categorySlice";
@@ -154,7 +155,25 @@ const ModalCategoryDetail: React.FC<Props> = ({
     }
   };
 
-  const handleCancelEditCategory = () => {};
+  const handleDeleteCategory: any = async () => {
+    const resDeleteCate = await dispatch(deleteCategory(selectedCategory?.id));
+
+    if (deleteCategory.fulfilled.match(resDeleteCate)) {
+      toast.success("Xóa hạng mục thành công!");
+
+      //cập nhập lại category
+      setDataCategory((prev) =>
+        prev.filter((category) => category.id !== selectedCategory?.id)
+      );
+      onClose();
+    } else {
+      toast.error(`${resDeleteCate.payload}`);
+    }
+  };
+
+  const handleCancelEditCategory = () => {
+    setEditCategoryMode(false);
+  };
 
   const handleChangeStatusCategory = async (status: string) => {
     const resChangeStatusCategory = await dispatch(
@@ -253,12 +272,14 @@ const ModalCategoryDetail: React.FC<Props> = ({
             userLogin={userLogin}
             formCategoryRef={formCategoryRef}
             selectedCategory={selectedCategory}
+            setPhaseData={setPhaseData}
             setDataCategory={setDataCategory}
             editCategoryMode={editCategoryMode}
             setEditCategoryMode={setEditCategoryMode}
             formCategory={formCategory}
             onCancelEditCategory={handleCancelEditCategory}
             onEditCategory={handleEditCategory}
+            handleDeleteCategory={handleDeleteCategory}
             handleChangeStatusCategory={handleChangeStatusCategory}
           />
 

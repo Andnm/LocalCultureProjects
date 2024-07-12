@@ -3,6 +3,7 @@ import { Form, Input, Descriptions, Button, Modal, message } from "antd";
 import { CheckCircleIcon, ClockIcon, Trash } from "lucide-react";
 import { Hint } from "@/components/hint";
 import { BiEdit } from "react-icons/bi";
+import { useAppDispatch } from "@/src/redux/store";
 
 const { TextArea } = Input;
 const { confirm } = Modal;
@@ -10,24 +11,28 @@ const { confirm } = Modal;
 interface Props {
   userLogin: any;
   selectedCategory: any;
-  setDataCategory: React.Dispatch<React.SetStateAction<any>>;
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
+  setDataCategory: React.Dispatch<React.SetStateAction<any[]>>;
   editCategoryMode: boolean;
   setEditCategoryMode: React.Dispatch<React.SetStateAction<boolean>>;
   formCategoryRef: any;
   formCategory: any; // Form Instance
   onCancelEditCategory: () => void;
   onEditCategory: () => void;
+  handleDeleteCategory: () => void;
   handleChangeStatusCategory: (status: string) => void;
 }
 
 const CategoryDetails: React.FC<Props> = ({
   userLogin,
   selectedCategory,
+  setDataCategory,
   editCategoryMode,
   setEditCategoryMode,
   formCategoryRef,
   formCategory,
   onCancelEditCategory,
+  handleDeleteCategory,
   onEditCategory,
   handleChangeStatusCategory,
 }) => {
@@ -127,7 +132,25 @@ const CategoryDetails: React.FC<Props> = ({
                 <Button onClick={() => setEditCategoryMode(true)}>
                   <BiEdit className="h-3 w-3" /> Sửa
                 </Button>
-                <Button danger onClick={() => {}}>
+                <Button
+                  danger
+                  onClick={async () => {
+                    confirm({
+                      centered: true,
+                      cancelText: "Quay lại",
+                      okText: "Xác nhận",
+                      title: `Bạn có chắc muốn xóa hạng mục này?`,
+                      onOk: async () => {
+                        try {
+                          await handleDeleteCategory();
+                        } catch (error) {
+                          console.log("error: ", error);
+                          message.error("Có lỗi xảy ra khi xóa hạng mục!");
+                        }
+                      },
+                    });
+                  }}
+                >
                   <Trash className="h-3 w-3" /> Xóa
                 </Button>
               </>
@@ -149,7 +172,7 @@ const CategoryDetails: React.FC<Props> = ({
             >
               {selectedCategory.category_status}
             </span>
-            {icon && (
+            {userLogin?.role_name === "Student" && icon && (
               <Hint sideOffset={10} description={hint} side="right">
                 <Button
                   type="text"
