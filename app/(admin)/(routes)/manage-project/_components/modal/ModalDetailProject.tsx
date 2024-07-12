@@ -256,39 +256,41 @@ const ModalDetailProject: React.FC<Props> = (props) => {
               selectedProject={selectedProject}
             />
 
-            {editMode && [
-              <div className="flex justify-end">
-                <Button
-                  className="btn-submit"
-                  key="cancel"
-                  type="text"
-                  onClick={() => {
-                    setEditMode((prev) => !prev);
-                    setIsAdding(false);
-                  }}
-                >
-                  Huỷ
-                </Button>
-                <Button
-                  className="btn-submit btn-continue-with-new-info"
-                  key="update"
-                  onClick={async () => {
-                    confirm({
-                      cancelText: "Quay lại",
-                      okText: "Xác nhận",
-                      title:
-                        "Bạn có chắc là muốn thay đổi những nội dung đã chỉnh sửa?",
-                      async onOk() {
-                        await handleFormUpdateProjectSubmit();
-                      },
-                      onCancel() {},
-                    });
-                  }}
-                >
-                  Thay đổi
-                </Button>
-              </div>,
-            ]}
+            {editMode && (
+              <>
+                <div className="flex justify-end">
+                  <Button
+                    className="btn-submit"
+                    key="cancel"
+                    type="text"
+                    onClick={() => {
+                      setEditMode((prev) => !prev);
+                      setIsAdding(false);
+                    }}
+                  >
+                    Huỷ
+                  </Button>
+                  <Button
+                    className="btn-submit btn-continue-with-new-info"
+                    key="update"
+                    onClick={async () => {
+                      confirm({
+                        cancelText: "Quay lại",
+                        okText: "Xác nhận",
+                        title:
+                          "Bạn có chắc là muốn thay đổi những nội dung đã chỉnh sửa?",
+                        async onOk() {
+                          await handleFormUpdateProjectSubmit();
+                        },
+                        onCancel() {},
+                      });
+                    }}
+                  >
+                    Thay đổi
+                  </Button>
+                </div>
+              </>
+            )}
           </Tabs.TabPane>
 
           <Tabs.TabPane tab="Người phụ trách" key="3">
