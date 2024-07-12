@@ -81,7 +81,7 @@ const ProjectIdPage = () => {
           project={project}
         />
       ) : (
-        <PostIdea />
+        <PostIdea dataProject={project} groupId={groupId} />
       )}
     </div>
   );

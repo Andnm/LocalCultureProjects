@@ -260,6 +260,10 @@ export const ViewNavbar = ({
   };
 
   React.useEffect(() => {
+    if (dataProject?.business_type !== 'Lên ý tưởng') {
+      return;
+    }
+
     // Gọi checkProjectCanDone ngay khi component được render
     handleCheckProjectCanDone();
 
