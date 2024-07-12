@@ -410,11 +410,6 @@ export default function ModalCreateProject({
       }
     });
 
-    if(juridicalFilesOrigin.length === 0 ) {
-      setErrorFile("Vui lòng chọn file để đăng!")
-      hasError = true;
-    }
-
     if (hasError) {
       setErrorFirstProject((prevErrorFirstProject) => ({
         ...prevErrorFirstProject,
@@ -557,17 +552,15 @@ export default function ModalCreateProject({
     }
 
     try {
-      const dataIsCreatedByAdmin: boolean | undefined =
-        userLogin && userLogin.role_name === "Admin";
+      const dataIsCreatedByAdmin = userLogin && userLogin.role_name === "Admin";
 
-      let juridicalFilesURLs: any = [];
+      let juridicalFilesURLs = [];
 
       if (juridicalFilesOrigin.length > 0) {
         const uploadPromises: any[] = [];
-        const uploadedFiles: any[] = [];
+        const uploadedFiles = [];
 
         const juridicalFilesDownload = juridicalFilesOrigin.map((file: any) => {
-          // const randomFileName = generateRandomString();
           const randomFileName = juridicalFilesOrigin[0]?.name;
           const storageRef = ref(storage, `khoduan/${randomFileName}`);
           const uploadTask = uploadBytes(storageRef, file);
@@ -577,96 +570,91 @@ export default function ModalCreateProject({
         });
 
         await Promise.all(uploadPromises);
-
         juridicalFilesURLs = await Promise.all(juridicalFilesDownload);
+      }
 
-        //kiểm tra business đã tồn tại chưa để lấy first project
-        const resCheckBusinessEmailExist = await dispatch(
-          checkEmailExist(businessData?.businessEmail)
-        );
+      //kiểm tra business đã tồn tại chưa để lấy first project
+      const resCheckBusinessEmailExist = await dispatch(
+        checkEmailExist(businessData?.businessEmail)
+      );
 
-        const dataIsFirstProject =
-          resCheckBusinessEmailExist.payload &&
-          resCheckBusinessEmailExist.payload.isConfirmByAdmin !== null &&
-          resCheckBusinessEmailExist.payload.isConfirmByAdmin !== undefined
-            ? !resCheckBusinessEmailExist.payload.isConfirmByAdmin
-            : false;
+      const dataIsFirstProject =
+        resCheckBusinessEmailExist.payload &&
+        resCheckBusinessEmailExist.payload.isConfirmByAdmin !== null &&
+        resCheckBusinessEmailExist.payload.isConfirmByAdmin !== undefined
+          ? !resCheckBusinessEmailExist.payload.isConfirmByAdmin
+          : false;
 
-        const projectTimeline = extractProjectDates(
-          firstProject.project_implement_time
-        );
+      const projectTimeline = extractProjectDates(
+        firstProject.project_implement_time
+      );
 
-        const dataBody = {
-          is_created_by_admin: dataIsCreatedByAdmin,
-          ...businessData,
-          ...responsiblePerson,
-          ...firstProject,
-          businessName: businessData.fullname,
-          businessEmail: businessData.businessEmail,
-          email_responsible_person: responsiblePerson.email,
-          is_change_business_info: isChangeBusinessInfo,
-          is_change_responsible_info: isChangeResponsibleInfo,
-          document_related_link: juridicalFilesURLs,
-          project_start_date: projectTimeline.project_start_date,
-          project_expected_end_date: projectTimeline.project_expected_end_date,
-          is_first_project: dataIsFirstProject,
-        };
+      const dataBody = {
+        is_created_by_admin: dataIsCreatedByAdmin,
+        ...businessData,
+        ...responsiblePerson,
+        ...firstProject,
+        businessName: businessData.fullname,
+        businessEmail: businessData.businessEmail,
+        email_responsible_person: responsiblePerson.email,
+        is_change_business_info: isChangeBusinessInfo,
+        is_change_responsible_info: isChangeResponsibleInfo,
+        document_related_link: juridicalFilesURLs,
+        project_start_date: projectTimeline.project_start_date,
+        project_expected_end_date: projectTimeline.project_expected_end_date,
+        is_first_project: dataIsFirstProject,
+      };
 
-        const resCreateProject = await dispatch(createProjectActionAPI(dataBody));
+      const resCreateProject = await dispatch(createProjectActionAPI(dataBody));
 
-        // console.log("resCreateProject: ", resCreateProject);
+      if (createProjectActionAPI.rejected.match(resCreateProject)) {
+        toast.error(`${resCreateProject.payload}`);
+        return;
+      } else {
+        try {
+          const resGetAllAdmin = await dispatch(getAllAdmin());
 
-        if (
-          createProjectActionAPI.rejected.match(resCreateProject)
-        ) {
-          toast.error(`${resCreateProject.payload}`);
-          return;
-        } else {
-          try {
-            const resGetAllAdmin = await dispatch(getAllAdmin());
+          await Promise.all(
+            resGetAllAdmin.payload.map(async (email: any) => {
+              const dataBodyNoti = {
+                notification_type: dataIsFirstProject
+                  ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
+                  : NOTIFICATION_TYPE.CREATE_PROJECT,
+                information: dataIsFirstProject
+                  ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
+                  : "Có một dự án mới cần được duyệt",
+                sender_email: businessData.businessEmail,
+                receiver_email: email,
+              };
 
-            await Promise.all(
-              resGetAllAdmin.payload.map(async (email: any) => {
-                const dataBodyNoti = {
-                  notification_type: dataIsFirstProject
-                    ? NOTIFICATION_TYPE.REQUEST_CONFIRM_FIRST_PROJECT_TO_ADMIN
-                    : NOTIFICATION_TYPE.CREATE_PROJECT,
-                  information: dataIsFirstProject
-                    ? "Có một dự án lần đầu đăng đang cần được phê duyệt!"
-                    : "Có một dự án mới cần được duyệt",
-                  sender_email: businessData.businessEmail,
-                  receiver_email: email,
-                };
+              const resNoti = await dispatch(
+                createNewNotification(dataBodyNoti)
+              );
+              console.log(resNoti);
+            })
+          );
 
-                const resNoti = await dispatch(
-                  createNewNotification(dataBodyNoti)
-                );
-                console.log(resNoti);
-              })
-            );
+          toast.success(
+            `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
+          );
 
-            toast.success(
-              `Đăng dự án thành công thành công, vui lòng chờ xác minh!`
-            );
-
-            if (setDataTable) {
-              if (dataTable) {
-                setDataTable([resCreateProject.payload, ...dataTable]);
-              }
+          if (setDataTable) {
+            if (dataTable) {
+              setDataTable([resCreateProject.payload, ...dataTable]);
             }
-
-            if (setDataTableOrigin) {
-              if (dataTableOrigin) {
-                setDataTable([resCreateProject.payload, ...dataTableOrigin]);
-              }
-            }
-
-            if (actionClose) {
-              actionClose();
-            }
-          } catch (error) {
-            console.error(error);
           }
+
+          if (setDataTableOrigin) {
+            if (dataTableOrigin) {
+              setDataTable([resCreateProject.payload, ...dataTableOrigin]);
+            }
+          } 
+
+          if (actionClose) {
+            actionClose();
+          }
+        } catch (error) {
+          console.error(error);
         }
       }
     } catch (error) {

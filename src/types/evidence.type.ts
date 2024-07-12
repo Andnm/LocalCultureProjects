@@ -6,7 +6,12 @@ export interface EvidenceType {
 }
 
 export interface CreateEvidenceType {
-  description: string;
   evidence_url: string;
   costId: number;
 }
+
+export interface UpdateEvidenceType {
+  evidence_url: string[];
+  costId: number;
+}
+

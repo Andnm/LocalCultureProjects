@@ -11,7 +11,10 @@ import {
 } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { useAppDispatch } from "@/src/redux/store";
-import { createEvidence } from "@/src/redux/features/evidenceSlice";
+import {
+  createEvidence,
+  updateEvidences,
+} from "@/src/redux/features/evidenceSlice";
 import { CreateEvidenceType } from "@/src/types/evidence.type";
 import toast from "react-hot-toast";
 import { BiEdit } from "react-icons/bi";
@@ -22,6 +25,7 @@ interface Props {
   userLogin: any;
   costId: number;
   fileListOrigin: any[];
+  setPhaseData: React.Dispatch<React.SetStateAction<any[]>>;
   setFileListOrigin: React.Dispatch<React.SetStateAction<any[]>>;
   fileUpdateList: any[];
   setFileUpdateList: React.Dispatch<React.SetStateAction<any[]>>;
@@ -32,6 +36,7 @@ const EvidenceDetails: React.FC<Props> = ({
   userLogin,
   costId,
   fileListOrigin,
+  setPhaseData,
   setFileListOrigin,
   fileUpdateList,
   setFileUpdateList,
@@ -56,6 +61,7 @@ const EvidenceDetails: React.FC<Props> = ({
     );
 
     let documentLinkList: string[] = [];
+    let newEvidences: any[] = [];
 
     for (let i = 0; i < fileUpdateList.length; i++) {
       const file = fileUpdateList[i]?.originFileObj;
@@ -80,19 +86,45 @@ const EvidenceDetails: React.FC<Props> = ({
         for (let j = 0; j < documentLinkList.length; j++) {
           const dataBody: CreateEvidenceType = {
             costId: costId,
-            description: "hmmm",
             evidence_url: documentLinkList[j],
           };
 
           const resCreateEvidence = await dispatch(createEvidence(dataBody));
 
+          console.log("resCreateEvidence: ", resCreateEvidence)
           if (createEvidence.rejected.match(resCreateEvidence)) {
             toast.error(`${resCreateEvidence.payload}`);
+          }else {
+            newEvidences.push(resCreateEvidence.payload);
           }
         }
 
         setFileListOrigin((prev) => [...prev, ...documentLinkList]);
         setFileUpdateList([]);
+        //gọi set phase data ra cập nhập
+        setPhaseData((prevPhaseData) => {
+          const updatedPhaseData = prevPhaseData.map((phase) => {
+            const updatedCategories = phase.categories.map((category: any) => {
+              if (category.cost && category.cost.id === costId) {
+                return {
+                  ...category,
+                  cost: {
+                    ...category.cost,
+                    evidences: [...category.cost.evidences, ...newEvidences],
+                  },
+                };
+              }
+              return category;
+            });
+  
+            return {
+              ...phase,
+              categories: updatedCategories,
+            };
+          });
+  
+          return updatedPhaseData;
+        });
         message.success("Đăng bằng chứng thành công!");
       } catch (error) {
         message.error("Failed to create evidence.");
@@ -168,8 +200,77 @@ const EvidenceDetails: React.FC<Props> = ({
                       onOk: async () => {
                         try {
                           //CALL API
-                          setFileListOrigin(fileListTmp);
-                          setEditEvidenceMode(false);
+                          const resUpdateEvidenceList = await dispatch(
+                            updateEvidences({
+                              evidence_url: fileListTmp,
+                              costId: costId,
+                            })
+                          );
+
+                          console.log(
+                            "resUpdateEvidenceList: ",
+                            resUpdateEvidenceList.payload
+                          );
+                          if (
+                            updateEvidences.fulfilled.match(
+                              resUpdateEvidenceList
+                            )
+                          ) {
+                            setFileListOrigin(fileListTmp);
+                            setEditEvidenceMode(false);
+
+                            const idsToRemove = resUpdateEvidenceList.payload;
+
+                            setPhaseData((prevPhaseData) => {
+                              const updatedPhaseData = prevPhaseData.map(
+                                (phase) => {
+                                  const updatedCategories =
+                                    phase.categories.map((category: any) => {
+                                      //nếu fileListTmp là rỗng tức là xóa hết thì cho mảng về rỗng luôn
+                                      if (fileListTmp.length === 0) {
+                                        console.log("come")
+                                        return {
+                                          ...category,
+                                          cost: {
+                                            ...category.cost,
+                                            evidences: [],
+                                          },
+                                        };
+                                      }
+
+                                      if (
+                                        category.cost &&
+                                        Array.isArray(category.cost.evidences)
+                                      ) {
+                                        const updatedEvidences =
+                                          category.cost.evidences.filter(
+                                            (evidence: any) =>
+                                              !idsToRemove.includes(evidence.id)
+                                          );
+                                        return {
+                                          ...category,
+                                          cost: {
+                                            ...category.cost,
+                                            evidences: updatedEvidences,
+                                          },
+                                        };
+                                      }
+                                      return category;
+                                    });
+
+                                  return {
+                                    ...phase,
+                                    categories: updatedCategories,
+                                  };
+                                }
+                              );
+
+                              return updatedPhaseData;
+                            });
+                            toast.success("Cập nhập thành công!");
+                          } else {
+                            toast.error(`${resUpdateEvidenceList.payload}`);
+                          }
                         } catch (error) {
                           console.log("error: ", error);
                           message.error("Có lỗi xảy ra khi cập nhập!");

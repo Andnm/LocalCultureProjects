@@ -71,7 +71,6 @@ const ModalCategoryDetail: React.FC<Props> = ({
   const [evidenceList, setEvidenceList] = useState<any[]>([]);
   const [fileListOrigin, setFileListOrigin] = useState<string[]>([]);
   const [fileUpdateList, setFileUpdateList] = useState<UploadFile[]>([]);
-
   //
   const [userLogin, setUserLogin] = useUserLogin();
 
@@ -297,6 +296,7 @@ const ModalCategoryDetail: React.FC<Props> = ({
             userLogin={userLogin}
             costId={formCost.getFieldValue("costId")}
             fileListOrigin={fileListOrigin}
+            setPhaseData={setPhaseData}
             setFileListOrigin={setFileListOrigin}
             fileUpdateList={fileUpdateList}
             setFileUpdateList={setFileUpdateList}
