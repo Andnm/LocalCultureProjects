@@ -164,7 +164,7 @@ const ModalDetailProject: React.FC<Props> = (props) => {
       setDataTable(updatedDataTable);
       setSelectedProject(updatedProject);
       onClose();
-      toast.success("Cập nhập dự ánthành công!");
+      toast.success("Cập nhập dự án thành công!");
     } else {
       toast.error(`${resUpdate.payload}`);
     }
@@ -211,6 +211,7 @@ const ModalDetailProject: React.FC<Props> = (props) => {
         status === "Pending" && (
           <Button
             danger
+            key="confirm"
             onClick={async () => {
               confirm({
                 cancelText: "Quay lại",

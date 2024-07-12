@@ -135,7 +135,10 @@ const EvidenceDetails: React.FC<Props> = ({
             <p className="mb-3">Hiện có</p>
             <div className="flex gap-2">
               {fileListOrigin.map((imageUrl, index) => (
-                <div className="border-2 rounded-lg border-dashed w-[102px] h-[102px] flex items-center justify-center p-2">
+                <div
+                  className="border-2 rounded-lg border-dashed w-[102px] h-[102px] flex items-center justify-center p-2"
+                  key={index}
+                >
                   <Image
                     key={index}
                     className="block object-cover"
