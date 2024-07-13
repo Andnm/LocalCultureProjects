@@ -52,11 +52,11 @@ const getIcon = (key: string) => {
 };
 
 const Dashboard = () => {
-  const [businessSectorList, setBusinessSectorList] = React.useState([]);
+  const [businessSectorList, setBusinessSectorList] = React.useState<[]>([]);
   const [projectData, setProjectData] = React.useState([]);
   const [businessFollowProvinceData, setBusinessFollowProvinceData] =
-    React.useState([]);
-  const [projectTypeListData, setProjectTypeListData] = React.useState([]);
+    React.useState<[]>([]);
+  const [projectTypeListData, setProjectTypeListData] = React.useState<[]>([]);
   const [accountData, setAccountData] = React.useState([]);
 
   const dispatch = useAppDispatch();
@@ -65,28 +65,44 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         dispatch(statisticsProjectByBusinessType()).then((result) => {
-          setProjectTypeListData(result.payload);
-        });
-
-        dispatch(statisticsProjectByBusinessType()).then((result) => {
-          setBusinessSectorList(result.payload);
+          if (result.payload === "") {
+            setProjectTypeListData([]);
+          } else {
+            setProjectTypeListData(result.payload);
+          }
         });
 
         dispatch(statisticsAccountByBusinessSector()).then((result) => {
-          setBusinessSectorList(result.payload);
+          if (result.payload === "") {
+            setBusinessSectorList([]);
+          } else {
+            setBusinessSectorList(result.payload);
+          }
         });
 
-        dispatch(statisticsProject()).then((result) =>
-          setProjectData(result.payload)
-        );
+        dispatch(statisticsProject()).then((result) => {
+          if (result.payload === "") {
+            setProjectData([]);
+          } else {
+            setProjectData(result.payload);
+          }
+        });
 
         dispatch(statisticsBusinessFollowProvince()).then((result) => {
-          setBusinessFollowProvinceData(result.payload.slice(0, 8));
+          if (result.payload === "") {
+            setBusinessFollowProvinceData([]);
+          } else {
+            setBusinessFollowProvinceData(result.payload.slice(0, 8));
+          }
         });
 
         dispatch(statisticsAccount()).then((result) => {
-          setAccountData(result.payload);
           // console.log("acc", result.payload);
+          if (result.payload === "") {
+            setAccountData([]);
+          } else {
+            setAccountData(result.payload);
+          }
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -96,23 +112,23 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const totalAccounts = accountData.reduce(
-    (total: any, item: any) => total + item.value,
-    0
-  );
+  const totalAccounts = Array.isArray(accountData)
+    ? accountData.reduce((total, item: any) => total + item.value, 0)
+    : 0;
 
-  const totalProject = projectData.reduce(
-    (total: any, item: any) => total + item.value,
-    0
-  );
+  const totalProject = Array.isArray(projectData)
+    ? projectData.reduce((total, item: any) => total + item.value, 0)
+    : 0;
 
-  const totalBusiness = accountData.reduce((total: any, item: any) => {
-    if (item.key === "Business") {
-      return total + item.value;
-    } else {
-      return total;
-    }
-  }, 0);
+  const totalBusiness = Array.isArray(accountData)
+    ? accountData.reduce((total, item: any) => {
+        if (item.key === "Business") {
+          return total + item.value;
+        } else {
+          return total;
+        }
+      }, 0)
+    : 0;
 
   return (
     <div className="flex overflow-hidden bg-white">
@@ -247,7 +263,11 @@ const Dashboard = () => {
                     Dự án theo trạng thái
                   </h2>
 
-                  <PieChart projectData={projectData} />
+                  {projectData.length === 0 ? (
+                    <p>Chưa có dự án nào được đăng</p>
+                  ) : (
+                    <PieChart projectData={projectData} />
+                  )}
                 </div>
               </div>
 
