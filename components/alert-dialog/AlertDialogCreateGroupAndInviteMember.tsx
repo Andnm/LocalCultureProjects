@@ -172,7 +172,7 @@ export const AlertDialogCreateGroupAndInviteMember: React.FC<
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="name_group"
               type="text"
-              placeholder="Ví dụ: 3 con báo"
+              placeholder="Ví dụ: ABC"
               value={groupName}
               onChange={handleGroupNameChange}
             />
