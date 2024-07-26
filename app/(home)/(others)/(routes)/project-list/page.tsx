@@ -231,40 +231,40 @@ const ProjectList = () => {
           <div className="flex flex-wrap flex-col ml-10 pt-3">
             {loadingProjectList ? (
               <>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
-                <div className="w-80 h-36 relative shrink-0 mb-4 ml-4">
+                <div className="w-80 h-44 relative shrink-0 mb-4 ml-4">
                   <Skeleton className="h-full w-full absolute" />
                 </div>
               </>
@@ -277,9 +277,9 @@ const ProjectList = () => {
                 return (
                   <div
                     onClick={() => handleProjectClick(project.id)}
-                    className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 gap-2 cursor-pointer"
+                    className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 items-center gap-2 cursor-pointer"
                     key={index}
-                    style={{ borderRadius: "10px", width: 500, height: 148 }}
+                    style={{ borderRadius: "10px", width: 500, height: 170 }}
                   >
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border border-gray-200">
                       <img
@@ -301,7 +301,7 @@ const ProjectList = () => {
                         Doanh nghiệp: {businessUser?.fullname}
                       </p>
 
-                      <p className="text-gray-500">
+                      <p className="text-gray-500 text-sm">
                         Thời gian diễn ra: {project?.project_implement_time}
                       </p>
                     </div>
