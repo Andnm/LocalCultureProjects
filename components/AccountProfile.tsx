@@ -15,26 +15,39 @@ import { CgProfile } from "react-icons/cg";
 import { GrSecure } from "react-icons/gr";
 import { Hint } from "./hint";
 import ModalChangePassword from "@/src/components/modal/password/ModalChangePassword";
+import ModalUpdateInfo from "@/src/components/modal/account/ModalUpdateInfo";
+import ModalUpdateDescription from "@/src/components/modal/account/ModalUpdateDescription";
+import ModalUpdateAvatar from "@/src/components/modal/account/ModalUpdateAvatar";
+import { FaCamera } from "react-icons/fa";
 
 const AccountProfile = () => {
   const dispatch = useAppDispatch();
   const [userLogin, setUserLogin] = useUserLogin();
   const [userData, setUserData] = React.useState<any>();
-  const { loadingUser } = useAppSelector((state) => state.user);
+  const [loadingDataUser, setLoadingDataUser] = React.useState<boolean>(true);
 
   const [isOpenModalChangePassword, setIsOpenModalChangePassword] =
     React.useState<boolean>(false);
 
+  const [openModalUpdateInfo, setOpenModalUpdateInfo] =
+    React.useState<boolean>(false);
+  const [openModalUpdateDescription, setOpenModalUpdateDescription] =
+    React.useState<boolean>(false);
+  const [openModalUpdateAvatar, setOpenModalUpdateAvatar] =
+    React.useState<boolean>(false);
+
   React.useEffect(() => {
+    setLoadingDataUser(true);
     dispatch(getProfileUser(userLogin?.email)).then((result) => {
       if (getProfileUser.fulfilled.match(result)) {
         setUserData(result.payload);
+        setLoadingDataUser(false);
         // console.log("data", result.payload);
       }
     });
   }, [userLogin]);
 
-  if (loadingUser) {
+  if (loadingDataUser) {
     return (
       <div className="h-screen">
         <SpinnerLoading />
@@ -48,7 +61,7 @@ const AccountProfile = () => {
         <div className="md:flex no-wrap md:-mx-2 ">
           <div className="w-full md:w-3/12 md:mx-2">
             <div className="bg-white p-3 border-t-4 border-green-400">
-              <div className="w-full">
+              <div className="relative w-full">
                 <img
                   className="h-auto w-full mx-auto"
                   src={
@@ -58,6 +71,12 @@ const AccountProfile = () => {
                   }
                   alt="img"
                 />
+                <div
+                  className="absolute bottom-0 right-0 bg-gray-800 text-white rounded-full p-2 shadow-md hover:bg-gray-400 cursor-pointer"
+                  onClick={() => setOpenModalUpdateAvatar(true)}
+                >
+                  <FaCamera className="text-lg" />
+                </div>
               </div>
               <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
                 {userData?.fullname}
@@ -87,7 +106,11 @@ const AccountProfile = () => {
               </ul>
             </div>
             <div className="my-4">
-              <Button className="btn-submit w-full" key="submit" onClick={() => setIsOpenModalChangePassword(true)}>
+              <Button
+                className="btn-submit w-full"
+                key="submit"
+                onClick={() => setIsOpenModalChangePassword(true)}
+              >
                 <GrSecure />
                 Đổi mật khẩu
               </Button>
@@ -101,6 +124,7 @@ const AccountProfile = () => {
                 </span>
                 <span className="tracking-wide">Thông tin</span>
                 <svg
+                  onClick={() => setOpenModalUpdateInfo(true)}
                   className="cursor-pointer -ml-1 mr-2 h-5 w-5 text-gray-400"
                   x-description="Heroicon name: mini/pencil"
                   xmlns="http://www.w3.org/2000/svg"
@@ -228,6 +252,7 @@ const AccountProfile = () => {
                     </span>
                     <span className="tracking-wide">Mô tả</span>
                     <svg
+                      onClick={() => setOpenModalUpdateDescription(true)}
                       className="cursor-pointer -ml-1 mr-2 h-5 w-5 text-gray-400"
                       x-description="Heroicon name: mini/pencil"
                       xmlns="http://www.w3.org/2000/svg"
@@ -263,6 +288,36 @@ const AccountProfile = () => {
         <ModalChangePassword
           open={isOpenModalChangePassword}
           onClose={() => setIsOpenModalChangePassword(false)}
+        />
+      )}
+      {openModalUpdateInfo && (
+        <ModalUpdateInfo
+          open={openModalUpdateInfo}
+          onClose={() => {
+            setOpenModalUpdateInfo(false);
+          }}
+          userData={userData}
+          setUserData={setUserData}
+        />
+      )}
+      {openModalUpdateDescription && (
+        <ModalUpdateDescription
+          open={openModalUpdateDescription}
+          onClose={() => {
+            setOpenModalUpdateDescription(false);
+          }}
+          userData={userData}
+          setUserData={setUserData}
+        />
+      )}
+      {openModalUpdateAvatar && (
+        <ModalUpdateAvatar
+          open={openModalUpdateAvatar}
+          onClose={() => {
+            setOpenModalUpdateAvatar(false);
+          }}
+          userData={userData}
+          setUserData={setUserData}
         />
       )}
     </div>

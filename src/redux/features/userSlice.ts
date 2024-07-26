@@ -31,10 +31,10 @@ interface SearchUserByEmailParams {
 
 export const getAllUser = createAsyncThunk(
   "user/getAllUser",
-  async (page: number, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
       const response = await http.get<any>(
-        `/users/?page=${page}`,
+        `/users`,
         getConfigHeader()
       );
 

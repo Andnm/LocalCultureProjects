@@ -126,7 +126,6 @@ const AccountTable: React.FC<ProjectTableProps> = ({
           )
         );
       } else {
-
         toast.error(`${resDelete.payload}`);
       }
       setOpenModalConfirmActionDelete(false);
@@ -243,7 +242,6 @@ const AccountTable: React.FC<ProjectTableProps> = ({
 
           {dataTable?.map((user: any, index) => {
             const isLast = index === dataTable.length - 1;
-
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
             const POPOVER_OPTION = [
@@ -254,7 +252,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                   setSelectedAccount(user);
                   setOpenModalAccountDetail(true);
                 },
-              },
+              },         
               {
                 name: "Xóa tài khoản",
                 icon: <MdOutlinePersonRemove />,
@@ -274,7 +272,8 @@ const AccountTable: React.FC<ProjectTableProps> = ({
                     <div className="flex items-center gap-3">
                       <Avatar
                         src={
-                          user?.avatar_url ?? generateFallbackAvatar(user?.fullname)
+                          user?.avatar_url ??
+                          generateFallbackAvatar(user?.fullname)
                         }
                         alt={user?.fullname}
                         size="sm"
