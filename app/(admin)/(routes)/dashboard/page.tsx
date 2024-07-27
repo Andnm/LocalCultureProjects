@@ -27,6 +27,7 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import { getColorByProjectStatus } from "@/src/utils/handleFunction";
 import toast from "react-hot-toast";
 import PieChart from "./_components/PieChart";
+import { GrUserManager } from "react-icons/gr";
 
 const getIcon = (key: string) => {
   switch (key.toLowerCase()) {
@@ -36,6 +37,8 @@ const getIcon = (key: string) => {
       return <LiaBusinessTimeSolid />;
     case "student":
       return <PiStudentLight />;
+    case "responsibleperson":
+      return <GrUserManager  />;
     case "nông nghiệp":
       return <MdOutlineAgriculture />;
     case "thủ công nghiệp":
@@ -101,6 +104,8 @@ const Dashboard = () => {
           if (result.payload === "") {
             setAccountData([]);
           } else {
+            console.log("result.payload: ", result.payload)
+
             setAccountData(result.payload);
           }
         });
