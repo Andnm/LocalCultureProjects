@@ -11,6 +11,7 @@ import {
   message,
   Tabs,
   Divider,
+  Descriptions,
 } from "antd";
 import { BiAddToQueue, BiEdit, BiPlus } from "react-icons/bi";
 import { UploadOutlined } from "@ant-design/icons";
@@ -22,7 +23,6 @@ import {
 } from "firebase/storage";
 import { storage } from "@/src/utils/configFirebase";
 import { Check, Trash } from "lucide-react";
-import StatusCell from "../StatusCell";
 import { extractProjectDates, formatDate } from "@/src/utils/handleFunction";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 import BusinessInfoForm from "./BusinessInfoForm";
@@ -31,6 +31,9 @@ import ResponsiblePersonForm from "./ResponsiblePersonForm";
 import { useAppDispatch } from "@/src/redux/store";
 import { updateProjectByAdmin } from "@/src/redux/features/projectSlice";
 import toast from "react-hot-toast";
+import TableCategoryDetail from "@/app/(home)/(business)/(routes)/project/[projectId]/view/_components/phases/phases_detail/TableCategoryDetail";
+import ViewPhaseDetailByAdmin from "../other_project_detail/ViewPhaseDetailByAdmin";
+import RegisterPitchingDetailByAdmin from "../other_project_detail/RegisterPitchingDetailByAdmin";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -308,6 +311,20 @@ const ModalDetailProject: React.FC<Props> = (props) => {
               setDataTable={setDataTable}
             />
           </Tabs.TabPane>
+
+          {status !== "Pending" && (
+            <Tabs.TabPane tab="Nhóm đăng kí pitching" key="4">
+              <RegisterPitchingDetailByAdmin
+                selectedProject={selectedProject}
+              />
+            </Tabs.TabPane>
+          )}
+
+          {status !== "Pending" && status !== "Public" && (
+            <Tabs.TabPane tab="Chi tiết quá trình" key="5">
+              <ViewPhaseDetailByAdmin selectedProject={selectedProject} />
+            </Tabs.TabPane>
+          )}
         </Tabs>
       </Form>
     </Modal>
