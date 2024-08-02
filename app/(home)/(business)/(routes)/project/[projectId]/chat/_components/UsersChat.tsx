@@ -78,7 +78,10 @@ const UsersChat: React.FC<UsersChatProps> = ({
 
         dataResponse.forEach((item: any) => {
           if (extractNumberAtIndex(item.identifierUserChat, 1) === projectId) {
-            if (userLogin?.role_name === "Business") {
+            if (
+              userLogin?.role_name === "Business" ||
+              userLogin?.role_name === "ResponsiblePerson"
+            ) {
               usersChat.push({ ...item });
             } else if (
               arrayGroupId?.includes(

@@ -27,10 +27,7 @@ interface PostIdeaProps {
   groupId: number;
 }
 
-export const PostIdea = ({
-  dataProject,
-  groupId,
-}: PostIdeaProps) => {
+export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
   const [userLogin, setUserLogin] = useUserLogin();
   const [open, setOpen] = React.useState(false);
   const [summaryReport, setSummaryReport] = React.useState<any>([]);
@@ -234,7 +231,8 @@ export const PostIdea = ({
               <tbody>
                 <tr>
                   <td className="pl-5">
-                    {userLogin?.role_name === "Business" ? (
+                    {userLogin?.role_name === "Business" ||
+                    userLogin?.role_name === "ResponsiblePerson" ? (
                       <>
                         {summaryReport.summary_report_url &&
                         summaryReport?.isBusinessConfirmed ? (

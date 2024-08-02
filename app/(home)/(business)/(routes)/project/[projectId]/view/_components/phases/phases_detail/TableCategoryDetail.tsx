@@ -42,7 +42,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
   const [userLogin, setUserLogin] = useUserLogin();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);//dùng để kiểm soát việc setIsLoading làm 1 lần
+  const [initialLoad, setInitialLoad] = useState<boolean>(true); //dùng để kiểm soát việc setIsLoading làm 1 lần
   const [categoriesData, setCategoriesData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
       dataIndex: "fileList",
       key: "fileList",
       width: "150px",
-      render: (fileList: any[]) => (
+      render: (fileList: any[]) =>
         fileList.length > 0 ? (
           <Upload
             fileList={fileList}
@@ -168,8 +168,7 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
           />
         ) : (
           <TextNotUpdate data="(Chưa cập nhật)" />
-        )
-      ),
+        ),
       fixed: "right",
     },
   ];
@@ -209,19 +208,20 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
             </div>
           )}
         />
-        {userLogin?.role_name === "Business" &&
-          dataPhase?.phase_status === "Done" &&
-          dataPhase?.cost_status !== "Transferred" && (
-            <div className="flex justify-end mt-4">
-              <Button
-                type="primary"
-                onClick={handleOpenModalChoosePaymentMethod}
-                className="mt-4"
-              >
-                Tiến hành thanh toán giai đoạn
-              </Button>
-            </div>
-          )}
+        {userLogin?.role_name === "Business" ||
+          (userLogin?.role_name === "ResponsiblePerson" &&
+            dataPhase?.phase_status === "Done" &&
+            dataPhase?.cost_status !== "Transferred" && (
+              <div className="flex justify-end mt-4">
+                <Button
+                  type="primary"
+                  onClick={handleOpenModalChoosePaymentMethod}
+                  className="mt-4"
+                >
+                  Tiến hành thanh toán giai đoạn
+                </Button>
+              </div>
+            ))}
       </Spin>
     </div>
   );

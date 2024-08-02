@@ -46,6 +46,11 @@ const roleSpecificMenuItems: Record<string, { path: string; name: string }[]> =
       { path: "/business-board", name: "Quản lý dự án" },
       { path: "/contact", name: "Liên hệ" },
     ],
+    ResponsiblePerson: [
+      { path: "/business-profile", name: "Trang cá nhân" },
+      { path: "/business-board", name: "Quản lý dự án" },
+      { path: "/contact", name: "Liên hệ" },
+    ],
     Lecturer: [
       { path: "/lecturer-profile", name: "Trang cá nhân" },
       { path: "/lecturer-board", name: "Quản lý nhóm" },

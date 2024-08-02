@@ -112,6 +112,7 @@ const Register: React.FC<RegisterProps> = ({
                   router.push("/dashboard");
                   break;
                 case "Business":
+                case "ResponsiblePerson":
                   router.push("/business-board");
                   break;
                 case "Student":

@@ -19,6 +19,7 @@ const Guideline = () => {
         studentRef.current?.scrollIntoView({ behavior: "smooth" });
         break;
       case "Business":
+      case "ResponsiblePerson":
         businessRef.current?.scrollIntoView({ behavior: "smooth" });
         break;
       case "Lecturer":

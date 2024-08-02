@@ -190,7 +190,8 @@ const AccountProfile = () => {
                     </div>
                   </div>
 
-                  {userLogin?.role_name === "Business" ? (
+                  {userLogin?.role_name === "Business" ||
+                  userLogin?.role_name === "ResponsiblePerson" ? (
                     <>
                       <div className="grid grid-cols-2">
                         <div className="px-4 py-2 font-semibold">
@@ -264,7 +265,8 @@ const AccountProfile = () => {
                     </svg>
                   </div>
                   <div className="text-gray-500 text-base px-4 py-2">
-                    {userLogin?.role_name === "Business" ? (
+                    {userLogin?.role_name === "Business" ||
+                    userLogin?.role_name === "ResponsiblePerson" ? (
                       <>
                         {userData?.business_description
                           ? userData?.business_description

@@ -262,9 +262,10 @@ const ListOptions = ({
                             if (deletePhase.fulfilled.match(resDeletePhase)) {
                               toast.success("Xóa giai đoạn thành công!");
                               setPhaseData((prevPhaseData) => {
-                                const updatedPhaseDataList = prevPhaseData.filter(
-                                  (phase) => phase.id !== data.id
-                                );
+                                const updatedPhaseDataList =
+                                  prevPhaseData.filter(
+                                    (phase) => phase.id !== data.id
+                                  );
                                 return updatedPhaseDataList;
                               });
                             } else {
@@ -289,7 +290,8 @@ const ListOptions = ({
           )}
 
           {(userLogin?.role_name === "Lecturer" ||
-            userLogin?.role_name === "Business") && (
+            userLogin?.role_name === "Business" ||
+            userLogin?.role_name === "ResponsiblePerson") && (
             <>
               <Button
                 className="rounded-none w-full h-auto p-2 px-5 justify-start hover:bg-gray-200/100"

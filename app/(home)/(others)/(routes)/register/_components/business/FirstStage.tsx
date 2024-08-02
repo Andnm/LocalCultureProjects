@@ -323,7 +323,8 @@ const FirstStage: React.FC<FirstStageProps> = ({
        */}
 
         {!userLogin ||
-        userLogin?.role_name !== "Business" ||
+        userLogin?.role_name === "Business" ||
+        userLogin?.role_name === "ResponsiblePerson" ||
         userLogin?.address ? (
           <SelectedProvince
             businessData={businessData}

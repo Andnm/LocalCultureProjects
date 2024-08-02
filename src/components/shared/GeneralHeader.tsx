@@ -87,6 +87,7 @@ const GeneralHeader = () => {
         case "Student":
           return NAV_ITEMS_STUDENT;
         case "Business":
+        case "ResponsiblePerson":
           return NAV_ITEMS_BUSINESS;
         case "Lecturer":
           return NAV_ITEMS_LECTURER;

@@ -198,22 +198,23 @@ const Project = ({ projectId }: { projectId: number }) => {
                 {dataProject?.name_project}
               </p>
 
-              {userLogin?.role_name === "Business" && (
-                <div
-                  onClick={() =>
-                    toast("Chưa hỗ trợ", {
-                      style: {
-                        borderRadius: "10px",
-                        background: "orange",
-                        color: "white",
-                      },
-                    })
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 absolute right-3 top-1"
-                >
-                  Sửa thông tin
-                </div>
-              )}
+              {userLogin?.role_name === "Business" ||
+                (userLogin?.role_name === "ResponsiblePerson" && (
+                  <div
+                    onClick={() =>
+                      toast("Chưa hỗ trợ", {
+                        style: {
+                          borderRadius: "10px",
+                          background: "orange",
+                          color: "white",
+                        },
+                      })
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 absolute right-3 top-1"
+                  >
+                    Sửa thông tin
+                  </div>
+                ))}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">

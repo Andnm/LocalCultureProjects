@@ -260,7 +260,7 @@ export const ViewNavbar = ({
   };
 
   React.useEffect(() => {
-    if (dataProject?.business_type !== 'Lên ý tưởng') {
+    if (dataProject?.business_type !== "Lên ý tưởng") {
       return;
     }
 
@@ -452,7 +452,8 @@ export const ViewNavbar = ({
               <tbody>
                 <tr>
                   <td className="pl-5">
-                    {userLogin?.role_name === "Business" ? (
+                    {userLogin?.role_name === "Business" ||
+                    userLogin?.role_name === "ResponsiblePerson" ? (
                       <>
                         {summaryReport.summary_report_url &&
                         summaryReport?.isBusinessConfirmed ? (

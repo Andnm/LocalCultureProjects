@@ -84,6 +84,7 @@ const Login: React.FC<LoginProps> = ({
               router.push("/dashboard");
               break;
             case "Business":
+            case "ResponsiblePerson":
               router.push("/business-board");
               break;
             case "Student":
@@ -120,6 +121,7 @@ const Login: React.FC<LoginProps> = ({
               router.push("/dashboard");
               break;
             case "Business":
+            case "ResponsiblePerson":
               router.push("/business-board");
               break;
             case "Student":

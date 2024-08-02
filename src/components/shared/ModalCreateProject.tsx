@@ -123,7 +123,11 @@ export default function ModalCreateProject({
 
   //   Cập nhập giá trị nếu đã login sẵn và có thông tin
   useEffect(() => {
-    if (userLogin && userLogin.role_name === "Business") {
+    if (
+      userLogin &&
+      (userLogin.role_name === "Business" ||
+        userLogin.role_name === "ResponsiblePerson")
+    ) {
       setBusinessData((prevData) => ({
         ...prevData,
         fullname: userLogin?.fullname || "",
@@ -648,7 +652,7 @@ export default function ModalCreateProject({
             if (dataTableOrigin) {
               setDataTable([resCreateProject.payload, ...dataTableOrigin]);
             }
-          } 
+          }
 
           if (actionClose) {
             actionClose();
