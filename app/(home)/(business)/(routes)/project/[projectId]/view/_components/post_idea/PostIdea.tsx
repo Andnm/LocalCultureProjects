@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, IconButton } from "@material-tailwind/react";
 import { Card, Typography } from "@material-tailwind/react";
@@ -196,7 +196,7 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
   }, []);
 
   //feedback
-  const [feedbackData, setFeedbackData] = useState<FeedbackType>({
+  const [feedbackData, setFeedbackData] = React.useState<FeedbackType>({
     coordination_work: "",
     compare_results: "",
     comment: "",
@@ -205,12 +205,12 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
     conclusion: "",
   });
 
-  const [typeFeedbackModal, setTypeFeedbackModal] = useState<number>(0);
+  const [typeFeedbackModal, setTypeFeedbackModal] = React.useState<number>(0);
   // 1 là create
   // 2 là view
   // 3 là update
   const [isOpenModalFeedback, setIsOpenModalFeedback] =
-    useState<boolean>(false);
+    React.useState<boolean>(false);
 
   return (
     <>
@@ -265,8 +265,9 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
           setFeedbackData={setFeedbackData}
         />
 
-        <div className="flex gap-2 text-black border-black">
-          <Card className="h-full w-full overflow-hidden mt-10">
+        <h2 className="mt-10">Xác nhận báo cáo tổng kết: </h2>
+        <div className=" flex gap-2 text-black border-black">
+          <Card className="h-full w-full overflow-hidden">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -530,6 +531,7 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
           }}
           feedbackData={feedbackData}
           setFeedbackData={setFeedbackData}
+          projectId={extractNumberFromPath(pathName)}
         />
       )}
     </>

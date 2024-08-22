@@ -42,11 +42,11 @@ const Feedback: React.FC<Props> = (props) => {
               handleOpenModalFeedBackProject(1);
             }}
           >
-            Bấm vào để tạo cập nhập
+            Bấm vào để tạo nhận xét dự án
           </Button>
         );
       } else {
-        return <p>Doanh nghiệp chưa tạo đánh giá!</p>;
+        return <span className="text-sm opacity-70">Doanh nghiệp chưa tạo nhận xét!</span>;
       }
     } else {
       return (
@@ -76,7 +76,7 @@ const Feedback: React.FC<Props> = (props) => {
 
   return (
     <div className="mt-20">
-      Đánh giá từ doanh nghiệp: <span className="ml-2"></span>
+      Nhận xét từ doanh nghiệp: <span className="ml-2"></span>
       {renderContent()}
     </div>
   );

@@ -43,6 +43,10 @@ import { createNewNotification } from "@/src/redux/features/notificationSlice";
 
 import "./style.scss";
 import { Modal } from "antd";
+import Feedback from "./feedback/Feedback";
+import { FeedbackType } from "@/src/types/feedback.type";
+import { getFeedbackByProjectId } from "@/src/redux/features/feedbackSlice";
+import ModalFeedbackProject from "@/app/(home)/(business)/(routes)/project/[projectId]/_components/feedback/ModalFeedbackProject";
 
 const { confirm } = Modal;
 
@@ -319,11 +323,39 @@ export const ViewNavbar = ({
         } else {
         }
       });
+
+      dispatch(getFeedbackByProjectId(extractNumberFromPath(pathName))).then(
+        (result) => {
+          if (getFeedbackByProjectId.fulfilled.match(result)) {
+            setFeedbackData(result.payload);
+            console.log("result.payload", result.payload);
+          } else {
+            
+          }
+        }
+      );
     }, 3000);
 
     //tạm thời ẩn
     return () => clearInterval(intervalId);
   }, []);
+
+  //feedback
+  const [feedbackData, setFeedbackData] = React.useState<FeedbackType>({
+    coordination_work: "",
+    compare_results: "",
+    comment: "",
+    suggest_improvement: "",
+    general_assessment: 0,
+    conclusion: "",
+  });
+
+  const [typeFeedbackModal, setTypeFeedbackModal] = React.useState<number>(0);
+  // 1 là create
+  // 2 là view
+  // 3 là update
+  const [isOpenModalFeedback, setIsOpenModalFeedback] =
+    React.useState<boolean>(false);
 
   return (
     <>
@@ -428,8 +460,17 @@ export const ViewNavbar = ({
           </IconButton>
         </div>
 
+        <Feedback
+          setTypeFeedbackModal={setTypeFeedbackModal}
+          setIsOpenModalFeedback={setIsOpenModalFeedback}
+          closeDrawer={closeDrawer}
+          feedbackData={feedbackData}
+          setFeedbackData={setFeedbackData}
+        />
+
+        <h2 className="mt-10">Xác nhận báo cáo tổng kết: </h2>
         <div className="flex gap-2 text-black border-black">
-          <Card className="h-full w-full overflow-hidden mt-10">
+          <Card className="h-full w-full overflow-hidden">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -682,6 +723,20 @@ export const ViewNavbar = ({
 
         {loadingUploadFile && <SpinnerLoading />}
       </Drawer>
+
+      {isOpenModalFeedback && (
+        <ModalFeedbackProject
+          typeFeedbackModal={typeFeedbackModal}
+          open={isOpenModalFeedback}
+          onClose={() => {
+            openDrawer();
+            setIsOpenModalFeedback(false);
+          }}
+          feedbackData={feedbackData}
+          setFeedbackData={setFeedbackData}
+          projectId={extractNumberFromPath(pathName)}
+        />
+      )}
     </>
   );
 };

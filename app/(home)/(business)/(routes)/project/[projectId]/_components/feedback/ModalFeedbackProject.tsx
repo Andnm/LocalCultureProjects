@@ -1,6 +1,13 @@
-import { FeedbackType } from "@/src/types/feedback.type";
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import {
+  createFeedback,
+  updateFeedbackByProjectId,
+} from "@/src/redux/features/feedbackSlice";
+import { useAppDispatch } from "@/src/redux/store";
+import { FeedbackType, PostFeedbackType } from "@/src/types/feedback.type";
 import { Button, Modal } from "antd";
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 const { confirm } = Modal;
 
 interface ModalProps {
@@ -9,6 +16,7 @@ interface ModalProps {
   onClose: () => void;
   feedbackData: FeedbackType;
   setFeedbackData: React.Dispatch<React.SetStateAction<FeedbackType>>;
+  projectId: number;
 }
 
 const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
@@ -16,8 +24,19 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
   // 1 là create
   // 2 là view
   // 3 là update
-  const { typeFeedbackModal, open, onClose, feedbackData, setFeedbackData } =
-    props;
+  const {
+    typeFeedbackModal,
+    open,
+    onClose,
+    feedbackData,
+    setFeedbackData,
+    projectId,
+  } = props;
+
+  const dispatch = useAppDispatch();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleInputChange = (e: any, field: string) => {
     let value = e.target.value;
@@ -25,6 +44,11 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
     if (field === "general_assessment") {
       value = Number(value);
     }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: "",
+    }));
 
     if (typeFeedbackModal !== 2) {
       setFeedbackData({
@@ -34,12 +58,62 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
     }
   };
 
+  const validateFields = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!feedbackData.coordination_work)
+      newErrors.coordination_work = "Vui lòng nhận xét về công tác phối hợp!";
+    if (!feedbackData.compare_results)
+      newErrors.compare_results = "Vui lòng chọn kết quả thực hiện!";
+    if (!feedbackData.comment)
+      newErrors.comment = "Vui lòng điền nhận xét/góp ý!";
+    if (
+      feedbackData.general_assessment === null ||
+      feedbackData.general_assessment === undefined ||
+      feedbackData.general_assessment === 0
+    )
+      newErrors.general_assessment = "Vui lòng chọn đánh giá chung!";
+    if (!feedbackData.conclusion)
+      newErrors.conclusion = "Vui lòng chọn kết luận!";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleCallApiCreateFeedbackProject = async () => {
-    onClose();
+    setIsLoading(true);
+    const dataBody: PostFeedbackType = {
+      projectId: projectId,
+      ...feedbackData,
+    };
+
+    dispatch(createFeedback(dataBody)).then((resCreateFeedback) => {
+      if (createFeedback.fulfilled.match(resCreateFeedback)) {
+        toast.success("Tạo nhận xét thành công!");
+        onClose();
+      } else {
+        toast.error(`${resCreateFeedback.payload}`);
+      }
+      setIsLoading(false);
+    });
   };
 
   const handleCallApiUpdateFeedbackProject = async () => {
-    onClose();
+    setIsLoading(true);
+
+    dispatch(
+      updateFeedbackByProjectId({
+        dataBody: feedbackData,
+        projectId: projectId,
+      })
+    ).then((resUpdateFeedback) => {
+      if (updateFeedbackByProjectId.fulfilled.match(resUpdateFeedback)) {
+        toast.success("Cập nhập nhận xét thành công!");
+        onClose();
+      } else {
+        toast.error(`${resUpdateFeedback.payload}`);
+      }
+      setIsLoading(false);
+    });
   };
 
   const renderFooter = () => {
@@ -49,6 +123,10 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
           <Button
             type="primary"
             onClick={async () => {
+              if (!validateFields()) {
+                toast.error("Vui lòng điền đầy đủ thông tin trước khi đăng!");
+                return;
+              }
               confirm({
                 cancelText: "Quay lại",
                 okText: "Xác nhận",
@@ -122,6 +200,9 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
               Về công tác phối hợp giữa Giảng viên, sinh viên và Doanh nghiệp{" "}
               <span className="text-red-700">*</span>
             </label>
+            {errors.coordination_work && (
+              <p className="text-red-600">{errors.coordination_work}</p>
+            )}
           </div>
 
           <>
@@ -166,6 +247,9 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
                 </div>
               </div>
             </fieldset>
+            {errors.compare_results && (
+              <p className="text-red-600">{errors.compare_results}</p>
+            )}
           </>
 
           <div className="form-group-material mt-4">
@@ -183,6 +267,7 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
               Nhận xét/Góp ý về đề tài/dự án{" "}
               <span className="text-red-700">*</span>
             </label>
+            {errors.comment && <p className="text-red-600">{errors.comment}</p>}
           </div>
 
           <div className="form-group-material mt-4">
@@ -244,6 +329,9 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
                 </div>
               </div>
             </fieldset>
+            {errors.general_assessment && (
+              <p className="text-red-600">{errors.general_assessment}</p>
+            )}
           </>
 
           <>
@@ -286,9 +374,14 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
                 </div>
               </div>
             </fieldset>
+            {errors.conclusion && (
+              <p className="text-red-600">{errors.conclusion}</p>
+            )}
           </>
         </div>
       </div>
+
+      {isLoading && <SpinnerLoading />}
     </Modal>
   );
 };
