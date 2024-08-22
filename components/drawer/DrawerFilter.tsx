@@ -15,6 +15,7 @@ interface DrawerFilterProps {
   closeDrawerAction: any;
   filterOption: any;
   setFilterOption: any;
+  clearFilter: () => void;
 }
 
 const DrawerFilter = ({
@@ -22,6 +23,7 @@ const DrawerFilter = ({
   closeDrawerAction,
   filterOption,
   setFilterOption,
+  clearFilter,
 }: DrawerFilterProps) => {
   const renderCheckIcon = (array: any, value: any) => {
     return (
@@ -50,24 +52,22 @@ const DrawerFilter = ({
     );
   };
 
-  const toggleBusiness_sector = (field: any) => {
+  const toggleProject_status = (field: any) => {
     setFilterOption((prevFilterOption: any) => {
       const fieldLower = field?.toLowerCase();
-      const fieldIndex = prevFilterOption?.business_sector?.indexOf(fieldLower);
+      const fieldIndex = prevFilterOption?.project_status?.indexOf(fieldLower);
 
       if (fieldIndex !== -1) {
-        // Field is already in the array, so remove it
         return {
           ...prevFilterOption,
-          business_sector: prevFilterOption?.business_sector?.filter(
+          project_status: prevFilterOption?.project_status?.filter(
             (f: any) => f !== fieldLower
           ),
         };
       } else {
-        // Field is not in the array, so add it
         return {
           ...prevFilterOption,
-          business_sector: [...prevFilterOption?.business_sector, fieldLower],
+          project_status: [...prevFilterOption?.project_status, fieldLower],
         };
       }
     });
@@ -79,7 +79,6 @@ const DrawerFilter = ({
       const fieldIndex = prevFilterOption?.business_type?.indexOf(fieldLower);
 
       if (fieldIndex !== -1) {
-        // Field is already in the array, so remove it
         return {
           ...prevFilterOption,
           business_type: prevFilterOption?.business_type?.filter(
@@ -87,7 +86,6 @@ const DrawerFilter = ({
           ),
         };
       } else {
-        // Field is not in the array, so add it
         return {
           ...prevFilterOption,
           business_type: [...prevFilterOption?.business_type, fieldLower],
@@ -126,7 +124,7 @@ const DrawerFilter = ({
       </div>
 
       <div>
-        {/* Linh vực kinh doanh, business_sector:*/}
+        {/* Trạng thái dự án, project_status:*/}
         <Accordion type="multiple">
           <AccordionItem value={`item-2`} className="border-none">
             <AccordionTrigger
@@ -135,8 +133,7 @@ const DrawerFilter = ({
               style={{ borderRadius: "6px" }}
             >
               <div className="flex items-center gap-x-2">
-                {/* business_model, b2c b2b*/}
-                <span className="font-medium text-sm">Lĩnh vực kinh doanh</span>
+                <span className="font-medium text-sm">Trạng thái dự án</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-1 text-neutral-700">
@@ -145,10 +142,10 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_sector("Nông nghiệp")}
+                onClick={() => toggleProject_status("Public")}
               >
-                {renderCheckIcon(filterOption.business_sector, "Nông nghiệp")}
-                Nông nghiệp
+                {renderCheckIcon(filterOption.project_status, "Public")}
+                Có thể đăng kí
               </Button>
 
               <Button
@@ -156,13 +153,10 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_sector("Thủ công nghiệp")}
+                onClick={() => toggleProject_status("Processing")}
               >
-                {renderCheckIcon(
-                  filterOption.business_sector,
-                  "Thủ công nghiệp"
-                )}
-                Thủ công nghiệp
+                {renderCheckIcon(filterOption.project_status, "Processing")}
+                Đang hoạt động
               </Button>
 
               <Button
@@ -170,10 +164,10 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_sector("Du lịch")}
+                onClick={() => toggleProject_status("Done")}
               >
-                {renderCheckIcon(filterOption.business_sector, "Du lịch")}
-                Du lịch
+                {renderCheckIcon(filterOption.project_status, "Done")}
+                Đã hoàn thành
               </Button>
 
               <Button
@@ -181,9 +175,9 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_sector("Khác")}
+                onClick={() => toggleProject_status("Khác")}
               >
-                {renderCheckIcon(filterOption.business_sector, "Khác")}
+                {renderCheckIcon(filterOption.project_status, "Khác")}
                 Khác
               </Button>
             </AccordionContent>
@@ -199,7 +193,6 @@ const DrawerFilter = ({
               style={{ borderRadius: "6px" }}
             >
               <div className="flex items-center gap-x-2">
-                {/* business_model, b2c b2b*/}
                 <span className="font-medium text-sm">Hướng đi của dự án</span>
               </div>
             </AccordionTrigger>
@@ -209,10 +202,10 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_type("Plan")}
+                onClick={() => toggleBusiness_type("Lên ý tưởng")}
               >
-                {renderCheckIcon(filterOption.business_type, "Plan")}
-                Lên kế hoạch
+                {renderCheckIcon(filterOption.business_type, "Lên ý tưởng")}
+                Lên ý tưởng
               </Button>
 
               <Button
@@ -220,27 +213,24 @@ const DrawerFilter = ({
                   "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
                 )}
                 variant="ghost"
-                onClick={() => toggleBusiness_type("Project")}
+                onClick={() => toggleBusiness_type("Triển khai thực tế")}
               >
-                {renderCheckIcon(filterOption.business_type, "Project")}
-                Triển khai dự án
+                {renderCheckIcon(
+                  filterOption.business_type,
+                  "Triển khai thực tế"
+                )}
+                Triển khai thực tế
               </Button>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
         <Button
           className={cn(
             "font-normal justify-start ph-10 mb-1 text-blue-900 bg-blue-300 hover:bg-blue-400 gap-2 rounded absolute bottom-20"
           )}
           variant="ghost"
-          onClick={() =>
-            setFilterOption({
-              business_model: [],
-              business_type: [],
-              specialized_field: [],
-              searchValue: filterOption?.searchValue,
-            })
-          }
+          onClick={clearFilter}
         >
           Xoá lựa chọn
         </Button>

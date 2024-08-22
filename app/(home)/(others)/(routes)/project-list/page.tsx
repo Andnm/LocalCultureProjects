@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/src/redux/store";
 import { getAllProjectByEveryOne } from "@/src/redux/features/projectSlice";
-import { formatDate, generateFallbackAvatar } from "@/src/utils/handleFunction";
+import {
+  formatDate,
+  generateFallbackAvatar,
+  getColorByProjectStatus,
+} from "@/src/utils/handleFunction";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
 import { socketInstance } from "@/src/utils/socket/socket-provider";
@@ -23,6 +27,8 @@ import CustomModal from "@/src/components/shared/CustomModal";
 const ProjectList = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  const [originalData, setOriginalData] = React.useState<any[]>([]);
+
   const [dataProjectList, setDataProjectList] = React.useState<any[]>([]);
   const [isOpenModalWarningLogin, setIsOpenModalWarningLogin] =
     React.useState(false);
@@ -33,17 +39,21 @@ const ProjectList = () => {
   const [userLogin, setUserLogin] = useUserLogin();
   const { loadingProjectList } = useAppSelector((state) => state.project);
 
-  const handleProjectClick = (project_id: any) => {
-    if (!userLogin) {
-      setIsOpenModalWarningLogin(true);
+  const handleProjectClick = (project: any) => {
+    if (project.project_status !== "Public") {
+      toast.error(`Bạn chỉ được xem những dự án có thể đăng ký!`);
     } else {
-      router.push(`/project-list/detail/${project_id}`);
+      if (!userLogin) {
+        setIsOpenModalWarningLogin(true);
+      } else {
+        router.push(`/project-list/detail/${project.id}`);
+      }
     }
   };
 
   const [filterOption, setFilterOption] = React.useState<any>({
+    project_status: [],
     business_type: [],
-    business_sector: [],
     searchValue: "",
   });
 
@@ -95,31 +105,15 @@ const ProjectList = () => {
   React.useEffect(() => {
     dispatch(getAllProjectByEveryOne()).then((result) => {
       if (getAllProjectByEveryOne.fulfilled.match(result)) {
-        // console.log("result", result.payload);
+        console.log("result", result.payload);
         // getProjects
         const newListProjects = result.payload[1]?.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt);
           const dateB = new Date(b.createdAt);
           return dateB.getTime() - dateA.getTime();
         });
+        setOriginalData(newListProjects);
         setDataProjectList(newListProjects);
-
-        socketInstance.on("getProjects", (data: any) => {
-          // console.log("data socket", data);
-          if (data && data.projects) {
-            const newListProjects = data.projects.sort((a: any, b: any) => {
-              const dateA = new Date(a.createdAt);
-              const dateB = new Date(b.createdAt);
-              return dateB.getTime() - dateA.getTime();
-            });
-            setDataProjectList(newListProjects);
-          } else {
-            console.log("No projects data or error occurred from socket");
-            if (newListProjects) {
-              setDataProjectList(newListProjects);
-            }
-          }
-        });
       } else {
         toast.error("Có lỗi xảy ra khi tải danh sách dự án!");
       }
@@ -130,47 +124,69 @@ const ProjectList = () => {
   const openDrawerAction = () => setOpenDrawer(true);
   const closeDrawerAction = () => setOpenDrawer(false);
 
-  const handleFilter = (array: any) => {
-    let fiteredArray = array;
+  const handleFilter = (projects: any[], filterOption: any) => {
     if (
-      filterOption?.business_model &&
-      filterOption?.business_model?.length > 0
+      filterOption.project_status.length === 0 &&
+      filterOption.business_type.length === 0 &&
+      filterOption.searchValue === ""
     ) {
-      fiteredArray = fiteredArray?.filter((item: any) =>
-        filterOption?.business_model?.includes(
-          item?.business_model?.toLowerCase()
-        )
-      );
+      return originalData;
     }
-    if (
-      filterOption?.business_type &&
-      filterOption?.business_type?.length > 0
-    ) {
-      fiteredArray = fiteredArray?.filter((item: any) =>
-        filterOption?.business_type?.includes(
-          item?.business_type?.toLowerCase()
-        )
-      );
-    }
-    if (
-      filterOption?.specialized_field &&
-      filterOption?.specialized_field?.length > 0
-    ) {
-      fiteredArray = fiteredArray?.filter((item: any) =>
-        filterOption?.specialized_field?.includes(
-          item?.specialized_field?.toLowerCase()
-        )
-      );
-    }
-    if (filterOption.searchValue) {
-      fiteredArray = fiteredArray.filter((item: any) =>
-        item.name_project
+
+    return projects.filter((project) => {
+      const matchStatus =
+        filterOption.project_status.length === 0 ||
+        filterOption.project_status.includes(
+          project.project_status.toLowerCase()
+        );
+
+      const matchType =
+        filterOption.business_type.length === 0 ||
+        filterOption.business_type.includes(
+          project.business_type.toLowerCase()
+        );
+
+      const matchSearch =
+        filterOption.searchValue === "" ||
+        project.name_project
           .toLowerCase()
-          .includes(filterOption.searchValue.toLowerCase())
-      );
-    }
-    return fiteredArray;
+          .includes(filterOption.searchValue.toLowerCase());
+
+      return matchStatus && matchType  && matchSearch;
+    });
   };
+
+  const clearFilter = () => {
+    setFilterOption({
+      project_status: [],
+      business_type: [],
+      searchValue: filterOption?.searchValue,
+    });
+
+    setDataProjectList(originalData);
+  };
+
+  const changeStatusFromEnToVn = (status: string): string => {
+    switch (status?.toLowerCase()) {
+      case "processing":
+        return "Đang hoạt động";
+      case "warning":
+        return "Đang bị cảnh báo";
+      case "done":
+        return "Đã hoàn thành";
+      case "public":
+        return "Có thể đăng kí";
+      default:
+        return "Trạng thái không xác định";
+    }
+  };
+
+  React.useEffect(() => {
+    if (Array.isArray(originalData)) {
+      const filteredProjects = handleFilter(originalData, filterOption);
+      setDataProjectList(filteredProjects);
+    }
+  }, [filterOption, originalData]);
 
   return (
     <>
@@ -210,6 +226,7 @@ const ProjectList = () => {
             closeDrawerAction={closeDrawerAction}
             filterOption={filterOption}
             setFilterOption={setFilterOption}
+            clearFilter={clearFilter}
           />
         )}
       </div>
@@ -269,15 +286,15 @@ const ProjectList = () => {
                 </div>
               </>
             ) : Array.isArray(dataProjectList) && dataProjectList.length > 0 ? (
-              handleFilter(dataProjectList)?.map((project: any, index: any) => {
+              dataProjectList?.map((project: any, index: any) => {
                 const businessUser = project?.user_projects?.find(
                   (up: any) => up.user.role_name === "Business"
                 )?.user;
 
                 return (
                   <div
-                    onClick={() => handleProjectClick(project.id)}
-                    className="flex flex-row py-4 px-4 mb-4 mr-4 border-2 items-center gap-2 cursor-pointer"
+                    onClick={() => handleProjectClick(project)}
+                    className="relative flex flex-row py-4 px-4 mb-4 mr-4 border-2 items-center gap-2 cursor-pointer"
                     key={index}
                     style={{ borderRadius: "10px", width: 500, height: 170 }}
                   >
@@ -304,6 +321,16 @@ const ProjectList = () => {
                       <p className="text-gray-500 text-sm">
                         Thời gian diễn ra: {project?.project_implement_time}
                       </p>
+                    </div>
+
+                    <div className="absolute bottom-2 right-2">
+                      <span
+                        className={`text-sm font-semibold inline-block py-1 px-2 rounded-full ${getColorByProjectStatus(
+                          project.project_status
+                        )}`}
+                      >
+                        {changeStatusFromEnToVn(project.project_status)}
+                      </span>
                     </div>
                   </div>
                 );
