@@ -17,6 +17,7 @@ import userChatReducer from "./features/userChatSlice";
 import responsiblePersonReducer from "./features/responsiblePersonSlice";
 import supportReducer from "./features/supportSlice";
 import provinceReducer from "./features/provinceSlice";
+import feedbackReducer from "./features/feedbackSlice";
 
 export const store = configureStore({
   reducer: {
@@ -35,7 +36,8 @@ export const store = configureStore({
     user: userReducer,
     responsiblePerson: responsiblePersonReducer,
     support: supportReducer,
-    province: provinceReducer
+    province: provinceReducer,
+    feedback: feedbackReducer
   },
 });
 

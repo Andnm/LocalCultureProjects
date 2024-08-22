@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, IconButton } from "@material-tailwind/react";
 import { Card, Typography } from "@material-tailwind/react";
@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useAppDispatch } from "@/src/redux/store";
 import {
   confirmSummaryReport,
+  getSummaryReportByProjectId,
   updateSummaryReportByLeader,
   upSummaryReportByLeader,
 } from "@/src/redux/features/summaryReportSlice";
@@ -18,6 +19,11 @@ import { Hint } from "@/components/hint";
 import { Check, Edit, MoreHorizontal } from "lucide-react";
 import { truncateString } from "@/src/utils/handleFunction";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import Feedback from "../../../_components/feedback/Feedback";
+import ModalFeedbackProject from "@/app/(home)/(business)/(routes)/project/[projectId]/_components/feedback/ModalFeedbackProject";
+import { FeedbackType } from "@/src/types/feedback.type";
+import "@/app/(home)/(others)/(routes)/register/style.scss";
+import { getFeedbackByProjectId } from "@/src/redux/features/feedbackSlice";
 
 const { confirm } = Modal;
 const TABLE_HEAD = ["Doanh nghiệp ", "Giảng viên ", "File tổng kết"];
@@ -162,6 +168,50 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
     }
   };
 
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(
+        getSummaryReportByProjectId(extractNumberFromPath(pathName))
+      ).then((result) => {
+        if (getSummaryReportByProjectId.fulfilled.match(result)) {
+          setSummaryReport(result.payload);
+          // console.log("result.payload", result.payload);
+        } else {
+        }
+      });
+
+      dispatch(getFeedbackByProjectId(extractNumberFromPath(pathName))).then(
+        (result) => {
+          if (getFeedbackByProjectId.fulfilled.match(result)) {
+            setFeedbackData(result.payload);
+            console.log("result.payload", result.payload);
+          } else {
+          }
+        }
+      );
+    }, 3000);
+
+    //tạm thời ẩn
+    return () => clearInterval(intervalId);
+  }, []);
+
+  //feedback
+  const [feedbackData, setFeedbackData] = useState<FeedbackType>({
+    coordination_work: "",
+    compare_results: "",
+    comment: "",
+    suggest_improvement: "",
+    general_assessment: 0,
+    conclusion: "",
+  });
+
+  const [typeFeedbackModal, setTypeFeedbackModal] = useState<number>(0);
+  // 1 là create
+  // 2 là view
+  // 3 là update
+  const [isOpenModalFeedback, setIsOpenModalFeedback] =
+    useState<boolean>(false);
+
   return (
     <>
       {open && (
@@ -189,7 +239,7 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
       >
         <div className="mb-6 flex items-center justify-between">
           <h5 className="text-black font-bold text-lg">TỔNG KẾT</h5>
-          <IconButton variant="text" onClick={closeDrawer}>
+          <IconButton variant="text" onClick={closeDrawer} className="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -207,8 +257,16 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
           </IconButton>
         </div>
 
+        <Feedback
+          setTypeFeedbackModal={setTypeFeedbackModal}
+          setIsOpenModalFeedback={setIsOpenModalFeedback}
+          closeDrawer={closeDrawer}
+          feedbackData={feedbackData}
+          setFeedbackData={setFeedbackData}
+        />
+
         <div className="flex gap-2 text-black border-black">
-          <Card className="h-full w-full overflow-hidden mt-32">
+          <Card className="h-full w-full overflow-hidden mt-10">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -461,6 +519,19 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
 
         {loadingUploadFile && <SpinnerLoading />}
       </Drawer>
+
+      {isOpenModalFeedback && (
+        <ModalFeedbackProject
+          typeFeedbackModal={typeFeedbackModal}
+          open={isOpenModalFeedback}
+          onClose={() => {
+            openDrawer();
+            setIsOpenModalFeedback(false);
+          }}
+          feedbackData={feedbackData}
+          setFeedbackData={setFeedbackData}
+        />
+      )}
     </>
   );
 };

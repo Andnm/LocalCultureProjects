@@ -410,7 +410,7 @@ export const ViewNavbar = ({
       >
         <div className="mb-6 flex items-center justify-between">
           <h5 className="text-black font-bold text-lg">TỔNG KẾT</h5>
-          <IconButton variant="text" onClick={closeDrawer}>
+          <IconButton variant="text" onClick={closeDrawer} className="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -429,7 +429,7 @@ export const ViewNavbar = ({
         </div>
 
         <div className="flex gap-2 text-black border-black">
-          <Card className="h-full w-full overflow-hidden mt-32">
+          <Card className="h-full w-full overflow-hidden mt-10">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>

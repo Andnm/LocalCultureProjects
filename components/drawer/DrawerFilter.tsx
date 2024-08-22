@@ -169,17 +169,7 @@ const DrawerFilter = ({
                 {renderCheckIcon(filterOption.project_status, "Done")}
                 Đã hoàn thành
               </Button>
-
-              <Button
-                className={cn(
-                  "w-full font-normal justify-start pl-10 mb-1 hover:bg-neutral-500/10 gap-2 rounded-md"
-                )}
-                variant="ghost"
-                onClick={() => toggleProject_status("Khác")}
-              >
-                {renderCheckIcon(filterOption.project_status, "Khác")}
-                Khác
-              </Button>
+         
             </AccordionContent>
           </AccordionItem>
         </Accordion>
