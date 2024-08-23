@@ -86,7 +86,6 @@ export const createNewProjectWithoutAuthentication = createAsyncThunk(
   }
 );
 
-
 export const getProjectById = createAsyncThunk(
   "listProject/getProjectById",
   async (id: number, thunkAPI) => {
@@ -134,6 +133,24 @@ export const getAllProjectByBusiness = createAsyncThunk(
 
     try {
       const response = await http.get<any>("/projects/business", configHeader);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const getAllProjectByResponsiblePerson = createAsyncThunk(
+  "listProject/getAllProjectByResponsiblePerson",
+  async (_, thunkAPI) => {
+    try {
+      const response = await http.get<any>(
+        "/projects/responsiblePerson",
+        getConfigHeader()
+      );
 
       return response.data;
     } catch (error) {
@@ -381,30 +398,42 @@ export const projectSlice = createSlice({
       state.loadingProject = true;
       state.error = "";
     });
-    builder.addCase(createNewProjectWithAuthentication.fulfilled, (state, action) => {
-      state.loadingProject = false;
-      state.data = [action.payload];
-      state.error = "";
-    });
-    builder.addCase(createNewProjectWithAuthentication.rejected, (state, action) => {
-      state.loadingProject = false;
-      state.error = action.payload as string;
-    });
+    builder.addCase(
+      createNewProjectWithAuthentication.fulfilled,
+      (state, action) => {
+        state.loadingProject = false;
+        state.data = [action.payload];
+        state.error = "";
+      }
+    );
+    builder.addCase(
+      createNewProjectWithAuthentication.rejected,
+      (state, action) => {
+        state.loadingProject = false;
+        state.error = action.payload as string;
+      }
+    );
 
     //create New Project Without Authentication
     builder.addCase(createNewProjectWithoutAuthentication.pending, (state) => {
       state.loadingProject = true;
       state.error = "";
     });
-    builder.addCase(createNewProjectWithoutAuthentication.fulfilled, (state, action) => {
-      state.loadingProject = false;
-      state.data = [action.payload];
-      state.error = "";
-    });
-    builder.addCase(createNewProjectWithoutAuthentication.rejected, (state, action) => {
-      state.loadingProject = false;
-      state.error = action.payload as string;
-    });
+    builder.addCase(
+      createNewProjectWithoutAuthentication.fulfilled,
+      (state, action) => {
+        state.loadingProject = false;
+        state.data = [action.payload];
+        state.error = "";
+      }
+    );
+    builder.addCase(
+      createNewProjectWithoutAuthentication.rejected,
+      (state, action) => {
+        state.loadingProject = false;
+        state.error = action.payload as string;
+      }
+    );
 
     //get Project By Id
     builder.addCase(getProjectById.pending, (state) => {
@@ -432,6 +461,21 @@ export const projectSlice = createSlice({
       state.error = "";
     });
     builder.addCase(getAllProjectByBusiness.rejected, (state, action) => {
+      state.loadingProjectList = false;
+      state.error = action.payload as string;
+    });
+
+    //getAllProjectByResponsiblePerson
+    builder.addCase(getAllProjectByResponsiblePerson.pending, (state) => {
+      state.loadingProjectList = true;
+      state.error = "";
+    });
+    builder.addCase(getAllProjectByResponsiblePerson.fulfilled, (state, action) => {
+      state.loadingProjectList = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getAllProjectByResponsiblePerson.rejected, (state, action) => {
       state.loadingProjectList = false;
       state.error = action.payload as string;
     });

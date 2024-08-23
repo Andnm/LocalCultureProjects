@@ -8,6 +8,8 @@ export interface PostFeedbackType {
   conclusion: string;
 }
 
-export type UpdateFeedbackType = Omit<PostFeedbackType, 'projectId'>;
+export type UpdateFeedbackType = Omit<PostFeedbackType, "projectId">;
 
-export type FeedbackType = UpdateFeedbackType;
+export type FeedbackType = UpdateFeedbackType & {
+  id: number;
+};

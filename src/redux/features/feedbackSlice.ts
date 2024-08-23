@@ -48,7 +48,7 @@ export const getFeedbackByProjectId = createAsyncThunk(
   async (projectId: number, thunkAPI) => {
     try {
       const response = await http.get<any>(
-        `/feedback/${projectId}`,
+        `/feedback/project/${projectId}`,
         getConfigHeader()
       );
       return response.data;
@@ -63,15 +63,15 @@ export const getFeedbackByProjectId = createAsyncThunk(
 
 interface UpdateFeedbackRequest {
   dataBody: UpdateFeedbackType;
-  projectId: number;
+  feedbackId: number;
 }
 
 export const updateFeedbackByProjectId = createAsyncThunk(
   "feedback/updateFeedbackByProjectId",
-  async ({ dataBody, projectId }: UpdateFeedbackRequest, thunkAPI) => {
+  async ({ dataBody, feedbackId }: UpdateFeedbackRequest, thunkAPI) => {
     try {
-      const response = await http.post<any>(
-        `/feedback/${projectId}`,
+      const response = await http.patch<any>(
+        `/feedback/${feedbackId}`,
         dataBody,
         getConfigHeader()
       );

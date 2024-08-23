@@ -179,24 +179,26 @@ export const PostIdea = ({ dataProject, groupId }: PostIdeaProps) => {
         } else {
         }
       });
-
-      dispatch(getFeedbackByProjectId(extractNumberFromPath(pathName))).then(
-        (result) => {
-          if (getFeedbackByProjectId.fulfilled.match(result)) {
-            setFeedbackData(result.payload);
-            console.log("result.payload", result.payload);
-          } else {
-          }
-        }
-      );
     }, 3000);
 
     //tạm thời ẩn
     return () => clearInterval(intervalId);
   }, []);
 
+  React.useEffect(() => {
+    dispatch(getFeedbackByProjectId(extractNumberFromPath(pathName))).then(
+      (result) => {
+        if (getFeedbackByProjectId.fulfilled.match(result)) {
+          setFeedbackData(result.payload);
+        } else {
+        }
+      }
+    );
+  }, []);
+
   //feedback
   const [feedbackData, setFeedbackData] = React.useState<FeedbackType>({
+    id: 0,
     coordination_work: "",
     compare_results: "",
     comment: "",

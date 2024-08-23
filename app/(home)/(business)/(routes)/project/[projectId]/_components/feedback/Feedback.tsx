@@ -34,7 +34,7 @@ const Feedback: React.FC<Props> = (props) => {
     userLogin?.role_name === "ResponsiblePerson";
 
   const renderContent = () => {
-    if (feedbackData.coordination_work === "") {
+    if (feedbackData.id === 0) {
       if (isBusinessOrResponsiblePerson) {
         return (
           <Button

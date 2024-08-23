@@ -1,6 +1,7 @@
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 import {
   createFeedback,
+  getFeedbackByProjectId,
   updateFeedbackByProjectId,
 } from "@/src/redux/features/feedbackSlice";
 import { useAppDispatch } from "@/src/redux/store";
@@ -89,7 +90,15 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
     dispatch(createFeedback(dataBody)).then((resCreateFeedback) => {
       if (createFeedback.fulfilled.match(resCreateFeedback)) {
         toast.success("Tạo nhận xét thành công!");
-        onClose();
+
+        dispatch(getFeedbackByProjectId(projectId)).then((result) => {
+          if (getFeedbackByProjectId.fulfilled.match(result)) {
+            setFeedbackData(result.payload);
+          } else {
+          }
+          onClose();
+
+        });
       } else {
         toast.error(`${resCreateFeedback.payload}`);
       }
@@ -103,7 +112,7 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
     dispatch(
       updateFeedbackByProjectId({
         dataBody: feedbackData,
-        projectId: projectId,
+        feedbackId: feedbackData.id,
       })
     ).then((resUpdateFeedback) => {
       if (updateFeedbackByProjectId.fulfilled.match(resUpdateFeedback)) {
