@@ -264,15 +264,16 @@ export const ViewNavbar = ({
   };
 
   React.useEffect(() => {
-    if (dataProject?.business_type !== "Lên ý tưởng") {
-      return;
-    }
-
     // Gọi checkProjectCanDone ngay khi component được render
     handleCheckProjectCanDone();
 
     // Thiết lập interval để gọi checkProjectCanDone mỗi 3 giây
     const intervalId = setInterval(() => {
+      // ẩn đi vì dataProject là undefined
+      // if (dataProject?.business_type !== "Lên ý tưởng") {
+      //   return;
+      // }
+      // console.log("dataProject: ", dataProject);
       handleCheckProjectCanDone();
     }, 3000);
 

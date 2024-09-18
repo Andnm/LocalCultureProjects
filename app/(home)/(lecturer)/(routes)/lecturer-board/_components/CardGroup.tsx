@@ -50,7 +50,7 @@ const CardGroup = ({ group }: CardGroupProps) => {
       className="cursor-pointer hover:scale-102 transition-transform duration-300 transform h-full border-2 border-gray-200 border-opacity-60 rounded-2xl overflow-hidden"
       onClick={() => handleNavigateIntoGroupDetail(group?.group?.id, group)}
     >
-      <div className="w-full bg-[#1a679e] relative" style={{ height: "185px" }}>
+      <div className="w-full bg-[#1a679e] relative" style={{ height: "250px" }}>
         <div className="flex flex-col p-5">
           <p className="text-white text-lg ">Tên dự án: </p>
           <p className="text-white text-lg italic pl-2">
@@ -88,7 +88,7 @@ const CardGroup = ({ group }: CardGroupProps) => {
               );
             })}
       </div>
-      <div className="p-4">
+      <div className="p-4 mt-4">
         <h2 className="tracking-widest text-xs font-medium text-gray-400 mb-1">
           {group?.subject_code}
         </h2>
