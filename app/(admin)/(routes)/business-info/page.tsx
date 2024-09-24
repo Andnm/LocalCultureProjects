@@ -181,7 +181,7 @@ const BusinessInfo = () => {
   };
 
   return (
-    <Card className="p-4 manager-project h-full">
+    <Card className="p-4 manager-project min-h-full">
       <div
         style={{
           marginBottom: 16,
