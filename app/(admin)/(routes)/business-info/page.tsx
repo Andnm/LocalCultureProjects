@@ -18,7 +18,8 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-const page = () => {
+const BusinessInfo = () => {
+
   const dispatch = useAppDispatch();
   const [data, setData] = useState<BusinessInfoListSheet[]>([]);
   const [loading, setLoading] = useState(false);
@@ -236,4 +237,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default BusinessInfo;
