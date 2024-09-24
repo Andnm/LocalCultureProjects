@@ -19,7 +19,6 @@ import {
 import * as XLSX from "xlsx";
 
 const BusinessInfo = () => {
-
   const dispatch = useAppDispatch();
   const [data, setData] = useState<BusinessInfoListSheet[]>([]);
   const [loading, setLoading] = useState(false);
@@ -140,7 +139,6 @@ const BusinessInfo = () => {
           message.success("Cập nhập dữ liệu thành công!");
           fetchData(currentPage);
         }
-
       } catch (error) {
         message.error("File upload thất bại!");
         toast.error(`${error}`);
@@ -157,24 +155,31 @@ const BusinessInfo = () => {
     setIsModalVisible(false);
   };
 
-  const handleExport = async () => {
-    const allData = await dispatch(getAllBusinessInfo()).unwrap();
+  const handleExport = () => {
+    const dataToExport = data.map((item, index) => ({
+      No: (currentPage - 1) * pageSize + index + 1,
+      "Tên Doanh nghiệp/ Hộ kinh doanh": item.businessName || "",
+      "Lĩnh vực kinh doanh": item.businessField || "",
+      "Giới thiệu ngắn về Doanh nghiệp/Hộ kinh doanh và sản phẩm":
+        item.shortIntro || "",
+      "Địa chỉ": item.address || "",
+      "Website/ Fanpage": item.website || "",
+      "Họ và tên": item.contactName || "",
+      "Chức vụ": item.position || "",
+      "Số điện thoại": item.phoneNumber || "",
+      Email: item.email || "",
+      "Thông tin liên hệ khác (nếu có)": item.otherContactInfo || "",
+    }));
 
-    const headers = columns.map((col) => col.title);
-
-    const rows = allData.map((item: BusinessInfoListSheet) => {
-      return columns.map(
-        (col: any) => item[col.dataIndex as keyof BusinessInfoListSheet]
-      );
-    });
-
-    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Business Info");
 
-    XLSX.writeFile(workbook, "BusinessInfo.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "BusinessInfo");
+
+    XLSX.writeFile(workbook, "business_info_export.xlsx");
   };
+
   return (
     <Card className="p-4 manager-project h-full">
       <div
