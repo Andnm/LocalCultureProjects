@@ -89,9 +89,9 @@ const Project = ({ projectId }: { projectId: number }) => {
                   <h1 className="text-xl font-bold">
                     {businessUser?.fullname}
                   </h1>
-                  <p className="text-gray-700 font-sans">
+                  {/* <p className="text-gray-700 font-sans">
                     {businessUser?.email}
-                  </p>
+                  </p> */}
 
                   {businessUser?.link_web && (
                     <div className="mt-6 flex flex-wrap gap-4 justify-center">

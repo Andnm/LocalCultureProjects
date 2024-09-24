@@ -110,11 +110,11 @@ const ProjectDetail = () => {
                   <h1 className="text-xl font-bold">
                     {businessUser?.fullname}
                   </h1>
-                  {isAccessToViewWorkingProcess && (
+                  {/* {isAccessToViewWorkingProcess && (
                     <p className="text-gray-700 font-sans">
                       {businessUser?.email}
                     </p>
-                  )}
+                  )} */}
                   {businessUser?.link_web && (
                     <div className="mt-6 flex flex-wrap gap-4 justify-center">
                       <Link

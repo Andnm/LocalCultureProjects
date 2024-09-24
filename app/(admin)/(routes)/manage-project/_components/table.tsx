@@ -319,9 +319,9 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                         <div className="flex flex-col">
                           <InfoText>{businessUser?.fullname}</InfoText>
 
-                          <InfoText className="opacity-70">
+                          {/* <InfoText className="opacity-70">
                             {truncateString(businessUser?.email, 20)}
-                          </InfoText>
+                          </InfoText> */}
                         </div>
                       </div>
                     </td>
