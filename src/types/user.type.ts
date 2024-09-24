@@ -19,45 +19,60 @@ export interface UserType {
 }
 
 export interface CheckBusinessInfoType {
-  businessName: string
-  businessEmail: string
-  business_description: string
-  business_sector: string
-  address: string
-  address_detail: string
+  businessName: string;
+  businessEmail: string;
+  business_description: string;
+  business_sector: string;
+  address: string;
+  address_detail: string;
 }
 
 export interface CheckResponsibleInfoType {
-  fullname: string
-  phone_number: string
-  position: string
-  email_responsible_person: string
+  fullname: string;
+  phone_number: string;
+  position: string;
+  email_responsible_person: string;
 }
 
 export interface AddResponsiblePersonType {
-  projectId: number
-  fullname: string
-  phone_number: string
-  position: string
-  email_responsible_person: string
-  other_contact: string
-  is_create_account: boolean
-  is_change_responsible_info: boolean
-  user_project_status: string
+  projectId: number;
+  fullname: string;
+  phone_number: string;
+  position: string;
+  email_responsible_person: string;
+  other_contact: string;
+  is_create_account: boolean;
+  is_change_responsible_info: boolean;
+  user_project_status: string;
 }
 export interface UpdateResponsibleStatusType {
-  userId: number
-  projectId: number
-  status: string
-  is_create_account: boolean
+  userId: number;
+  projectId: number;
+  status: string;
+  is_create_account: boolean;
 }
 
 export interface ProviderAccountType {
-  fullname: string
-  position: string
-  email: string
-  phone_number: string
-  other_contact: string
-  projectId: number
-  user_project_status: string
+  fullname: string;
+  position: string;
+  email: string;
+  phone_number: string;
+  other_contact: string;
+  projectId: number;
+  user_project_status: string;
+}
+
+//new
+export interface BusinessInfoListSheet {
+  id: number | null;
+  businessName: string | null;
+  businessField: string | null;
+  shortIntro: string | null;
+  address: string | null;
+  website: string | null;
+  contactName: string | null;
+  position: string | null;
+  phoneNumber: string | null;
+  email: string | null;
+  otherContactInfo: string | null;
 }

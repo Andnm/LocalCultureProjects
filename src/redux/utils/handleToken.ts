@@ -29,6 +29,19 @@ export const getConfigHeader = () => {
   return configHeader;
 };
 
+export const getConfigHeaderMultipartFormData = () => {
+  const token = getTokenFromSessionStorage();
+  const configHeader = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Accept: "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  return configHeader;
+};
+
 //decode token to user info
 export const decodeTokenToUser = (token: string): any | null => {
   const user: UserType = jwtDecode(token);

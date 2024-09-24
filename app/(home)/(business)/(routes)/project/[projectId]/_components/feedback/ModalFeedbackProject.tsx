@@ -352,7 +352,7 @@ const ModelFeedbackProject: React.FC<ModalProps> = (props) => {
                 className="text-lg"
                 style={{ fontSize: "15px", color: "#6d859f" }}
               >
-                Về kết quả thực hiện so với yêu cầu đề ra{" "}
+                Kết luận về việc nghiệm thu đề tài/dự án{" "}
                 <span className="text-red-700">*</span>
               </legend>
               <div className="pb-2">

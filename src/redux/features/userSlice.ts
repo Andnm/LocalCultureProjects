@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../utils/https";
 import {
+  BusinessInfoListSheet,
   CheckBusinessInfoType,
   CheckResponsibleInfoType,
   ProviderAccountType,
@@ -8,6 +9,7 @@ import {
 } from "@/src/types/user.type";
 import {
   getConfigHeader,
+  getConfigHeaderMultipartFormData,
   getTokenFromSessionStorage,
 } from "../utils/handleToken";
 import { ErrorType } from "@/src/types/error.type";
@@ -33,10 +35,7 @@ export const getAllUser = createAsyncThunk(
   "user/getAllUser",
   async (_, thunkAPI) => {
     try {
-      const response = await http.get<any>(
-        `/users`,
-        getConfigHeader()
-      );
+      const response = await http.get<any>(`/users`, getConfigHeader());
 
       return response.data;
     } catch (error) {
@@ -206,7 +205,7 @@ export const providerAccount = createAsyncThunk(
     try {
       const response = await http.post<any>(
         `/auth/providerAccount/admin`,
-        dataBody, 
+        dataBody,
         getConfigHeader()
       );
 
@@ -225,7 +224,7 @@ export const provideAccountResponsible = createAsyncThunk(
     try {
       const response = await http.post<any>(
         `/auth/provideAccountResponsible/admin`,
-        dataBody, 
+        dataBody,
         getConfigHeader()
       );
 
@@ -303,6 +302,44 @@ export const updateProfileNotAuth = createAsyncThunk(
         `users/update-profile-not-auth`,
         data,
         getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const getAllBusinessInfo = createAsyncThunk(
+  "user/getAllBusinessInfo",
+  async (_, thunkAPI) => {
+    // console.log("data update", data);
+    try {
+      const response = await http.get<BusinessInfoListSheet[]>(
+        `business`,
+        getConfigHeader()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
+export const uploadFileBusinessInfo = createAsyncThunk(
+  "user/uploadFileBusinessInfo",
+  async (data: any, thunkAPI) => {
+    try {
+      const response = await http.post<any>(
+        `business/import`,
+        data,
+        getConfigHeaderMultipartFormData()
       );
 
       return response.data;
@@ -525,6 +562,36 @@ export const userSlice = createSlice({
       state.error = "";
     });
     builder.addCase(provideAccountResponsible.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //getAllBusinessInfo
+    builder.addCase(getAllBusinessInfo.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(getAllBusinessInfo.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getAllBusinessInfo.rejected, (state, action) => {
+      // state.loadingUser = false;
+      state.error = action.payload as string;
+    });
+
+    //uploadFileBusinessInfo
+    builder.addCase(uploadFileBusinessInfo.pending, (state) => {
+      // state.loadingUser = true;
+      state.error = "";
+    });
+    builder.addCase(uploadFileBusinessInfo.fulfilled, (state, action) => {
+      // state.loadingUser = false;
+      // state.data = action.payload;
+      state.error = "";
+    });
+    builder.addCase(uploadFileBusinessInfo.rejected, (state, action) => {
       // state.loadingUser = false;
       state.error = action.payload as string;
     });

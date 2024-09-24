@@ -63,14 +63,18 @@
 }
 
 .custom-table::-webkit-scrollbar {
-  height: 8px; 
+  height: 8px;
 }
 
 .custom-table::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2); 
-  border-radius: 10px; 
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 .custom-table::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1); 
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.table-business tr:first-child .ant-table-cell:nth-child(3) {
+  border-left: 1px solid #f0f0f0;
 }

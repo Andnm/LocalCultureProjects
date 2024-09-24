@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { List, ListItemSuffix, Chip } from "@material-tailwind/react";
 
 import { SiSimpleanalytics } from "react-icons/si";
-import { MdOutlineAccountCircle } from "react-icons/md";
+import { MdBusinessCenter, MdOutlineAccountCircle } from "react-icons/md";
 import { IoMdPaper } from "react-icons/io";
 import { GrGroup } from "react-icons/gr";
 import { GoProjectRoadmap } from "react-icons/go";
@@ -112,6 +112,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
           href: "/configure",
           icon: <GrConfigure className="w-4 h-4" />,
           label: "Cấu hình",
+        },
+        {
+          href: "/business-info",
+          icon: <MdBusinessCenter  className="w-4 h-4" />,
+          label: "Thông tin doanh nghiệp",
         },
       ],
     },
