@@ -17,6 +17,7 @@ import {
   ExportOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
+import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
 
 const BusinessInfo = () => {
   const dispatch = useAppDispatch();
@@ -155,29 +156,40 @@ const BusinessInfo = () => {
     setIsModalVisible(false);
   };
 
-  const handleExport = () => {
-    const dataToExport = data.map((item, index) => ({
-      No: (currentPage - 1) * pageSize + index + 1,
-      "Tên Doanh nghiệp/ Hộ kinh doanh": item.businessName || "",
-      "Lĩnh vực kinh doanh": item.businessField || "",
-      "Giới thiệu ngắn về Doanh nghiệp/Hộ kinh doanh và sản phẩm":
-        item.shortIntro || "",
-      "Địa chỉ": item.address || "",
-      "Website/ Fanpage": item.website || "",
-      "Họ và tên": item.contactName || "",
-      "Chức vụ": item.position || "",
-      "Số điện thoại": item.phoneNumber || "",
-      Email: item.email || "",
-      "Thông tin liên hệ khác (nếu có)": item.otherContactInfo || "",
-    }));
+  const handleExport = async () => {
+    setIsUploading(true);
+    try {
+      const resGetAll = await dispatch(getAllBusinessInfo()).unwrap();
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const dataToExport = resGetAll.map(
+        (item: BusinessInfoListSheet, index: number) => ({
+          No: index + 1,
+          "Tên Doanh nghiệp/ Hộ kinh doanh": item.businessName || "",
+          "Lĩnh vực kinh doanh": item.businessField || "",
+          "Giới thiệu ngắn về Doanh nghiệp/Hộ kinh doanh và sản phẩm":
+            item.shortIntro || "",
+          "Địa chỉ": item.address || "",
+          "Website/ Fanpage": item.website || "",
+          "Họ và tên": item.contactName || "",
+          "Chức vụ": item.position || "",
+          "Số điện thoại": item.phoneNumber || "",
+          Email: item.email || "",
+          "Thông tin liên hệ khác (nếu có)": item.otherContactInfo || "",
+        })
+      );
 
-    const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "BusinessInfo");
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "BusinessInfo");
+      XLSX.writeFile(workbook, "business_info_export.xlsx");
 
-    XLSX.writeFile(workbook, "business_info_export.xlsx");
+      message.success("Xuất file thành công!");
+    } catch (error) {
+      message.error("Xuất file thất bại!");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -238,6 +250,8 @@ const BusinessInfo = () => {
           đăng?
         </p>
       </Modal>
+
+      {isUploading && <SpinnerLoading />}
     </Card>
   );
 };
