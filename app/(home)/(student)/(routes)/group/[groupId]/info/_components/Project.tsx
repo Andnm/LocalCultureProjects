@@ -45,7 +45,7 @@ const Project = ({ projectId }: { projectId: number }) => {
     dispatch(getProjectById(projectId)).then((result) => {
       if (getProjectById.fulfilled.match(result)) {
         projectDetail = result.payload;
-        
+
         setDataProject(result.payload);
 
         setBusinessUser(
@@ -185,9 +185,7 @@ const Project = ({ projectId }: { projectId: number }) => {
                     </h2>
                     <p className="text-gray-700 font-sans">
                       {" "}
-                      {dataProject?.business_type === "Project"
-                        ? "Triển khai dự án"
-                        : "Lên kế hoạch"}
+                      {dataProject?.business_type}
                     </p>
                   </div>
 
@@ -240,7 +238,7 @@ const Project = ({ projectId }: { projectId: number }) => {
                   <div className="max-w-4xl">
                     <pre className="text-gray-700 whitespace-pre-wrap break-words font-sans text-justify">
                       {dataProject?.request ? (
-                        "- " + dataProject?.request
+                        dataProject?.request
                       ) : (
                         <span className="italic">(Chưa được cập nhập)</span>
                       )}

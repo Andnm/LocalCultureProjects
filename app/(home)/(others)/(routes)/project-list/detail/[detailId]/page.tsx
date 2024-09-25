@@ -220,9 +220,7 @@ const ProjectDetail = () => {
                     </h2>
                     <p className="text-gray-700 font-sans">
                       {" "}
-                      {dataProject?.business_type === "Project"
-                        ? "Triển khai dự án"
-                        : "Lên kế hoạch"}
+                      {dataProject?.business_type}
                     </p>
                   </div>
 
