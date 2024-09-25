@@ -39,6 +39,9 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
     <Form.Item label="Địa chỉ cụ thể" className="mx-3">
       <Input disabled={true} value={businessUser?.address_detail} />
     </Form.Item>
+    <Form.Item label="Website / Fanpage" className="mx-3">
+      <Input disabled={true} value={businessUser?.link_web} />
+    </Form.Item>
   </div>
 );
 

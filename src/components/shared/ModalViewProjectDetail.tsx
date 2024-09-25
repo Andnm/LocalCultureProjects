@@ -128,9 +128,9 @@ export default function ModalViewProjectDetail({
                               <p className="text-gray-700">
                                 {selectedProject?.business_sector}
                               </p>
-                              <p className="text-gray-700">
+                              {/* <p className="text-gray-700">
                                 {selectedProject?.business?.email}
-                              </p>
+                              </p> */}
                               {selectedProject?.business?.link_web && (
                                 <div className="mt-6 flex flex-wrap gap-4 justify-center">
                                   <Link
@@ -149,7 +149,7 @@ export default function ModalViewProjectDetail({
                                 Thông tin liên lạc
                               </span>
                               <ul>
-                                <li className="mb-2">
+                                {/* <li className="mb-2">
                                   <span className="font-bold">
                                     Số điện thoại:{" "}
                                   </span>{" "}
@@ -160,7 +160,7 @@ export default function ModalViewProjectDetail({
                                       Chưa cập nhập
                                     </span>
                                   )}
-                                </li>
+                                </li> */}
                                 <li className="mb-2">
                                   <span className="font-bold">Địa chỉ: </span>
                                   {selectedProject?.business?.address_detail ? (

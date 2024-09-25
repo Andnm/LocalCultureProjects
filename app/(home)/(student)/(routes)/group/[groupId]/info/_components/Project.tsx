@@ -112,7 +112,7 @@ const Project = ({ projectId }: { projectId: number }) => {
                     Thông tin liên lạc
                   </span>
                   <ul>
-                    <li className="mb-2">
+                    {/* <li className="mb-2">
                       <span className="font-bold">Số điện thoại: </span>{" "}
                       {businessUser?.phone_number ? (
                         businessUser?.phone_number
@@ -121,7 +121,7 @@ const Project = ({ projectId }: { projectId: number }) => {
                           Chưa cập nhập
                         </span>
                       )}
-                    </li>
+                    </li> */}
                     <li className="mb-2">
                       <span className="font-bold">Địa chỉ: </span>
                       {businessUser?.address_detail ? (
