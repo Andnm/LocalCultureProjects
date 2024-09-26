@@ -61,8 +61,10 @@ const BusinessInfo = () => {
   const columns: ColumnsType<BusinessInfoListSheet> = [
     {
       title: "No",
+      width: 50,
       key: "no",
       render: (text, record, index) => (currentPage - 1) * pageSize + index + 1,
+      fixed: "left",
     },
     {
       title: "Thông tin Doanh nghiệp/ Hộ kinh doanh",
@@ -71,25 +73,38 @@ const BusinessInfo = () => {
           title: "Tên Doanh nghiệp/ Hộ kinh doanh",
           dataIndex: "businessName",
           key: "businessName",
+          fixed: "left",
+          width: 200,
         },
         {
           title: "Lĩnh vực kinh doanh",
           dataIndex: "businessField",
           key: "businessField",
+          width: 180,
         },
         {
           title: "Giới thiệu ngắn về Doanh nghiệp/Hộ kinh doanh và sản phẩm",
           dataIndex: "shortIntro",
           key: "shortIntro",
+          width: 500,
         },
-        { title: "Địa chỉ", dataIndex: "address", key: "address" },
-        { title: "Website/ Fanpage", dataIndex: "website", key: "website" },
+        { title: "Địa chỉ", dataIndex: "address", key: "address", width: 500 },
+        {
+          title: "Website/ Fanpage",
+          dataIndex: "website",
+          key: "website",
+          width: 500,
+        },
       ],
     },
     {
       title: "Thông tin liên hệ người phụ trách",
       children: [
-        { title: "Họ và tên", dataIndex: "contactName", key: "contactName" },
+        {
+          title: "Họ và tên người phụ trách",
+          dataIndex: "contactName",
+          key: "contactName",
+        },
         { title: "Chức vụ", dataIndex: "position", key: "position" },
         {
           title: "Số điện thoại",
@@ -227,6 +242,7 @@ const BusinessInfo = () => {
           pagination={false}
           rowKey="id"
           className="table-business"
+          scroll={{ x: "max-content" }}
         />
       )}
       <Pagination

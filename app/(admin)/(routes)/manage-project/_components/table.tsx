@@ -304,7 +304,7 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
               return (
                 <tbody key={index}>
                   <tr>
-                    <td className={classes}>
+                    <td className={classes} style={{width: "400px"}}>
                       <div className="flex items-center gap-3">
                         <Avatar
                           src={
@@ -328,7 +328,8 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
                     <td className={classes} style={{ width: "220px" }}>
                       <InfoText>{business?.name_project}</InfoText>
                     </td>
-                    <td className={classes}>
+
+                    <td className={classes} style={{width: "300px"}}>
                       <div className="flex flex-col">
                         {responsiblePersonList?.map(
                           (responsiblePerson: any, index: number) => (

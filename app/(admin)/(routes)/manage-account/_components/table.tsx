@@ -268,7 +268,7 @@ const AccountTable: React.FC<ProjectTableProps> = ({
             return (
               <tbody key={index}>
                 <tr>
-                  <td className={classes}>
+                  <td className={classes} style={{width: "400px"}}>
                     <div className="flex items-center gap-3">
                       <Avatar
                         src={

@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@types/react-datepicker": "^4.19.4",
     "antd": "^5.18.0",
+    "antd-style": "^3.6.3",
     "aos": "^2.3.4",
     "axios": "^1.6.2",
     "chart.js": "^4.4.2",
