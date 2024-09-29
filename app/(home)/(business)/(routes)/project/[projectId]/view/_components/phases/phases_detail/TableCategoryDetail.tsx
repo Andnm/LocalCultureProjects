@@ -208,20 +208,20 @@ const TableCategoryDetail: React.FC<Props> = (props) => {
             </div>
           )}
         />
-        {userLogin?.role_name === "Business" ||
-          (userLogin?.role_name === "ResponsiblePerson" &&
-            dataPhase?.phase_status === "Done" &&
-            dataPhase?.cost_status !== "Transferred" && (
-              <div className="flex justify-end mt-4">
-                <Button
-                  type="primary"
-                  onClick={handleOpenModalChoosePaymentMethod}
-                  className="mt-4"
-                >
-                  Tiến hành thanh toán giai đoạn
-                </Button>
-              </div>
-            ))}
+        {(userLogin?.role_name === "Business" ||
+          userLogin?.role_name === "ResponsiblePerson") &&
+          dataPhase?.phase_status === "Done" &&
+          dataPhase?.cost_status !== "Transferred" && (
+            <div className="flex justify-end mt-4">
+              <Button
+                type="primary"
+                onClick={handleOpenModalChoosePaymentMethod}
+                className="mt-4"
+              >
+                Tiến hành thanh toán giai đoạn
+              </Button>
+            </div>
+          )}
       </Spin>
     </div>
   );
