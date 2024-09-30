@@ -351,6 +351,24 @@ export const uploadFileBusinessInfo = createAsyncThunk(
   }
 );
 
+export const clearBusinessInfo = createAsyncThunk(
+  "user/clearBusinessInfo",
+  async (_, thunkAPI) => {
+    try {
+      const response = await http.delete<any>(
+        `business/`,
+        getConfigHeaderMultipartFormData()
+      );
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        (error as ErrorType)?.response?.data?.message
+      );
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,

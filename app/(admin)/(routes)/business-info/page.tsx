@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Card } from "@material-tailwind/react";
 import { useAppDispatch } from "@/src/redux/store";
 import {
+  clearBusinessInfo,
   getAllBusinessInfo,
   uploadFileBusinessInfo,
 } from "@/src/redux/features/userSlice";
@@ -18,6 +19,8 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import SpinnerLoading from "@/src/components/loading/SpinnerLoading";
+import { CgRemove } from "react-icons/cg";
+const { confirm } = Modal;
 
 const BusinessInfo = () => {
   const dispatch = useAppDispatch();
@@ -207,6 +210,22 @@ const BusinessInfo = () => {
     }
   };
 
+  const handleClear = async () => {
+    setIsUploading(true);
+    try {
+      const resClearData = await dispatch(clearBusinessInfo()).unwrap();
+
+      if (resClearData) {
+        fetchData(currentPage);
+      }
+      message.success("Xóa dữ liệu thành công!");
+    } catch (error) {
+      message.error("Xóa dữ liệu thất bại!");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <Card className="p-4 manager-project min-h-full">
       <div
@@ -230,6 +249,25 @@ const BusinessInfo = () => {
 
         <Button icon={<ExportOutlined />} onClick={handleExport}>
           Xuất File
+        </Button>
+
+        <Button
+          icon={<CgRemove />}
+          danger
+          onClick={async () => {
+            confirm({
+              cancelText: "Quay lại",
+              okText: "Xác nhận",
+              title:
+                "Bạn có chắc là muốn xóa hết dữ liệu về danh sách thông tin doanh nghiệp ngày? ",
+              async onOk() {
+                handleClear();
+              },
+              onCancel() {},
+            });
+          }}
+        >
+          Xóa dữ liệu
         </Button>
       </div>
 
